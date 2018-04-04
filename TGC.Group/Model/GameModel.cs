@@ -84,6 +84,9 @@ namespace TGC.Group.Model
             //Luego en nuestro juego tendremos que crear una cámara que cambie la matriz de view con variables como movimientos o animaciones de escenas.
         }
 
+        float jumpTime = 1;
+        float currentJumpTime = 0;
+        float jumpHeight = 20;
         /// <summary>
         ///     Se llama en cada frame.
         ///     Se debe escribir toda la lógica de computo del modelo, así como también verificar entradas del usuario y reacciones
@@ -99,20 +102,44 @@ namespace TGC.Group.Model
                 BoundingBox = !BoundingBox;
             }
 
-            //Capturar Input Mouse
-            if (Input.buttonUp(TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            if (Input.keyPressed(Key.Space))
             {
-                //Como ejemplo podemos hacer un movimiento simple de la cámara.
-                //En este caso le sumamos un valor en Y
-                Camara.SetCamera(Camara.Position + new TGCVector3(0, 10f, 0), Camara.LookAt);
-                //Ver ejemplos de cámara para otras operaciones posibles.
-
-                //Si superamos cierto Y volvemos a la posición original.
-                if (Camara.Position.Y > 300f)
-                {
-                    Camara.SetCamera(new TGCVector3(Camara.Position.X, 0f, Camara.Position.Z), Camara.LookAt);
-                }
+                if (currentJumpTime <= 0)
+                    currentJumpTime = jumpTime;
             }
+            var lookAt = Camara.LookAt;
+            var camara = Camara.Position;
+            if (currentJumpTime > 0)
+            {
+                TGCVector3 deltaHeight;
+                var thisFramesJumpTime = FastMath.Min(ElapsedTime, currentJumpTime);
+                if (currentJumpTime > jumpTime / 2)
+                {
+                    deltaHeight = new TGCVector3(0, jumpHeight / jumpTime * thisFramesJumpTime, 0);
+                }
+                else
+                {
+                    deltaHeight = new TGCVector3(0, -jumpHeight / jumpTime * thisFramesJumpTime, 0);
+                }
+                lookAt += deltaHeight;
+                camara += deltaHeight;
+                currentJumpTime -= thisFramesJumpTime;
+            }
+            var velocidadAdelante = 0f;
+            var velocidadLado = 0f;
+            if (Input.keyDown(Key.UpArrow))
+                velocidadAdelante += 25f;
+            if (Input.keyDown(Key.DownArrow))
+                velocidadAdelante -= 25f;
+            if (Input.keyDown(Key.RightArrow))
+                velocidadLado -= 35f;
+            if (Input.keyDown(Key.LeftArrow))
+                velocidadLado += 35f;
+            var versorAdelante = TGCVector3.Normalize(Camara.LookAt - Camara.Position);
+            var versorCostado = TGCVector3.Normalize(TGCVector3.Cross(versorAdelante, new TGCVector3(0, 1, 0)));
+            camara += versorAdelante * velocidadAdelante * ElapsedTime;
+            lookAt += versorAdelante * velocidadAdelante * ElapsedTime + versorCostado * velocidadLado * ElapsedTime;
+            Camara.SetCamera(camara, lookAt);
 
             PostUpdate();
         }
