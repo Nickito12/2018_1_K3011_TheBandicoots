@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TGC.Core.SkeletalAnimation;
+﻿using TGC.Core.SkeletalAnimation;
 using TGC.Core.Camara;
 using Microsoft.DirectX.DirectInput;
 using TGC.Core.Mathematica;
-using TGC.Group.Model.GameObjects;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -44,6 +38,10 @@ namespace TGC.Group.Model.GameObjects
                         env.MediaDir + "Robot\\Caminando-TgcSkeletalAnim.xml",
                         env.MediaDir + "Robot\\Parado-TgcSkeletalAnim.xml"
                     });
+            mesh.playAnimation("Parado", true);
+            // Eventualmente esto lo vamos a hacer manual
+            mesh.AutoTransform = true;
+            mesh.Scale = new TGCVector3(0.1f, 0.1f, 0.1f);
         }
         public override void Update()
         {
@@ -86,7 +84,16 @@ namespace TGC.Group.Model.GameObjects
             var versorCostado = TGCVector3.Normalize(TGCVector3.Cross(versorAdelante, new TGCVector3(0, 1, 0)));
             camara += versorAdelante * velocidadAdelante * ElapsedTime;
             lookAt += versorAdelante * velocidadAdelante * ElapsedTime + versorCostado * velocidadLado * env.ElapsedTime;
+            mesh.Position = lookAt;
             Camara.SetCamera(camara, lookAt);
+            /* Intento fallido de rotar el mesh
+            var a = lookAt - camara;
+            var b = new TGCVector3(0, 0, 1);
+            var det = TGCVector3.Dot(new TGCVector3(0, 1, 0), TGCVector3.Cross(a, b));
+            var dot = TGCVector3.Dot(a, b);
+            var x = FastMath.Atan2(det, dot);
+            mesh.RotateY(x-mesh.Rotation.Y);
+            */
         }
         public override void Render()
         {
