@@ -2,6 +2,8 @@
 using TGC.Core.Mathematica;
 using TGC.Core.Textures;
 using TGC.Core.Direct3D;
+using TGC.Core.BoundingVolumes;
+using TGC.Core.Collision;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -22,7 +24,7 @@ namespace TGC.Group.Model.GameObjects
             var pisoWidth = 1000f;
             var pisoLength = pisoWidth;
             var pisoTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, env.MediaDir + "cajaMadera4.jpg");
-            piso = new TgcPlane(new TGCVector3(pisoWidth * -0.5f, -20f, pisoWidth * -0.5f), new TGCVector3(pisoWidth, 0f, pisoWidth), TgcPlane.Orientations.XZplane, pisoTexture);
+            piso = new TgcPlane(new TGCVector3(pisoWidth * -0.5f, -1f, pisoWidth * -0.5f), new TGCVector3(pisoWidth, 20f, pisoWidth), TgcPlane.Orientations.XZplane, pisoTexture);
         }
         public override void Update()
         {
@@ -31,10 +33,15 @@ namespace TGC.Group.Model.GameObjects
         public override void Render()
         {
             piso.Render();
+            piso.BoundingBox.Render();
         }
         public override void Dispose()
         {
             piso.Dispose();
+        }
+        public override bool Collision(TgcBoundingAxisAlignBox boundingBox)
+        {
+            return TgcCollisionUtils.testAABBAABB(piso.BoundingBox, boundingBox);
         }
     }
 }

@@ -7,6 +7,7 @@ using TGC.Core.Geometry;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Group.Model.GameObjects;
+using TGC.Core.Collision;
 
 namespace TGC.Group.Model
 {
@@ -18,6 +19,10 @@ namespace TGC.Group.Model
     /// </summary>
     public class GameModel : TgcExample
     {
+        // El personaje principal
+        public Character personaje = new Character();
+        public List<GameObject> objetos = new List<GameObject>();
+        public TgcThirdPersonCamera NuevaCamara;
         /// <summary>
         ///     Constructor del juego.
         /// </summary>
@@ -29,9 +34,6 @@ namespace TGC.Group.Model
             Name = "Grupo The Bandicoots";
             Description = "Crash Bandicoot - Plataformas - 2018";
         }
-        // El personaje principal
-        Character personaje;
-        List<GameObject> objetos = new List<GameObject>();
         /// <summary>
         ///     Se llama una sola vez, al principio cuando se ejecuta el ejemplo.
         ///     Escribir aquí todo el código de inicialización: cargar modelos, texturas, estructuras de optimización, todo
@@ -40,7 +42,8 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Init()
         {
-            personaje = new Character();
+            NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), 50, -75);
+            Camara = NuevaCamara;
             personaje.Init(this);
             // ...
             objetos.Add(new Escenario1(personaje));

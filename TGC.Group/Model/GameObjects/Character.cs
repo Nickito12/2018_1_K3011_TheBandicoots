@@ -2,6 +2,11 @@
 using TGC.Core.Camara;
 using Microsoft.DirectX.DirectInput;
 using TGC.Core.Mathematica;
+using TGC.Core.Collision;
+using TGC.Core.BoundingVolumes;
+using System.Drawing;
+using System.Collections.Generic;
+using Microsoft.DirectX.Direct3D;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -12,18 +17,19 @@ namespace TGC.Group.Model.GameObjects
         // El mesh del personaje
         private TgcSkeletalMesh mesh;
         //Referencia a la camara para facil acceso
-        TgcCamera Camara;
+        TgcThirdPersonCamera Camara;
 
-        // Un salto de verdad seria con una aceleracion y gravedad
-        // Pero esto sirve por ahora (?)
-        float jumpTime = 1; // Tiempo en segundos de salto
-        float currentJumpTime = 0; // Tiempo transcurrido del salto actual
-        float jumpHeight = 20; // Altura maxima del salto
-
+        float velocidadY = 0f;
+        float gravedad = -2f;
+        float velocidadSalto = 5f;
+        float velocidadRotacion = 5f;
+        float velocidadMovimiento = 5f;
+        bool canJump = true;
+        float velocidadYMaxima = 10f;
         public override void Init(GameModel _env)
         {
             env = _env;
-            Camara = env.Camara;
+            Camara = env.NuevaCamara;
 
             var skeletalLoader = new TgcSkeletalLoader();
             mesh =
@@ -42,61 +48,78 @@ namespace TGC.Group.Model.GameObjects
             // Eventualmente esto lo vamos a hacer manual
             mesh.AutoTransform = true;
             mesh.Scale = new TGCVector3(0.1f, 0.1f, 0.1f);
+            mesh.RotateY(FastMath.ToRad(210f));
         }
         public override void Update()
         {
             var ElapsedTime = env.ElapsedTime;
             var Input = env.Input;
-            if (Input.keyPressed(Key.Space))
+            if (canJump && Input.keyPressed(Key.Space))
             {
-                if (currentJumpTime <= 0)
-                    currentJumpTime = jumpTime;
+                velocidadY = velocidadSalto;
+                canJump = false;
             }
-            var lookAt = Camara.LookAt;
-            var camara = Camara.Position;
-            if (currentJumpTime > 0)
-            {
-                TGCVector3 deltaHeight;
-                var thisFramesJumpTime = FastMath.Min(ElapsedTime, currentJumpTime);
-                if (currentJumpTime > jumpTime / 2)
-                {
-                    deltaHeight = new TGCVector3(0, jumpHeight / jumpTime * thisFramesJumpTime, 0);
-                }
-                else
-                {
-                    deltaHeight = new TGCVector3(0, -jumpHeight / jumpTime * thisFramesJumpTime, 0);
-                }
-                lookAt += deltaHeight;
-                camara += deltaHeight;
-                currentJumpTime -= thisFramesJumpTime;
-            }
-            var velocidadAdelante = 0f;
-            var velocidadLado = 0f;
+            float velocidadAdelante = 0f;
+            float velocidadLado = 0;
             if (Input.keyDown(Key.UpArrow))
-                velocidadAdelante += 25f;
+                velocidadAdelante += velocidadMovimiento;
             if (Input.keyDown(Key.DownArrow))
-                velocidadAdelante -= 25f;
+                velocidadAdelante -= velocidadMovimiento;
             if (Input.keyDown(Key.RightArrow))
-                velocidadLado -= 35f;
+                velocidadLado += velocidadRotacion;
             if (Input.keyDown(Key.LeftArrow))
-                velocidadLado += 35f;
-            var versorAdelante = TGCVector3.Normalize(Camara.LookAt - Camara.Position);
-            var versorCostado = TGCVector3.Normalize(TGCVector3.Cross(versorAdelante, new TGCVector3(0, 1, 0)));
-            camara += versorAdelante * velocidadAdelante * ElapsedTime;
-            lookAt += versorAdelante * velocidadAdelante * ElapsedTime + versorCostado * velocidadLado * env.ElapsedTime;
-            mesh.Position = lookAt;
-            Camara.SetCamera(camara, lookAt);
-            /* Intento fallido de rotar el mesh
-            var a = lookAt - camara;
-            var b = new TGCVector3(0, 0, 1);
-            var det = TGCVector3.Dot(new TGCVector3(0, 1, 0), TGCVector3.Cross(a, b));
-            var dot = TGCVector3.Dot(a, b);
-            var x = FastMath.Atan2(det, dot);
-            mesh.RotateY(x-mesh.Rotation.Y);
-            */
+                velocidadLado -= velocidadRotacion;
+            var diff = Camara.LookAt - Camara.Position;
+            diff.Y = 0;
+            var versorAdelante = TGCVector3.Normalize(diff);
+            //var versorCostado = TGCVector3.Normalize(TGCVector3.Cross(versorAdelante, new TGCVector3(0, 1, 0)));
+            if(ElapsedTime < 100 && velocidadY > -velocidadYMaxima)
+                velocidadY += gravedad * ElapsedTime;
+            var lastPos = mesh.Position;
+            mesh.Position += new TGCVector3(0, velocidadY, 0) * ElapsedTime;
+            var collision = false;
+            var colliders = new List<TgcBoundingAxisAlignBox>();
+            foreach (var objeto in (env.objetos))
+            {
+                var thisCollision = objeto.Collision(mesh.BoundingBox);
+                if (thisCollision) {
+                    colliders.Add(objeto.Collider());
+                    collision = true;
+                }
+            }
+            if (collision)
+            {
+                // Colision en Y
+                mesh.Position = lastPos;
+                canJump = velocidadY < 0;
+            }
+            var posBeforeMovingInXZ = mesh.Position;
+            mesh.Position += versorAdelante * velocidadAdelante * ElapsedTime;
+            collision = false;
+            colliders = new List<TgcBoundingAxisAlignBox>();
+            foreach (var objeto in (env.objetos))
+            {
+                var thisCollision = objeto.Collision(mesh.BoundingBox);
+                if (thisCollision)
+                {
+                    colliders.Add(objeto.Collider());
+                    collision = true;
+                }
+            }
+            if (collision)
+                mesh.Position = posBeforeMovingInXZ;
+            if (mesh.Position != lastPos)
+                mesh.playAnimation("Caminando", true);
+            else
+                mesh.playAnimation("Parado", true);
+            Camara.Target = mesh.Position;
+            var angulo = FastMath.ToRad(velocidadLado * ElapsedTime);
+            mesh.RotateY(angulo);
+            Camara.rotateY(angulo);
         }
         public override void Render()
         {
+            env.DrawText.drawText("[Personaje]: " + TGCVector3.PrintVector3(mesh.Position), 0, 30, Color.OrangeRed);
             mesh.Render();
         }
         public override void Dispose()
