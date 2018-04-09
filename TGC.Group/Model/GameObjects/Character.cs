@@ -18,10 +18,10 @@ namespace TGC.Group.Model.GameObjects
         TgcThirdPersonCamera Camara;
 
         float VelocidadY = 0f;
-        float Gravedad = -4f;
-        float VelocidadTerminal = -4f;
-        float DesplazamientoMaximoY = 7f;
-        float velocidadSalto = 1f;
+        float Gravedad = -25f;
+        float VelocidadTerminal = -50f;
+        float DesplazamientoMaximoY = 10f;
+        float velocidadSalto = 25f;
         float velocidadRotacion = 15f;
         float VelocidadMovimiento = 35f;
         bool CanJump = true;
@@ -74,7 +74,7 @@ namespace TGC.Group.Model.GameObjects
             //var versorCostado = TGCVector3.Normalize(TGCVector3.Cross(versorAdelante, new TGCVector3(0, 1, 0)));
             VelocidadY = FastMath.Max(VelocidadY+Gravedad * ElapsedTime, VelocidadTerminal);
             var LastPos = Mesh.Position;
-            Mesh.Position += new TGCVector3(0, FastMath.Clamp(VelocidadY, -DesplazamientoMaximoY, DesplazamientoMaximoY), 0);
+            Mesh.Position += new TGCVector3(0, FastMath.Clamp(VelocidadY * ElapsedTime, -DesplazamientoMaximoY, DesplazamientoMaximoY), 0);
 
             List<TgcBoundingAxisAlignBox> Colliders;
             var Collision = CheckColision(out Colliders);

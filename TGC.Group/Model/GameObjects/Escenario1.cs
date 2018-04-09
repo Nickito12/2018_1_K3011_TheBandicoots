@@ -26,7 +26,7 @@ namespace TGC.Group.Model.GameObjects
             var PisoWidth = 1000f;
             var PisoLength = PisoWidth;
             var PisoTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "pasto.jpg");
-            Piso = new TgcPlane(new TGCVector3(PisoWidth * -0.5f, -1f, PisoWidth * -0.5f), new TGCVector3(PisoWidth, 20f, PisoWidth), TgcPlane.Orientations.XZplane, PisoTexture);
+            Piso = new TgcPlane(new TGCVector3(PisoWidth * -0.5f, 0f, PisoWidth * -0.5f), new TGCVector3(PisoWidth, 20f, PisoWidth), TgcPlane.Orientations.XZplane, PisoTexture);
 
             //Crear SkyBox
             SkyBox = new TgcSkyBox();
@@ -37,8 +37,8 @@ namespace TGC.Group.Model.GameObjects
             SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, TexturesPath + "Down.jpg");
             SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, TexturesPath + "Left.jpg");
             SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, TexturesPath + "Right.jpg");
-            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, TexturesPath + "Back.jpg");
-            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, TexturesPath + "Front.jpg");
+            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, TexturesPath + "Back.jpg");
+            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, TexturesPath + "Front.jpg");
             SkyBox.Init();
         }
         public override void Update()
