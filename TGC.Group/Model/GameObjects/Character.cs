@@ -24,8 +24,8 @@ namespace TGC.Group.Model.GameObjects
         float velocidadTerminal = -4f;
         float desplazamientoMaximoY = 10f;
         float velocidadSalto = 5f;
-        float velocidadRotacion = 5f;
-        float velocidadMovimiento = 5f;
+        float velocidadRotacion = 15f;
+        float velocidadMovimiento = 15f;
         bool canJump = true;
         public override void Init(GameModel _env)
         {

@@ -42,7 +42,7 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Init()
         {
-            NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), 50, -75);
+            NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), 20, -75);
             Camara = NuevaCamara;
             personaje.Init(this);
             // ...
