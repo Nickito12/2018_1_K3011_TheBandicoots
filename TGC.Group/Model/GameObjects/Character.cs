@@ -20,12 +20,13 @@ namespace TGC.Group.Model.GameObjects
         TgcThirdPersonCamera Camara;
 
         float velocidadY = 0f;
-        float gravedad = -2f;
+        float gravedad = -3f;
+        float velocidadTerminal = -4f;
+        float desplazamientoMaximoY = 10f;
         float velocidadSalto = 5f;
         float velocidadRotacion = 5f;
         float velocidadMovimiento = 5f;
         bool canJump = true;
-        float velocidadYMaxima = 10f;
         public override void Init(GameModel _env)
         {
             env = _env;
@@ -48,7 +49,7 @@ namespace TGC.Group.Model.GameObjects
             // Eventualmente esto lo vamos a hacer manual
             mesh.AutoTransform = true;
             mesh.Scale = new TGCVector3(0.1f, 0.1f, 0.1f);
-            mesh.RotateY(FastMath.ToRad(210f));
+            mesh.RotateY(FastMath.ToRad(180f));
         }
         public override void Update()
         {
@@ -73,10 +74,9 @@ namespace TGC.Group.Model.GameObjects
             diff.Y = 0;
             var versorAdelante = TGCVector3.Normalize(diff);
             //var versorCostado = TGCVector3.Normalize(TGCVector3.Cross(versorAdelante, new TGCVector3(0, 1, 0)));
-            if(ElapsedTime < 100 && velocidadY > -velocidadYMaxima)
-                velocidadY += gravedad * ElapsedTime;
+            velocidadY = FastMath.Max(velocidadY+gravedad * ElapsedTime, velocidadTerminal);
             var lastPos = mesh.Position;
-            mesh.Position += new TGCVector3(0, velocidadY, 0) * ElapsedTime;
+            mesh.Position += new TGCVector3(0, FastMath.Clamp(velocidadY * ElapsedTime, -desplazamientoMaximoY, desplazamientoMaximoY), 0);
             var collision = false;
             var colliders = new List<TgcBoundingAxisAlignBox>();
             foreach (var objeto in (env.objetos))
@@ -108,10 +108,10 @@ namespace TGC.Group.Model.GameObjects
             }
             if (collision)
                 mesh.Position = posBeforeMovingInXZ;
-            if (mesh.Position != lastPos)
-                mesh.playAnimation("Caminando", true);
+            if (velocidadAdelante != 0)
+                SetAnimation("Caminando");
             else
-                mesh.playAnimation("Parado", true);
+                SetAnimation("Parado");
             Camara.Target = mesh.Position;
             var angulo = FastMath.ToRad(velocidadLado * ElapsedTime);
             mesh.RotateY(angulo);
@@ -132,6 +132,13 @@ namespace TGC.Group.Model.GameObjects
         { 
             mesh.Position = posPj;
             Camara.SetCamera(posCamara, mesh.Position); 
+        }
+         public bool SetAnimation(string animationName, bool loop=true)
+        {
+            var alreadySet = mesh.CurrentAnimation.Name == animationName;
+            if (!alreadySet)
+                mesh.playAnimation(animationName, loop);
+            return !alreadySet;
         }
     }
 }

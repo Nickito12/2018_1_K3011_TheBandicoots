@@ -4,6 +4,7 @@ using TGC.Core.Textures;
 using TGC.Core.Direct3D;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
+using TGC.Core.Terrain;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -11,6 +12,7 @@ namespace TGC.Group.Model.GameObjects
     {
         // El piso del mapa/escenario
         private TgcPlane piso;
+        private TgcSkyBox skyBox;
 
         public Escenario1(Character pj)
         {
@@ -23,8 +25,21 @@ namespace TGC.Group.Model.GameObjects
             //Crear piso
             var pisoWidth = 1000f;
             var pisoLength = pisoWidth;
-            var pisoTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, env.MediaDir + "cajaMadera4.jpg");
+            var pisoTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, env.MediaDir + "pasto.jpg");
             piso = new TgcPlane(new TGCVector3(pisoWidth * -0.5f, -1f, pisoWidth * -0.5f), new TGCVector3(pisoWidth, 20f, pisoWidth), TgcPlane.Orientations.XZplane, pisoTexture);
+
+            //Crear SkyBox
+            skyBox = new TgcSkyBox();
+            skyBox.Center = TGCVector3.Empty;
+            skyBox.Size = new TGCVector3(10000, 10000, 10000);
+            var texturesPath = env.MediaDir + "SkyBox1\\";
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "Up.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "Down.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "Left.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "Right.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "Back.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "Front.jpg");
+            skyBox.Init();
         }
         public override void Update()
         {
@@ -33,11 +48,12 @@ namespace TGC.Group.Model.GameObjects
         public override void Render()
         {
             piso.Render();
-            piso.BoundingBox.Render();
+            skyBox.Render();
         }
         public override void Dispose()
         {
             piso.Dispose();
+            skyBox.Dispose();
         }
         public override bool Collision(TgcBoundingAxisAlignBox boundingBox)
         {
