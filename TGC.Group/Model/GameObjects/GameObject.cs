@@ -10,7 +10,7 @@ namespace TGC.Group.Model.GameObjects
     public abstract class GameObject
     {
         // La referencia al GameModel del juego
-        protected GameModel env;
+        protected GameModel Env;
 
         public abstract void Init(GameModel _env);
         public abstract void Update();

@@ -8,14 +8,14 @@ namespace TGC.Group.Model
     /// </summary>
     public class TgcThirdPersonCamera : TgcCamera
     {
-        private TGCVector3 position;
+        private TGCVector3 Position;
 
         /// <summary>
         ///     Crear una nueva camara
         /// </summary>
         public TgcThirdPersonCamera()
         {
-            resetValues();
+            ResetValues();
         }
 
         public TgcThirdPersonCamera(TGCVector3 target, float offsetHeight, float offsetForward) : this()
@@ -64,21 +64,21 @@ namespace TGC.Group.Model
         public override void UpdateCamera(float elapsedTime)
         {
             TGCVector3 targetCenter;
-            CalculatePositionTarget(out position, out targetCenter);
-            SetCamera(position, targetCenter);
+            CalculatePositionTarget(out Position, out targetCenter);
+            SetCamera(Position, targetCenter);
         }
 
         /// <summary>
         ///     Carga los valores default de la camara y limpia todos los cálculos intermedios
         /// </summary>
-        public void resetValues()
+        public void ResetValues()
         {
             OffsetHeight = 20;
             OffsetForward = -120;
             RotationY = 0;
             TargetDisplacement = TGCVector3.Empty;
             Target = TGCVector3.Empty;
-            position = TGCVector3.Empty;
+            Position = TGCVector3.Empty;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace TGC.Group.Model
         /// <param name="target">Objetivo al cual la camara tiene que apuntar</param>
         /// <param name="offsetHeight">Desplazamiento en altura de la camara respecto del target</param>
         /// <param name="offsetForward">Desplazamiento hacia adelante o atras de la camara repecto del target.</param>
-        public void setTargetOffsets(TGCVector3 target, float offsetHeight, float offsetForward)
+        public void SetTargetOffsets(TGCVector3 target, float offsetHeight, float offsetForward)
         {
             Target = target;
             OffsetHeight = offsetHeight;
@@ -113,7 +113,7 @@ namespace TGC.Group.Model
         ///     Rotar la camara respecto del eje Y
         /// </summary>
         /// <param name="angle">Ángulo de rotación en radianes</param>
-        public void rotateY(float angle)
+        public void RotateY(float angle)
         {
             RotationY += angle;
         }

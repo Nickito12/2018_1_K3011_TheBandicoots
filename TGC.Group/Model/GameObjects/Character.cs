@@ -12,116 +12,114 @@ namespace TGC.Group.Model.GameObjects
 {
     public class Character : GameObject
     {
-        // La referencia al GameModel del juego
-        GameModel env;
         // El mesh del personaje
-        private TgcSkeletalMesh mesh;
+        private TgcSkeletalMesh Mesh;
         //Referencia a la camara para facil acceso
         TgcThirdPersonCamera Camara;
 
-        float velocidadY = 0f;
-        float gravedad = -3f;
-        float velocidadTerminal = -4f;
-        float desplazamientoMaximoY = 10f;
+        float VelocidadY = 0f;
+        float Gravedad = -3f;
+        float VelocidadTerminal = -4f;
+        float DesplazamientoMaximoY = 10f;
         float velocidadSalto = 5f;
         float velocidadRotacion = 15f;
-        float velocidadMovimiento = 15f;
-        bool canJump = true;
+        float VelocidadMovimiento = 15f;
+        bool CanJump = true;
         public override void Init(GameModel _env)
         {
-            env = _env;
-            Camara = env.NuevaCamara;
+            Env = _env;
+            Camara = Env.NuevaCamara;
 
-            var skeletalLoader = new TgcSkeletalLoader();
-            mesh =
-                skeletalLoader.loadMeshAndAnimationsFromFile(
+            var SkeletalLoader = new TgcSkeletalLoader();
+            Mesh =
+                SkeletalLoader.loadMeshAndAnimationsFromFile(
                     // xml del mesh
-                    env.MediaDir + "Robot\\Robot-TgcSkeletalMesh.xml",
+                    Env.MediaDir + "Robot\\Robot-TgcSkeletalMesh.xml",
                     // Carpeta del mesh 
-                    env.MediaDir + "Robot\\",
+                    Env.MediaDir + "Robot\\",
                     // Animaciones
                     new[]
                     {
-                        env.MediaDir + "Robot\\Caminando-TgcSkeletalAnim.xml",
-                        env.MediaDir + "Robot\\Parado-TgcSkeletalAnim.xml"
+                        Env.MediaDir + "Robot\\Caminando-TgcSkeletalAnim.xml",
+                        Env.MediaDir + "Robot\\Parado-TgcSkeletalAnim.xml"
                     });
-            mesh.playAnimation("Parado", true);
+            Mesh.playAnimation("Parado", true);
             // Eventualmente esto lo vamos a hacer manual
-            mesh.AutoTransform = true;
-            mesh.Scale = new TGCVector3(0.1f, 0.1f, 0.1f);
-            mesh.RotateY(FastMath.ToRad(180f));
+            Mesh.AutoTransform = true;
+            Mesh.Scale = new TGCVector3(0.1f, 0.1f, 0.1f);
+            Mesh.RotateY(FastMath.ToRad(180f));
         }
         public override void Update()
         {
-            var ElapsedTime = env.ElapsedTime;
-            var Input = env.Input;
-            if (canJump && Input.keyPressed(Key.Space))
+            var ElapsedTime = Env.ElapsedTime;
+            var Input = Env.Input;
+            if (CanJump && Input.keyPressed(Key.Space))
             {
-                velocidadY = velocidadSalto;
-                canJump = false;
+                VelocidadY = velocidadSalto;
+                CanJump = false;
             }
-            float velocidadAdelante = 0f;
-            float velocidadLado = 0;
+            float VelocidadAdelante = 0f;
+            float VelocidadLado = 0;
             if (Input.keyDown(Key.UpArrow))
-                velocidadAdelante += velocidadMovimiento;
+                VelocidadAdelante += VelocidadMovimiento;
             if (Input.keyDown(Key.DownArrow))
-                velocidadAdelante -= velocidadMovimiento;
+                VelocidadAdelante -= VelocidadMovimiento;
             if (Input.keyDown(Key.RightArrow))
-                velocidadLado += velocidadRotacion;
+                VelocidadLado += velocidadRotacion;
             if (Input.keyDown(Key.LeftArrow))
-                velocidadLado -= velocidadRotacion;
-            var diff = Camara.LookAt - Camara.Position;
-            diff.Y = 0;
-            var versorAdelante = TGCVector3.Normalize(diff);
+                VelocidadLado -= velocidadRotacion;
+            var Diff = Camara.LookAt - Camara.Position;
+            Diff.Y = 0;
+            var versorAdelante = TGCVector3.Normalize(Diff);
             //var versorCostado = TGCVector3.Normalize(TGCVector3.Cross(versorAdelante, new TGCVector3(0, 1, 0)));
-            velocidadY = FastMath.Max(velocidadY+gravedad * ElapsedTime, velocidadTerminal);
-            var lastPos = mesh.Position;
-            mesh.Position += new TGCVector3(0, FastMath.Clamp(velocidadY * ElapsedTime, -desplazamientoMaximoY, desplazamientoMaximoY), 0);
+            VelocidadY = FastMath.Max(VelocidadY+Gravedad * ElapsedTime, VelocidadTerminal);
+            var LastPos = Mesh.Position;
+            Mesh.Position += new TGCVector3(0, FastMath.Clamp(VelocidadY * ElapsedTime, -DesplazamientoMaximoY, DesplazamientoMaximoY), 0);
 
-            List<TgcBoundingAxisAlignBox> colliders;
-            var collision = checkColision(out colliders);
-            if (collision)
+            List<TgcBoundingAxisAlignBox> Colliders;
+            var Collision = CheckColision(out Colliders);
+            if (Collision)
             {
                 // Colision en Y
-                mesh.Position = lastPos;
-                canJump = velocidadY < 0;
-                collision = checkColision(out colliders);
+                Mesh.Position = LastPos;
+                CanJump = VelocidadY < 0;
+                Collision = CheckColision(out Colliders);
 
                 // Hack: Movimiento en XZ en el piso no funciona sin esto
-                if (collision)
-                    mesh.Position += new TGCVector3(0, 0.1f, 0);
+                if (Collision)
+                    Mesh.Position += new TGCVector3(0, 0.1f, 0);
             }
-            var posBeforeMovingInXZ = mesh.Position;
-            mesh.Position += versorAdelante * velocidadAdelante * ElapsedTime;
-            collision = checkColision(out colliders);
-            if (collision)
-                mesh.Position = posBeforeMovingInXZ;
-            if (velocidadAdelante != 0)
+            var PosBeforeMovingInXZ = Mesh.Position;
+            Mesh.Position += versorAdelante * VelocidadAdelante * ElapsedTime;
+            Collision = CheckColision(out Colliders);
+            if (Collision)
+                Mesh.Position = PosBeforeMovingInXZ;
+            if (VelocidadAdelante != 0)
                 SetAnimation("Caminando");
             else
                 SetAnimation("Parado");
-            Camara.Target = mesh.Position;
-            var angulo = FastMath.ToRad(velocidadLado * ElapsedTime);
-            mesh.RotateY(angulo);
-            Camara.rotateY(angulo);
-            mesh.updateAnimation(ElapsedTime);
+            Camara.Target = Mesh.Position;
+            var angulo = FastMath.ToRad(VelocidadLado * ElapsedTime);
+            Mesh.RotateY(angulo);
+            Camara.RotateY(angulo);
+            Mesh.updateAnimation(ElapsedTime);
         }
         public override void Render()
         {
-            env.DrawText.drawText("[Personaje]: " + TGCVector3.PrintVector3(mesh.Position), 0, 30, Color.OrangeRed);
-            mesh.Render();
+            Env.DrawText.drawText("[Personaje]: " + TGCVector3.PrintVector3(Mesh.Position), 0, 30, Color.OrangeRed);
+            Mesh.Render();
         }
         public override void Dispose()
         {
-            mesh.Dispose();
+            Mesh.Dispose();
         }
-        public bool checkColision(out List<TgcBoundingAxisAlignBox> colliders)
+        public bool CheckColision(out List<TgcBoundingAxisAlignBox> colliders)
         {
             var collision = false;
             colliders = new List<TgcBoundingAxisAlignBox>();
-            foreach (var objeto in (env.objetos))
+            foreach (var objeto in (Env.Objetos))
             {
-                var thisCollision = objeto.Collision(mesh.BoundingBox);
+                var thisCollision = objeto.Collision(Mesh.BoundingBox);
                 if (thisCollision)
                 {
                     colliders.Add(objeto.Collider());
@@ -132,15 +130,15 @@ namespace TGC.Group.Model.GameObjects
         }
         internal void Move(TGCVector3 posPj, TGCVector3 posCamara)
         { 
-            mesh.Position = posPj;
-            Camara.SetCamera(posCamara, mesh.Position); 
+            Mesh.Position = posPj;
+            Camara.SetCamera(posCamara, Mesh.Position); 
         }
          public bool SetAnimation(string animationName, bool loop=true)
         {
-            var alreadySet = mesh.CurrentAnimation.Name == animationName;
-            if (!alreadySet)
-                mesh.playAnimation(animationName, loop);
-            return !alreadySet;
+            var AlreadySet = Mesh.CurrentAnimation.Name == animationName;
+            if (!AlreadySet)
+                Mesh.playAnimation(animationName, loop);
+            return !AlreadySet;
         }
     }
 }

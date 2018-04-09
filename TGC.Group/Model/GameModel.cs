@@ -20,8 +20,8 @@ namespace TGC.Group.Model
     public class GameModel : TgcExample
     {
         // El personaje principal
-        public Character personaje = new Character();
-        public List<GameObject> objetos = new List<GameObject>();
+        public Character Personaje = new Character();
+        public List<GameObject> Objetos = new List<GameObject>();
         public TgcThirdPersonCamera NuevaCamara;
         /// <summary>
         ///     Constructor del juego.
@@ -44,12 +44,12 @@ namespace TGC.Group.Model
         {
             NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), 20, -75);
             Camara = NuevaCamara;
-            personaje.Init(this);
+            Personaje.Init(this);
             // ...
-            objetos.Add(new Escenario1(personaje));
-            objetos.Add(personaje);
+            Objetos.Add(new Escenario1(Personaje));
+            Objetos.Add(Personaje);
             // ...
-            foreach (var objeto in objetos) 
+            foreach (var objeto in Objetos) 
                 objeto.Init(this);
         }
 
@@ -61,8 +61,8 @@ namespace TGC.Group.Model
         public override void Update()
         {
             PreUpdate();
-            foreach (var objeto in objetos)
-                objeto.Update();
+            foreach (var Objeto in Objetos)
+                Objeto.Update();
             PostUpdate();
         }
 
@@ -76,8 +76,8 @@ namespace TGC.Group.Model
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
             PreRender();
 
-            foreach (var objeto in objetos)
-                objeto.Render();
+            foreach (var Objeto in Objetos)
+                Objeto.Render();
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
             PostRender();
         }
@@ -89,8 +89,8 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Dispose()
         {
-            foreach (var objeto in objetos)
-                objeto.Dispose();
+            foreach (var Objeto in Objetos)
+                Objeto.Dispose();
         }
     }
 }
