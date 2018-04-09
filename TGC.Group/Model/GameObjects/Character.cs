@@ -116,6 +116,7 @@ namespace TGC.Group.Model.GameObjects
             var angulo = FastMath.ToRad(velocidadLado * ElapsedTime);
             mesh.RotateY(angulo);
             Camara.rotateY(angulo);
+            mesh.updateAnimation(ElapsedTime);
         }
         public override void Render()
         {
