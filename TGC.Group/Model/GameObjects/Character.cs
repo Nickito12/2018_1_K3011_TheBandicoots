@@ -77,35 +77,23 @@ namespace TGC.Group.Model.GameObjects
             velocidadY = FastMath.Max(velocidadY+gravedad * ElapsedTime, velocidadTerminal);
             var lastPos = mesh.Position;
             mesh.Position += new TGCVector3(0, FastMath.Clamp(velocidadY * ElapsedTime, -desplazamientoMaximoY, desplazamientoMaximoY), 0);
-            var collision = false;
-            var colliders = new List<TgcBoundingAxisAlignBox>();
-            foreach (var objeto in (env.objetos))
-            {
-                var thisCollision = objeto.Collision(mesh.BoundingBox);
-                if (thisCollision) {
-                    colliders.Add(objeto.Collider());
-                    collision = true;
-                }
-            }
+
+            List<TgcBoundingAxisAlignBox> colliders;
+            var collision = checkColision(out colliders);
             if (collision)
             {
                 // Colision en Y
                 mesh.Position = lastPos;
                 canJump = velocidadY < 0;
+                collision = checkColision(out colliders);
+
+                // Hack: Movimiento en XZ en el piso no funciona sin esto
+                if (collision)
+                    mesh.Position += new TGCVector3(0, 0.1f, 0);
             }
             var posBeforeMovingInXZ = mesh.Position;
             mesh.Position += versorAdelante * velocidadAdelante * ElapsedTime;
-            collision = false;
-            colliders = new List<TgcBoundingAxisAlignBox>();
-            foreach (var objeto in (env.objetos))
-            {
-                var thisCollision = objeto.Collision(mesh.BoundingBox);
-                if (thisCollision)
-                {
-                    colliders.Add(objeto.Collider());
-                    collision = true;
-                }
-            }
+            collision = checkColision(out colliders);
             if (collision)
                 mesh.Position = posBeforeMovingInXZ;
             if (velocidadAdelante != 0)
@@ -127,7 +115,21 @@ namespace TGC.Group.Model.GameObjects
         {
             mesh.Dispose();
         }
-
+        public bool checkColision(out List<TgcBoundingAxisAlignBox> colliders)
+        {
+            var collision = false;
+            colliders = new List<TgcBoundingAxisAlignBox>();
+            foreach (var objeto in (env.objetos))
+            {
+                var thisCollision = objeto.Collision(mesh.BoundingBox);
+                if (thisCollision)
+                {
+                    colliders.Add(objeto.Collider());
+                    collision = true;
+                }
+            }
+            return collision;
+        }
         internal void Move(TGCVector3 posPj, TGCVector3 posCamara)
         { 
             mesh.Position = posPj;
