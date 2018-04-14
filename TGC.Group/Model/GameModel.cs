@@ -21,7 +21,9 @@ namespace TGC.Group.Model
     {
         // El personaje principal
         public Character Personaje = new Character();
-        public List<GameObject> Objetos = new List<GameObject>();
+        public GameObject Escenario;
+        // Para precargar todos los escenarios
+        public List<GameObject> Escenarios = new List<GameObject>();
         public TgcThirdPersonCamera NuevaCamara;
         /// <summary>
         ///     Constructor del juego.
@@ -45,12 +47,10 @@ namespace TGC.Group.Model
             NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), 20, -75);
             Camara = NuevaCamara;
             Personaje.Init(this);
-            // ...
-            Objetos.Add(new Escenario1(Personaje));
-            Objetos.Add(Personaje);
-            // ...
-            foreach (var objeto in Objetos) 
-                objeto.Init(this);
+            Escenario = new Escenario1(Personaje);
+            Escenarios.Add(Escenario);
+            Personaje.Init(this);
+            Escenario.Init(this);
         }
 
         /// <summary>
@@ -61,8 +61,8 @@ namespace TGC.Group.Model
         public override void Update()
         {
             PreUpdate();
-            foreach (var Objeto in Objetos)
-                Objeto.Update();
+            Personaje.Update();
+            Escenario.Update();
             PostUpdate();
         }
 
@@ -75,9 +75,8 @@ namespace TGC.Group.Model
         {
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
             PreRender();
-
-            foreach (var Objeto in Objetos)
-                Objeto.Render();
+            Personaje.Render();
+            Escenario.Render();
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
             PostRender();
         }
@@ -89,8 +88,9 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Dispose()
         {
-            foreach (var Objeto in Objetos)
-                Objeto.Dispose();
+            Personaje.Dispose();
+            foreach(GameObject Esc in Escenarios)
+                Esc.Dispose();
         }
     }
 }

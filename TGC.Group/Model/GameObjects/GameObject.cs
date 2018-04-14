@@ -16,7 +16,7 @@ namespace TGC.Group.Model.GameObjects
         public abstract void Update();
         public abstract void Render();
         public abstract void Dispose();
-        virtual public bool Collision(TgcBoundingAxisAlignBox box) { return false; }
-        virtual public TgcBoundingAxisAlignBox Collider() { return null; }
+        virtual public TgcBoundingAxisAlignBox ColisionY(TgcBoundingAxisAlignBox box) { return null; }
+        virtual public TgcBoundingAxisAlignBox ColisionXZ(TgcBoundingAxisAlignBox box) { return null; }
     }
 }
