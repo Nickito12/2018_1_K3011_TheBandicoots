@@ -79,8 +79,11 @@ namespace TGC.Group.Model.GameObjects
             Piso.Render();
             SkyBox.Render();
             Meshes.RenderAll();
+            //Dibujar bounding boxes de los mesh (Debugging?)
+            /*
             foreach (TgcMesh mesh in Meshes.Meshes)
                 mesh.BoundingBox.Render();
+            */
         }
         public override void Dispose()
         {
