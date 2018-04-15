@@ -48,7 +48,6 @@ namespace TGC.Group.Model.GameObjects
             Mesh.AutoTransform = true;
             Mesh.Scale = new TGCVector3(0.1f, 0.1f, 0.1f);
             Mesh.RotateY(FastMath.ToRad(180f));
-            Mesh.Move(0, 1, 0);
         }
         public override void Update()
         {
