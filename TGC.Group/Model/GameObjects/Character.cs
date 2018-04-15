@@ -48,6 +48,7 @@ namespace TGC.Group.Model.GameObjects
             Mesh.AutoTransform = true;
             Mesh.Scale = new TGCVector3(0.1f, 0.1f, 0.1f);
             Mesh.RotateY(FastMath.ToRad(180f));
+            Mesh.Move(0, 1, 0);
         }
         public override void Update()
         {
@@ -136,6 +137,8 @@ namespace TGC.Group.Model.GameObjects
             var angulo = FastMath.ToRad(VelocidadLado * ElapsedTime);
             Mesh.RotateY(angulo);
             Camara.RotateY(angulo);
+           /* Camara.OffsetForward = -300f;
+            Camara.OffsetHeight = 125f; */
             Mesh.updateAnimation(ElapsedTime);
         }
         public override void Render()
