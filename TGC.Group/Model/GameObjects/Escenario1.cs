@@ -15,15 +15,11 @@ namespace TGC.Group.Model.GameObjects
         // El piso del mapa/escenario
         private TgcPlane Piso;
 
-        public Escenario1(Character pj)
-        {
-            // Reset pj (Moverlo a la posicion inicial del escenario)
-            pj.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
-            
-        }
         public override void Init(GameModel _env)
         {
             Env = _env;
+            // Reset pj (Moverlo a la posicion inicial del escenario)
+            Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
             //Crear piso
             var PisoWidth = 1200f;
             var PisoLength = PisoWidth;

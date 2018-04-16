@@ -47,7 +47,7 @@ namespace TGC.Group.Model
             NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), 20, -75);
             Camara = NuevaCamara;
             Personaje.Init(this);
-            Escenario = new Escenario1(Personaje);
+            Escenario = new Escenario1();
             Escenarios.Add(Escenario);
             Personaje.Init(this);
             Escenario.Init(this);
