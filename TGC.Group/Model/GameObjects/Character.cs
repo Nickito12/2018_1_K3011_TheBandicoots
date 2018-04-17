@@ -81,8 +81,7 @@ namespace TGC.Group.Model.GameObjects
                 VelocidadLado -= velocidadRotacion;
 
             var versorAdelante = TGCVector3.Normalize(Diff);
-            //var versorCostado = TGCVector3.Normalize(TGCVector3.Cross(versorAdelante, new TGCVector3(0, 1, 0)));
-            VelocidadY = FastMath.Max(VelocidadY + Gravedad * ElapsedTime, VelocidadTerminal);
+            VelocidadY = FastMath.Clamp(VelocidadY + Gravedad * ElapsedTime, VelocidadTerminal, -VelocidadTerminal);
             var LastPos = Mesh.Position;
             // Colision en Y
             Mesh.Position += new TGCVector3(0, FastMath.Clamp(VelocidadY * ElapsedTime, -DesplazamientoMaximoY, DesplazamientoMaximoY), 0);
@@ -146,7 +145,7 @@ namespace TGC.Group.Model.GameObjects
             {
                 SetAnimation("Jump", false);
             }
-            else if (Input.keyDown(Key.LeftShift)) {
+            else if (Input.keyDown(Key.LeftShift) || Input.keyDown(Key.RightShift)) {
                 SetAnimation("CrouchWalk");
                 updateAnimation = VelocidadAdelante != 0;
             }
@@ -161,15 +160,16 @@ namespace TGC.Group.Model.GameObjects
             var angulo = FastMath.ToRad(VelocidadLado * ElapsedTime);
             Mesh.RotateY(angulo);
             Camara.RotateY(angulo);
-            /* Camara.OffsetForward = -300f;
-             Camara.OffsetHeight = 125f; */
             if (updateAnimation)
                 Mesh.updateAnimation(ElapsedTime);
         }
 
         public override void Render()
         {
-            Env.DrawText.drawText("[Personaje]: " + TGCVector3.PrintVector3(Mesh.Position), 0, 30, Color.OrangeRed);
+            Env.DrawText.drawText("[Pos pj]: " + TGCVector3.PrintVector3(Mesh.Position), 0, 20, Color.OrangeRed);
+            Env.DrawText.drawText("Velocidad Y: " + VelocidadY.ToString(), 0, 40, Color.OrangeRed);
+            Env.DrawText.drawText("Ctrl: Render BB", 0, 60, Color.OrangeRed);
+            Env.DrawText.drawText("Shift: Crouch", 0, 80, Color.OrangeRed);
             Mesh.Render();
         }
 

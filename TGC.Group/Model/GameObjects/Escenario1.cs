@@ -4,6 +4,7 @@ using TGC.Core.Textures;
 using TGC.Core.Direct3D;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
+using TGC.Core.Sound;
 using TGC.Core.Terrain;
 using TGC.Core.SceneLoader;
 using Microsoft.DirectX.DirectInput;
@@ -14,6 +15,8 @@ namespace TGC.Group.Model.GameObjects
     {
         // El piso del mapa/escenario
         private TgcPlane Piso;
+
+        private TgcMp3Player mp3Player;
 
         public override void Init(GameModel _env)
         {
@@ -31,6 +34,10 @@ namespace TGC.Group.Model.GameObjects
 
             Loader = new TgcSceneLoader();
             Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\ESCENACALABERITANUEVA-TgcScene.xml");
+
+            mp3Player = new TgcMp3Player();
+            mp3Player.FileName = Env.MediaDir + "\\Sound\\song.mp3";
+            mp3Player.play(true);
         }
         public override void Update()
         {
@@ -44,6 +51,7 @@ namespace TGC.Group.Model.GameObjects
         public override void Dispose()
         {
             Piso.Dispose();
+            mp3Player.closeFile();
             base.Dispose();
         }
         public override TgcBoundingAxisAlignBox ColisionXZ(TgcBoundingAxisAlignBox boundingBox)
