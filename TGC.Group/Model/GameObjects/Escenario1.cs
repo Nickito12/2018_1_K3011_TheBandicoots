@@ -24,7 +24,7 @@ namespace TGC.Group.Model.GameObjects
             var PisoWidth = 1200f;
             var PisoLength = PisoWidth;
             var PisoTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "pasto.jpg");
-            Piso = new TgcPlane(new TGCVector3(PisoWidth * -0.5f, 0f, PisoWidth * -0.5f), new TGCVector3(PisoWidth, 20f, PisoWidth), TgcPlane.Orientations.XZplane, PisoTexture);
+            Piso = new TgcPlane(new TGCVector3(PisoWidth * -0.5f, 0f, PisoWidth * -0.5f), new TGCVector3(PisoWidth, 20f, PisoWidth), TgcPlane.Orientations.XZplane, PisoTexture, 15, 15);
 
             //Crear SkyBox
             CreateSkyBox(TGCVector3.Empty, new TGCVector3(10000, 10000, 10000), "SkyBox1");

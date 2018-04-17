@@ -25,6 +25,7 @@ namespace TGC.Group.Model.GameObjects
         float velocidadRotacion = 30f;
         float VelocidadMovimiento = 35f;
         bool CanJump = true;
+        bool updateAnimation = true;
 
         public override void Init(GameModel _env)
         {
@@ -35,21 +36,17 @@ namespace TGC.Group.Model.GameObjects
             Mesh =
                 SkeletalLoader.loadMeshAndAnimationsFromFile(
                     // xml del mesh
-                    //Env.MediaDir + "Robot\\Robot-TgcSkeletalMesh.xml",
                     Env.MediaDir + "Piloto\\Pilot-TgcSkeletalMesh.xml",
                     // Carpeta del mesh 
-                    //Env.MediaDir + "Robot\\",
                     Env.MediaDir + "Piloto\\",
                     // Animaciones
                     new[]
                     {
-                        //Env.MediaDir + "Robot\\Caminando-TgcSkeletalAnim.xml",
-                        //Env.MediaDir + "Robot\\Parado-TgcSkeletalAnim.xml"
                         Env.MediaDir + "Piloto\\Animations\\Walk-TgcSkeletalAnim.xml",
                         Env.MediaDir + "Piloto\\Animations\\StandBy-TgcSkeletalAnim.xml",
                         Env.MediaDir + "Piloto\\Animations\\CrouchWalk-TgcSkeletalAnim.xml",
-                        Env.MediaDir + "Piloto\\Animations\\LowKick-TgcSkeletalAnim.xml"
-                        //Env.MediaDir + "Piloto\\Animations\\Jump-TgcSkeletalAnim.xml"
+                        Env.MediaDir + "Piloto\\Animations\\LowKick-TgcSkeletalAnim.xml",
+                        Env.MediaDir + "Piloto\\Animations\\Jump-TgcSkeletalAnim.xml"
                     });
 
             Mesh.playAnimation("StandBy", true);
@@ -85,7 +82,7 @@ namespace TGC.Group.Model.GameObjects
 
             var versorAdelante = TGCVector3.Normalize(Diff);
             //var versorCostado = TGCVector3.Normalize(TGCVector3.Cross(versorAdelante, new TGCVector3(0, 1, 0)));
-            VelocidadY = FastMath.Max(VelocidadY+Gravedad * ElapsedTime, VelocidadTerminal);
+            VelocidadY = FastMath.Max(VelocidadY + Gravedad * ElapsedTime, VelocidadTerminal);
             var LastPos = Mesh.Position;
             // Colision en Y
             Mesh.Position += new TGCVector3(0, FastMath.Clamp(VelocidadY * ElapsedTime, -DesplazamientoMaximoY, DesplazamientoMaximoY), 0);
@@ -144,13 +141,21 @@ namespace TGC.Group.Model.GameObjects
                 Mesh.Position = PosBeforeMovingInXZ - rs;
             }
 
-            if (VelocidadAdelante != 0 && Input.keyDown(Key.LeftShift))
+            updateAnimation = true;
+            if (Mesh.Position.Y != LastPos.Y)
+            {
+                SetAnimation("Jump", false);
+            }
+            else if (Input.keyDown(Key.LeftShift)) {
                 SetAnimation("CrouchWalk");
-            else
+                updateAnimation = VelocidadAdelante != 0;
+            }
+            else 
                 if (VelocidadAdelante != 0)
                     SetAnimation("Walk");
                 else
                     SetAnimation("StandBy");
+            
 
             Camara.Target = Mesh.Position;
             var angulo = FastMath.ToRad(VelocidadLado * ElapsedTime);
@@ -158,8 +163,8 @@ namespace TGC.Group.Model.GameObjects
             Camara.RotateY(angulo);
             /* Camara.OffsetForward = -300f;
              Camara.OffsetHeight = 125f; */
-
-            Mesh.updateAnimation(ElapsedTime);
+            if (updateAnimation)
+                Mesh.updateAnimation(ElapsedTime);
         }
 
         public override void Render()
