@@ -34,19 +34,24 @@ namespace TGC.Group.Model.GameObjects
             Mesh =
                 SkeletalLoader.loadMeshAndAnimationsFromFile(
                     // xml del mesh
-                    Env.MediaDir + "Robot\\Robot-TgcSkeletalMesh.xml",
+                    //Env.MediaDir + "Robot\\Robot-TgcSkeletalMesh.xml",
+                    Env.MediaDir + "Piloto\\Pilot-TgcSkeletalMesh.xml",
                     // Carpeta del mesh 
-                    Env.MediaDir + "Robot\\",
+                    //Env.MediaDir + "Robot\\",
+                    Env.MediaDir + "Piloto\\",
                     // Animaciones
                     new[]
                     {
-                        Env.MediaDir + "Robot\\Caminando-TgcSkeletalAnim.xml",
-                        Env.MediaDir + "Robot\\Parado-TgcSkeletalAnim.xml"
+                        //Env.MediaDir + "Robot\\Caminando-TgcSkeletalAnim.xml",
+                        //Env.MediaDir + "Robot\\Parado-TgcSkeletalAnim.xml"
+                        Env.MediaDir + "Piloto\\Animations\\Walk-TgcSkeletalAnim.xml",
+                        Env.MediaDir + "Piloto\\Animations\\StandBy-TgcSkeletalAnim.xml",
+                        //Env.MediaDir + "Piloto\\Animations\\Jump-TgcSkeletalAnim.xml"
                     });
-            Mesh.playAnimation("Parado", true);
+            Mesh.playAnimation("StandBy", true);
             // Eventualmente esto lo vamos a hacer manual
             Mesh.AutoTransform = true;
-            Mesh.Scale = new TGCVector3(0.1f, 0.1f, 0.1f);
+            Mesh.Scale = new TGCVector3(0.3f, 0.3f, 0.3f);
             Mesh.RotateY(FastMath.ToRad(180f));
         }
         public override void Update()
@@ -129,9 +134,9 @@ namespace TGC.Group.Model.GameObjects
                 Mesh.Position = PosBeforeMovingInXZ - rs;
             }
             if (VelocidadAdelante != 0)
-                SetAnimation("Caminando");
+                SetAnimation("Walk");
             else
-                SetAnimation("Parado");
+                SetAnimation("StandBy");
             Camara.Target = Mesh.Position;
             var angulo = FastMath.ToRad(VelocidadLado * ElapsedTime);
             Mesh.RotateY(angulo);
