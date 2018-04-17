@@ -18,13 +18,14 @@ namespace TGC.Group.Model.GameObjects
         TgcThirdPersonCamera Camara;
 
         float VelocidadY = 0f;
-        float Gravedad = -25f;
+        float Gravedad = -60f;
         float VelocidadTerminal = -50f;
         float DesplazamientoMaximoY = 10f;
-        float velocidadSalto = 25f;
+        float velocidadSalto = 40f;
         float velocidadRotacion = 30f;
         float VelocidadMovimiento = 35f;
         bool CanJump = true;
+
         public override void Init(GameModel _env)
         {
             Env = _env;
@@ -46,35 +47,42 @@ namespace TGC.Group.Model.GameObjects
                         //Env.MediaDir + "Robot\\Parado-TgcSkeletalAnim.xml"
                         Env.MediaDir + "Piloto\\Animations\\Walk-TgcSkeletalAnim.xml",
                         Env.MediaDir + "Piloto\\Animations\\StandBy-TgcSkeletalAnim.xml",
+                        Env.MediaDir + "Piloto\\Animations\\CrouchWalk-TgcSkeletalAnim.xml",
+                        Env.MediaDir + "Piloto\\Animations\\LowKick-TgcSkeletalAnim.xml"
                         //Env.MediaDir + "Piloto\\Animations\\Jump-TgcSkeletalAnim.xml"
                     });
+
             Mesh.playAnimation("StandBy", true);
             // Eventualmente esto lo vamos a hacer manual
             Mesh.AutoTransform = true;
             Mesh.Scale = new TGCVector3(0.3f, 0.3f, 0.3f);
             Mesh.RotateY(FastMath.ToRad(180f));
         }
+
         public override void Update()
         {
             var ElapsedTime = Env.ElapsedTime;
             var Input = Env.Input;
+            float VelocidadAdelante = 0f;
+            float VelocidadLado = 0;
+            var Diff = Camara.LookAt - Camara.Position;
+            Diff.Y = 0;
+
             if (CanJump && Input.keyPressed(Key.Space))
             {
                 VelocidadY = velocidadSalto;
                 CanJump = false;
             }
-            float VelocidadAdelante = 0f;
-            float VelocidadLado = 0;
-            if (Input.keyDown(Key.UpArrow))
+
+            if (Input.keyDown(Key.W) || Input.keyDown(Key.UpArrow))
                 VelocidadAdelante += VelocidadMovimiento;
-            if (Input.keyDown(Key.DownArrow))
+            if (Input.keyDown(Key.S) || Input.keyDown(Key.DownArrow))
                 VelocidadAdelante -= VelocidadMovimiento;
-            if (Input.keyDown(Key.RightArrow))
+            if (Input.keyDown(Key.D) || Input.keyDown(Key.RightArrow))
                 VelocidadLado += velocidadRotacion;
-            if (Input.keyDown(Key.LeftArrow))
+            if (Input.keyDown(Key.A) || Input.keyDown(Key.LeftArrow))
                 VelocidadLado -= velocidadRotacion;
-            var Diff = Camara.LookAt - Camara.Position;
-            Diff.Y = 0;
+
             var versorAdelante = TGCVector3.Normalize(Diff);
             //var versorCostado = TGCVector3.Normalize(TGCVector3.Cross(versorAdelante, new TGCVector3(0, 1, 0)));
             VelocidadY = FastMath.Max(VelocidadY+Gravedad * ElapsedTime, VelocidadTerminal);
@@ -82,19 +90,21 @@ namespace TGC.Group.Model.GameObjects
             // Colision en Y
             Mesh.Position += new TGCVector3(0, FastMath.Clamp(VelocidadY * ElapsedTime, -DesplazamientoMaximoY, DesplazamientoMaximoY), 0);
             TgcBoundingAxisAlignBox Collider = Env.Escenario.ColisionY(Mesh.BoundingBox);
+
             if (Collider != null)
             {
                 Mesh.Position = LastPos;
                 CanJump = VelocidadY < 0;
             }
+
             var PosBeforeMovingInXZ = Mesh.Position;
             Mesh.Position += versorAdelante * VelocidadAdelante * ElapsedTime;
             Collider = Env.Escenario.ColisionXZ(Mesh.BoundingBox);
             if (Collider != null)
             {
-
                 var movementRay = PosBeforeMovingInXZ - Mesh.Position;
                 var rs = TGCVector3.Empty;
+
                 if (((Mesh.BoundingBox.PMax.X > Collider.PMax.X && movementRay.X > 0) ||
                     (Mesh.BoundingBox.PMin.X < Collider.PMin.X && movementRay.X < 0)) &&
                     ((Mesh.BoundingBox.PMax.Z > Collider.PMax.Z && movementRay.Z > 0) ||
@@ -133,39 +143,50 @@ namespace TGC.Group.Model.GameObjects
                 }
                 Mesh.Position = PosBeforeMovingInXZ - rs;
             }
-            if (VelocidadAdelante != 0)
-                SetAnimation("Walk");
+
+            if (VelocidadAdelante != 0 && Input.keyDown(Key.LeftShift))
+                SetAnimation("CrouchWalk");
             else
-                SetAnimation("StandBy");
+                if (VelocidadAdelante != 0)
+                    SetAnimation("Walk");
+                else
+                    SetAnimation("StandBy");
+
             Camara.Target = Mesh.Position;
             var angulo = FastMath.ToRad(VelocidadLado * ElapsedTime);
             Mesh.RotateY(angulo);
             Camara.RotateY(angulo);
-           /* Camara.OffsetForward = -300f;
-            Camara.OffsetHeight = 125f; */
+            /* Camara.OffsetForward = -300f;
+             Camara.OffsetHeight = 125f; */
+
             Mesh.updateAnimation(ElapsedTime);
         }
+
         public override void Render()
         {
             Env.DrawText.drawText("[Personaje]: " + TGCVector3.PrintVector3(Mesh.Position), 0, 30, Color.OrangeRed);
             Mesh.Render();
         }
+
         public override void Dispose()
         {
             Mesh.Dispose();
         }
+
         public bool CheckColision(out TgcBoundingAxisAlignBox Collider)
         {
             Collider = Env.Escenario.ColisionXZ(Mesh.BoundingBox);
             var Colision = Collider == null;
             return Colision;
         }
+
         internal void Move(TGCVector3 posPj, TGCVector3 posCamara)
         { 
             Mesh.Position = posPj;
             Camara.SetCamera(posCamara, Mesh.Position); 
         }
-         public bool SetAnimation(string animationName, bool loop=true)
+
+        public bool SetAnimation(string animationName, bool loop=true)
         {
             var AlreadySet = Mesh.CurrentAnimation.Name == animationName;
             if (!AlreadySet)
