@@ -8,6 +8,7 @@ using TGC.Core.Sound;
 using TGC.Core.Terrain;
 using TGC.Core.SceneLoader;
 using Microsoft.DirectX.DirectInput;
+using System.Collections.Generic;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -15,6 +16,8 @@ namespace TGC.Group.Model.GameObjects
     {
         // El piso del mapa/escenario
         private TgcPlane Piso;
+        private List<TgcMesh> ListaPozos = new List<TgcMesh>();
+        private List<TgcMesh> ListaPisos = new List<TgcMesh>();
 
         private TgcMp3Player mp3Player;
 
@@ -34,6 +37,8 @@ namespace TGC.Group.Model.GameObjects
 
             Loader = new TgcSceneLoader();
             Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd10-TgcScene.xml");
+            ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
+            ListaPisos = Scene.Meshes.FindAll(m => m.Name.Contains("Box"));
 
             mp3Player = new TgcMp3Player();
             mp3Player.FileName = Env.MediaDir + "\\Sound\\song.mp3";
@@ -60,7 +65,18 @@ namespace TGC.Group.Model.GameObjects
             TgcBoundingAxisAlignBox Colisionador = null;
             foreach (var Mesh in Scene.Meshes)
             {
-                if (TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
+
+                if (ListaPozos.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
+                {
+                    Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
+                    break;
+                }
+                else if (ListaPisos.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
+                {
+                    break;
+                }
+
+                else if (TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
                 {
                     Colisionador = Mesh.BoundingBox;
                     break;
@@ -70,7 +86,21 @@ namespace TGC.Group.Model.GameObjects
         }
         public override TgcBoundingAxisAlignBox ColisionY(TgcBoundingAxisAlignBox boundingBox)
         {
-            return TgcCollisionUtils.testAABBAABB(Piso.BoundingBox, boundingBox) ? Piso.BoundingBox : null;
+            TgcBoundingAxisAlignBox Colisionador = null;
+            foreach (var Mesh in ListaPisos) {
+                if (TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
+                {
+                    Colisionador = Mesh.BoundingBox;
+                    break;
+                }
+
+            }
+
+            if (Colisionador == null && TgcCollisionUtils.testAABBAABB(Piso.BoundingBox, boundingBox)) {
+                Colisionador = Piso.BoundingBox;
+            }
+
+            return Colisionador;
         }
     }
 }

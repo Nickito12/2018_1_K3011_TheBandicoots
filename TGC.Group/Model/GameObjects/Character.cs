@@ -21,11 +21,12 @@ namespace TGC.Group.Model.GameObjects
         float Gravedad = -60f;
         float VelocidadTerminal = -50f;
         float DesplazamientoMaximoY = 10f;
-        float velocidadSalto = 40f;
+        float velocidadSalto = 60f;
         float velocidadRotacion = 30f;
         float VelocidadMovimiento = 35f;
         bool CanJump = true;
         bool updateAnimation = true;
+        TiposColision TipoColisionActual;
 
         public override void Init(GameModel _env)
         {
@@ -64,6 +65,7 @@ namespace TGC.Group.Model.GameObjects
             float VelocidadLado = 0;
             var Diff = Camara.LookAt - Camara.Position;
             Diff.Y = 0;
+            TipoColisionActual = TiposColision.SinColision;
 
             if (CanJump && Input.keyPressed(Key.Space))
             {
@@ -79,6 +81,8 @@ namespace TGC.Group.Model.GameObjects
                 VelocidadLado += velocidadRotacion;
             if (Input.keyDown(Key.A) || Input.keyDown(Key.LeftArrow))
                 VelocidadLado -= velocidadRotacion;
+            if (Input.keyDown(Key.R))
+                Mesh.Position = new TGCVector3(0, 1, 0);
 
             var versorAdelante = TGCVector3.Normalize(Diff);
             VelocidadY = FastMath.Clamp(VelocidadY + Gravedad * ElapsedTime, VelocidadTerminal, -VelocidadTerminal);
@@ -96,8 +100,16 @@ namespace TGC.Group.Model.GameObjects
             var PosBeforeMovingInXZ = Mesh.Position;
             Mesh.Position += versorAdelante * VelocidadAdelante * ElapsedTime;
             Collider = Env.Escenario.ColisionXZ(Mesh.BoundingBox);
-            if (Collider != null)
+            if (Collider == null && TipoColisionActual == TiposColision.Pozo)
             {
+                Mesh.Position += new TGCVector3(0, -15f, 0);
+                //Esto estaria codeado a "Manopla", haciendo que el bbox del pj termine por debajo del bbox del Pozo, para que no haya problemas, ya que el analisis de la colision es en XZ
+            }
+           
+
+            else if (Collider != null)
+            {
+
                 var movementRay = PosBeforeMovingInXZ - Mesh.Position;
                 var rs = TGCVector3.Empty;
 
@@ -170,6 +182,7 @@ namespace TGC.Group.Model.GameObjects
             Env.DrawText.drawText("Velocidad Y: " + VelocidadY.ToString(), 0, 40, Color.OrangeRed);
             Env.DrawText.drawText("Ctrl: Render BB", 0, 60, Color.OrangeRed);
             Env.DrawText.drawText("Shift: Crouch", 0, 80, Color.OrangeRed);
+            Env.DrawText.drawText("R: Reiniciar Posición", 0, 100, Color.OrangeRed);
             Mesh.Render();
         }
 
@@ -197,6 +210,10 @@ namespace TGC.Group.Model.GameObjects
             if (!AlreadySet)
                 Mesh.playAnimation(animationName, loop);
             return !AlreadySet;
+        }
+        public void SetTipoColisionActual(TiposColision resultadoColision)
+        {
+            TipoColisionActual = resultadoColision;
         }
     }
 }
