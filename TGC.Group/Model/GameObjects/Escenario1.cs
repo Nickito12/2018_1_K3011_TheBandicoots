@@ -18,6 +18,7 @@ namespace TGC.Group.Model.GameObjects
         private TgcPlane Piso;
         private List<TgcMesh> ListaPozos = new List<TgcMesh>();
         private List<TgcMesh> ListaPisos = new List<TgcMesh>();
+        private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
 
         private TgcMp3Player mp3Player;
@@ -37,9 +38,10 @@ namespace TGC.Group.Model.GameObjects
             CreateSkyBox(TGCVector3.Empty, new TGCVector3(10000, 10000, 10000), "SkyBox1");
 
             Loader = new TgcSceneLoader();
-            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd10-TgcScene.xml");
+            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd13-TgcScene.xml");
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
             ListaPisos = Scene.Meshes.FindAll(m => m.Name.Contains("Box"));
+            ListaPisosResbalosos = Scene.Meshes.FindAll(m => m.Name.Contains("PisoResbaloso"));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001233")));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
 
@@ -79,6 +81,12 @@ namespace TGC.Group.Model.GameObjects
                 }
                 else if (ListaPisos.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
                 {
+                    break;
+                }
+
+                else if (ListaPisosResbalosos.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
+                {
+                    Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
                     break;
                 }
 
