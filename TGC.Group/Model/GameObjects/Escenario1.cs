@@ -18,6 +18,7 @@ namespace TGC.Group.Model.GameObjects
         private TgcPlane Piso;
         private List<TgcMesh> ListaPozos = new List<TgcMesh>();
         private List<TgcMesh> ListaPisos = new List<TgcMesh>();
+        private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
 
         private TgcMp3Player mp3Player;
 
@@ -39,6 +40,8 @@ namespace TGC.Group.Model.GameObjects
             Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd10-TgcScene.xml");
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
             ListaPisos = Scene.Meshes.FindAll(m => m.Name.Contains("Box"));
+            ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001233")));
+            ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
 
             mp3Player = new TgcMp3Player();
             mp3Player.FileName = Env.MediaDir + "\\Sound\\song.mp3";
@@ -65,8 +68,11 @@ namespace TGC.Group.Model.GameObjects
             TgcBoundingAxisAlignBox Colisionador = null;
             foreach (var Mesh in Scene.Meshes)
             {
-
-                if (ListaPozos.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
+                if (ListaMeshesSinColision.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
+                {
+                    break;
+                }
+                else if (ListaPozos.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
                 {
                     Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
                     break;
