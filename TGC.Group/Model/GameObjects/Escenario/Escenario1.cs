@@ -19,20 +19,14 @@ namespace TGC.Group.Model.GameObjects
         // El piso del mapa/escenario
         private TgcPlane Piso;
         private List<TgcMesh> ListaPozos = new List<TgcMesh>();
-        private List<TgcMesh> ListaPisos = new List<TgcMesh>();
         private List<TgcMesh> ListaPlataformasGiratorias = new List<TgcMesh>();
         private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
 
         private TgcMp3Player mp3Player;
 
-        //plataforma
-        private TgcMesh plataforma1;
         private const float ROTATION_SPEED = 1f;
-        private const float MOVEMENT_SPEED = 0.1f;
-        private float currentMoveDir = 1f;
-        private TGCVector3 posicion;
-        private List<PlataformaGiratoria> pGiratorias;
+        private List<Plataforma> Plataformas;
         public override void Init(GameModel _env)
         {
             Env = _env;
@@ -50,7 +44,6 @@ namespace TGC.Group.Model.GameObjects
             Loader = new TgcSceneLoader();
             Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd17-TgcScene.xml");
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
-            ListaPisos = Scene.Meshes.FindAll(m => m.Name.Contains("Box"));
             foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto"))) {
                 mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
             }
@@ -71,15 +64,13 @@ namespace TGC.Group.Model.GameObjects
             mp3Player.FileName = Env.MediaDir + "\\Sound\\crash.mp3";
             mp3Player.play(true);
 
-            //1er plataforma
-            plataforma1 = Scene.Meshes.Find(m => m.Name.Contains("Box_1"));
-            plataforma1.AutoTransform = true;
 
-            pGiratorias = new List<PlataformaGiratoria>();
-            pGiratorias.Add(new PlataformaGiratoria(20, plataforma1.clone("pGira"), new TGCVector3(275f,0f,275f), 5f));
-            foreach (var pGira in pGiratorias)
+            Plataformas = new List<Plataforma>();
+            Plataformas.Add(new PlataformaLineal(Scene.Meshes.Find(m => m.Name.Contains("Box_1")), new TGCVector3(0f, 0f, 0f), 26f, true, 12f));
+            Plataformas.Add(new PlataformaGiratoria(20, Plataformas[0].Mesh.clone("pGira"), new TGCVector3(260f, 0f, 275f), 5f));
+            foreach (var plataforma in Plataformas)
             {
-                ListaPlataformasGiratorias.Add(pGira.Mesh);
+                ListaPlataformasGiratorias.Add(plataforma.Mesh);
             }
 
             KDTree = new KdTree();
@@ -88,20 +79,12 @@ namespace TGC.Group.Model.GameObjects
         }
         public override void Update()
         {
-            //guardo la posicion para el personaje
-            posicion = new TGCVector3(MOVEMENT_SPEED * currentMoveDir, 0, 0);
-
-            //para que la plataforma se mueva
-            plataforma1.Move(MOVEMENT_SPEED * currentMoveDir, 0, 0);
-            if (FastMath.Abs(plataforma1.Position.X) > 26f)
-            {
-                currentMoveDir *= -1;
-            }
-            plataforma1.getVertexPositions();
+            if (Env.ElapsedTime > 10000)
+                return;
             ShowKdTree = Env.Input.keyDown(Key.F3);
-            foreach (var pGira in pGiratorias)
+            foreach (var plataforma in Plataformas)
             {
-                pGira.Update(Env.ElapsedTime);
+                plataforma.Update(Env.ElapsedTime);
             }
         }
         public override void Render()
@@ -109,11 +92,9 @@ namespace TGC.Group.Model.GameObjects
             Piso.Render();
             base.Render();
 
-            //1er plataforma
-            plataforma1.Render();
-            foreach (var pGira in pGiratorias)
+            foreach (var plataforma in Plataformas)
             {
-                pGira.Mesh.Render();
+                plataforma.Mesh.Render();
             }
         }
         public override void Dispose()
@@ -134,15 +115,9 @@ namespace TGC.Group.Model.GameObjects
                     {
                         Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
                     }
-                    else if (ListaPisos.Contains(Mesh))
-                    {
-                        //Para la 1era plataforma
-                        Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
-                        Env.Personaje.setposition(posicion);
-                    }
                     else if(ListaPlataformasGiratorias.Contains(Mesh))
                     {
-                        var Plataforma = pGiratorias.Find(p=> p.Mesh == Mesh);
+                        var Plataforma = Plataformas.Find(p=> p.Mesh == Mesh);
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                         Env.Personaje.setposition(Plataforma.deltaPosicion());
                     }
@@ -162,22 +137,13 @@ namespace TGC.Group.Model.GameObjects
         public override TgcBoundingAxisAlignBox ColisionY(TgcBoundingAxisAlignBox boundingBox)
         {
             TgcBoundingAxisAlignBox Colisionador = null;
-            foreach (var Mesh in ListaPisos) {
-                if (Escenario.testAABBAABB(Mesh.BoundingBox, boundingBox))
-                {
-                    Env.Personaje.setposition(posicion);
-                    Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
-                    Colisionador = Mesh.BoundingBox;
-                    break;
-                }
-            }
-            foreach (var pGira in pGiratorias)
+            foreach (var plataforma in Plataformas)
             {
-                if (Escenario.testAABBAABB(pGira.Mesh.BoundingBox, boundingBox))
+                if (Escenario.testAABBAABB(plataforma.Mesh.BoundingBox, boundingBox))
                 {
-                    Env.Personaje.setposition(pGira.deltaPosicion());
+                    Env.Personaje.setposition(plataforma.deltaPosicion());
                     Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
-                    Colisionador = pGira.Mesh.BoundingBox;
+                    Colisionador = plataforma.Mesh.BoundingBox;
                     break;
                 }
             }

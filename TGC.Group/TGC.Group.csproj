@@ -88,9 +88,11 @@
     <Compile Include="Model\Estructuras\KdTree.cs" />
     <Compile Include="Model\Estructuras\KdTreeBuilder.cs" />
     <Compile Include="Model\Estructuras\KdTreeNode.cs" />
-    <Compile Include="Model\GameObjects\PlataformaGiratoria.cs" />
-    <Compile Include="Model\GameObjects\Escenario.cs" />
-    <Compile Include="Model\GameObjects\Escenario1.cs" />
+    <Compile Include="Model\GameObjects\Plataforma\Plataforma.cs" />
+    <Compile Include="Model\GameObjects\Plataforma\PlataformaLineal.cs" />
+    <Compile Include="Model\GameObjects\Plataforma\PlataformaGiratoria.cs" />
+    <Compile Include="Model\GameObjects\Escenario\Escenario.cs" />
+    <Compile Include="Model\GameObjects\Escenario\Escenario1.cs" />
     <Compile Include="Model\GameObjects\Character.cs" />
     <Compile Include="Model\GameModel.cs" />
     <Compile Include="Model\GameObjects\GameObject.cs" />

@@ -61,8 +61,8 @@ namespace TGC.Group.Model
         public override void Update()
         {
             PreUpdate();
-            Personaje.Update();
             Escenario.Update();
+            Personaje.Update();
             PostUpdate();
         }
 

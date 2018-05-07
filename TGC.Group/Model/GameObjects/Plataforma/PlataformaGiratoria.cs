@@ -9,12 +9,9 @@ using TGC.Core.Mathematica;
 
 namespace TGC.Group.Model.GameObjects
 {
-    class PlataformaGiratoria
+    class PlataformaGiratoria : Plataforma
     {
         private float Radio = 0f;
-        public TgcMesh Mesh;
-        private TGCVector3 Pos;
-        private TGCVector3 Delta;
         private float Period;
         private float Moment = 0f;
         public PlataformaGiratoria(float radio, TgcMesh mesh, TGCVector3 pos, float period)
@@ -24,7 +21,7 @@ namespace TGC.Group.Model.GameObjects
             Pos = pos;
             Period = period;
         }
-        public void Update(float ElapsedTime)
+        public override void Update(float ElapsedTime)
         {
             Moment += ElapsedTime;
             while (Moment >= Period)
@@ -32,10 +29,6 @@ namespace TGC.Group.Model.GameObjects
             var old = Mesh.Position;
             Mesh.Position = new TGCVector3(Pos.X+Radio*FastMath.Cos((Moment/Period) * FastMath.TWO_PI), Pos.Y, Pos.Z + Radio * FastMath.Sin((Moment / Period) * FastMath.TWO_PI));
             Delta = Mesh.Position - old;
-        }
-        public TGCVector3 deltaPosicion()
-        {
-            return Delta;
         }
     }
 }
