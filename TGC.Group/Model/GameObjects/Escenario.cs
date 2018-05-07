@@ -7,6 +7,7 @@ using TGC.Core.Collision;
 using TGC.Core.Terrain;
 using TGC.Core.SceneLoader;
 using Microsoft.DirectX.DirectInput;
+using TGC.Group.Model.Estructuras;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -15,6 +16,7 @@ namespace TGC.Group.Model.GameObjects
         protected TgcSkyBox SkyBox;
         protected TgcScene Scene;
         protected TgcSceneLoader Loader;
+        public GrillaRegular grilla;
 
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
         {
@@ -46,11 +48,11 @@ namespace TGC.Group.Model.GameObjects
         public override void Render()
         {
             SkyBox.Render();
-            Scene.RenderAll();
             //Dibujar bounding boxes de los mesh (Debugging)
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
                 foreach (TgcMesh mesh in Scene.Meshes)
                     mesh.BoundingBox.Render();
+            grilla.render(Env.Frustum, false);
         }
         public override void Dispose()
         {

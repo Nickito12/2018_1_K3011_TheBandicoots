@@ -7,6 +7,7 @@ using TGC.Core.BoundingVolumes;
 using System.Drawing;
 using System.Collections.Generic;
 using Microsoft.DirectX.Direct3D;
+using TGC.Core.SceneLoader;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -21,7 +22,7 @@ namespace TGC.Group.Model.GameObjects
         float Gravedad = -60f;
         float VelocidadTerminal = -50f;
         float DesplazamientoMaximoY = 10f;
-        float velocidadSalto = 60f;
+        float VelocidadSalto = 60f;
         float VelocidadMovimiento = 35f;
         float ultimoDesplazamientoAdelante = 0f;
         bool CanJump = true;
@@ -72,7 +73,7 @@ namespace TGC.Group.Model.GameObjects
 
             if (CanJump && Input.keyPressed(Key.Space))
             {
-                VelocidadY = velocidadSalto;
+                VelocidadY = VelocidadSalto;
                 CanJump = false;
             }
 
@@ -80,6 +81,14 @@ namespace TGC.Group.Model.GameObjects
                 VelocidadAdelante += VelocidadMovimiento;
             if (Input.keyDown(Key.S) || Input.keyDown(Key.DownArrow))
                 VelocidadAdelante -= VelocidadMovimiento;
+            if (Input.keyDown(Key.F8))
+                VelocidadMovimiento += 10 * ElapsedTime;
+            if (Input.keyDown(Key.F9))
+                VelocidadMovimiento -= 10 * ElapsedTime;
+            if (Input.keyDown(Key.F10))
+                VelocidadSalto += 10 * ElapsedTime;
+            if (Input.keyDown(Key.F11))
+                VelocidadSalto -= 10 * ElapsedTime;
             Camara.keyboardMovement = 0;
             if (Input.keyDown(Key.D) || Input.keyDown(Key.RightArrow))
                 Camara.keyboardMovement += 1;
@@ -201,6 +210,9 @@ namespace TGC.Group.Model.GameObjects
             Env.DrawText.drawText("Ctrl: Render BB", 0, 60, Color.OrangeRed);
             Env.DrawText.drawText("Shift: Crouch", 0, 80, Color.OrangeRed);
             Env.DrawText.drawText("R: Reiniciar Posición", 0, 100, Color.OrangeRed);
+            Env.DrawText.drawText("F8/F9: +/- velocidad (" + VelocidadMovimiento + ")", 0, 120, Color.OrangeRed);
+            Env.DrawText.drawText("F10/F11: +/- salto (" + VelocidadSalto + ")", 0, 140, Color.OrangeRed);
+            Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.grilla.DrawCount+"/"+Env.Escenario.grilla.modelos.Count, 0, 160, Color.OrangeRed);
             Mesh.Render();
         }
 

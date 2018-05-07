@@ -9,6 +9,7 @@ using TGC.Core.Terrain;
 using TGC.Core.SceneLoader;
 using Microsoft.DirectX.DirectInput;
 using System.Collections.Generic;
+using TGC.Group.Model.Estructuras;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -62,6 +63,10 @@ namespace TGC.Group.Model.GameObjects
             ListaPisosResbalosos = Scene.Meshes.FindAll(m => m.Name.Contains("PisoResbaloso"));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001233")));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
+
+            grilla = new GrillaRegular();
+            grilla.create(Scene.Meshes.FindAll(m => !m.Name.Contains("Box")), Scene.BoundingBox);
+            grilla.createDebugMeshes();
 
             mp3Player = new TgcMp3Player();
             //mp3Player.FileName = Env.MediaDir + "\\Sound\\song.mp3";
@@ -140,13 +145,10 @@ namespace TGC.Group.Model.GameObjects
                     Colisionador = Mesh.BoundingBox;
                     break;
                 }
-
             }
-
             if (Colisionador == null && TgcCollisionUtils.testAABBAABB(Piso.BoundingBox, boundingBox)) {
                 Colisionador = Piso.BoundingBox;
             }
-
             return Colisionador;
         }
     }

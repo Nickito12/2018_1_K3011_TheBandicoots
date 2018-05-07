@@ -21,7 +21,7 @@ namespace TGC.Group.Model
     {
         // El personaje principal
         public Character Personaje = new Character();
-        public GameObject Escenario;
+        public Escenario Escenario;
         // Para precargar todos los escenarios
         public List<GameObject> Escenarios = new List<GameObject>();
         public TgcThirdPersonCamera NuevaCamara;
