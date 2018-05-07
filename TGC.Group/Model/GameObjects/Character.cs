@@ -266,5 +266,7 @@ namespace TGC.Group.Model.GameObjects
                 MoveXZ(rs * -0.9f, Collider);
             }
         }
+        public TGCVector3 Position() { return Mesh.Position; }
+        public void Position(TGCVector3 pos) { Mesh.Position = pos; }
     }
 }

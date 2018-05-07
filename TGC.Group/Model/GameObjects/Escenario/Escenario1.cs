@@ -81,6 +81,8 @@ namespace TGC.Group.Model.GameObjects
         {
             if (Env.ElapsedTime > 10000)
                 return;
+            if (Env.Personaje.Position().Y <= -100)
+                Env.Personaje.Position(new TGCVector3(0, 1, 0));
             ShowKdTree = Env.Input.keyDown(Key.F3);
             foreach (var plataforma in Plataformas)
             {
