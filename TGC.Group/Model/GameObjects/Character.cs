@@ -22,11 +22,12 @@ namespace TGC.Group.Model.GameObjects
         float VelocidadTerminal = -50f;
         float DesplazamientoMaximoY = 10f;
         float velocidadSalto = 60f;
-        float velocidadRotacion = 30f;
         float VelocidadMovimiento = 35f;
+        float ultimoDesplazamientoAdelante = 0f;
         bool CanJump = true;
         bool updateAnimation = true;
         TiposColision TipoColisionActual;
+        TiposColision UltimoTipoColision;
 
         //posicion con respecto a la plataforma
         private TGCVector3 posicionPlataforma;
@@ -65,7 +66,6 @@ namespace TGC.Group.Model.GameObjects
             var ElapsedTime = Env.ElapsedTime;
             var Input = Env.Input;
             float VelocidadAdelante = 0f;
-            float VelocidadLado = 0;
             var Diff = Camara.LookAt - Camara.Position;
             Diff.Y = 0;
             TipoColisionActual = TiposColision.SinColision;
@@ -102,31 +102,25 @@ namespace TGC.Group.Model.GameObjects
             }
 
             var PosBeforeMovingInXZ = Mesh.Position;
+            if (UltimoTipoColision == TiposColision.PisoResbaloso)
+                VelocidadAdelante += ultimoDesplazamientoAdelante;
+            else
+                ultimoDesplazamientoAdelante = 0;
             Mesh.Position += versorAdelante * VelocidadAdelante * ElapsedTime;
+            ultimoDesplazamientoAdelante += VelocidadAdelante * ElapsedTime;
             Collider = Env.Escenario.ColisionXZ(Mesh.BoundingBox);
+            UltimoTipoColision = TipoColisionActual;
 
             if (Collider == null && TipoColisionActual == TiposColision.Pozo)
             {
                 Mesh.Position += new TGCVector3(0, -15f, 0);
                 //Esto estaria codeado a "Manopla", haciendo que el bbox del pj termine por debajo del bbox del Pozo, para que no haya problemas, ya que el analisis de la colision es en XZ
             }
-
-
-            else if (Collider == null && TipoColisionActual == TiposColision.PisoResbaloso)
-            {
-                if (VelocidadAdelante < 0)
-                    VelocidadAdelante -= VelocidadMovimiento;
-                else VelocidadAdelante += VelocidadMovimiento;
-                Mesh.Position += versorAdelante * VelocidadAdelante * ElapsedTime;
-            }
-			
 			 //El personaje se movera con la plataforma
 			else if (Collider == null && TipoColisionActual == TiposColision.Caja)
             {
                 Mesh.Move(posicionPlataforma);
             }
-           
-
             else if (Collider != null)
             {
 
