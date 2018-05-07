@@ -48,9 +48,16 @@ namespace TGC.Group.Model.GameObjects
             Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd13-TgcScene.xml");
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
             ListaPisos = Scene.Meshes.FindAll(m => m.Name.Contains("Box"));
-            var arbustos = Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto"));
-            foreach (var arbusto in arbustos) {
-                arbusto.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
+            foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto"))) {
+                mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
+            }
+            foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto2")))
+            {
+                mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
+            }
+            foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Flores")))
+            {
+                mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
             }
             ListaPisosResbalosos = Scene.Meshes.FindAll(m => m.Name.Contains("PisoResbaloso"));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001233")));
