@@ -113,7 +113,7 @@ namespace TGC.Group.Model.GameObjects
 
             if (Collider == null && TipoColisionActual == TiposColision.Pozo)
             {
-                Mesh.Position += new TGCVector3(0, -15f, 0);
+                Mesh.Position += new TGCVector3(0, -25f, 0);
                 //Esto estaria codeado a "Manopla", haciendo que el bbox del pj termine por debajo del bbox del Pozo, para que no haya problemas, ya que el analisis de la colision es en XZ
             }
 			 //El personaje se movera con la plataforma
