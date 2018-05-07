@@ -12,7 +12,9 @@ namespace TGC.Group.Model
         //private TGCVector3 Position;
         public static TGCVector3 DEFAULT_DOWN = new TGCVector3(0f, -1f, 0f);
         public static float DEFAULT_ROTATION_SPEED = 5f;
-
+        public float rotX;
+        public float rotY;
+        public float keyboardMovement;
         /// <summary>
         ///     Crear una nueva camara
         /// </summary>
@@ -88,10 +90,11 @@ namespace TGC.Group.Model
                 DiffX += mouseX;
                 DiffY += mouseY;
             }
+            DiffX += keyboardMovement * elapsedTime * RotationSpeed;
 
             //Calcular rotacion a aplicar
-            var rotX = -DiffY / FastMath.PI;
-            var rotY = DiffX / FastMath.PI;
+            rotX = -DiffY / FastMath.PI;
+            rotY = DiffX / FastMath.PI;
 
             //Truncar valores de rotacion fuera de rango
             if (rotX > FastMath.PI * 2 || rotX < -FastMath.PI * 2)

@@ -80,10 +80,11 @@ namespace TGC.Group.Model.GameObjects
                 VelocidadAdelante += VelocidadMovimiento;
             if (Input.keyDown(Key.S) || Input.keyDown(Key.DownArrow))
                 VelocidadAdelante -= VelocidadMovimiento;
+            Camara.keyboardMovement = 0;
             if (Input.keyDown(Key.D) || Input.keyDown(Key.RightArrow))
-                VelocidadLado += velocidadRotacion;
+                Camara.keyboardMovement += 1;
             if (Input.keyDown(Key.A) || Input.keyDown(Key.LeftArrow))
-                VelocidadLado -= velocidadRotacion;
+                Camara.keyboardMovement -= 1;
             if (Input.keyDown(Key.R))
                 Mesh.Position = new TGCVector3(0, 1, 0);
 
@@ -188,9 +189,7 @@ namespace TGC.Group.Model.GameObjects
             
 
             Camara.Target = Mesh.Position;
-            var angulo = FastMath.ToRad(VelocidadLado * ElapsedTime);
-            Mesh.RotateY(angulo);
-            Camara.RotateY(angulo);
+            Mesh.Rotation = new TGCVector3(0, Camara.rotY + FastMath.PI, 0);
             if (updateAnimation)
                 Mesh.updateAnimation(ElapsedTime);
         }
