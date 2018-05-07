@@ -97,7 +97,7 @@ namespace TGC.Group.Model.GameObjects
 
             if (Collider != null)
             {
-                Mesh.Position = LastPos;
+                Mesh.Position = new TGCVector3(Mesh.Position.X, FastMath.Clamp(Mesh.Position.Y, Collider.PMax.Y, Collider.PMax.Y+2), Mesh.Position.Z);
                 CanJump = VelocidadY < 0;
             }
 
