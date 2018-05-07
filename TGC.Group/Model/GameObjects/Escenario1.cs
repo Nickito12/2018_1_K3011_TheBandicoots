@@ -10,6 +10,7 @@ using TGC.Core.SceneLoader;
 using Microsoft.DirectX.DirectInput;
 using System.Collections.Generic;
 using TGC.Group.Model.Estructuras;
+using Microsoft.DirectX.Direct3D;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -19,6 +20,7 @@ namespace TGC.Group.Model.GameObjects
         private TgcPlane Piso;
         private List<TgcMesh> ListaPozos = new List<TgcMesh>();
         private List<TgcMesh> ListaPisos = new List<TgcMesh>();
+        private List<TgcMesh> ListaPlataformasGiratorias = new List<TgcMesh>();
         private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
 
@@ -30,7 +32,7 @@ namespace TGC.Group.Model.GameObjects
         private const float MOVEMENT_SPEED = 0.1f;
         private float currentMoveDir = 1f;
         private TGCVector3 posicion;
-
+        private List<PlataformaGiratoria> pGiratorias;
         public override void Init(GameModel _env)
         {
             Env = _env;
@@ -64,10 +66,6 @@ namespace TGC.Group.Model.GameObjects
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001233")));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
 
-            KDTree = new KdTree();
-            KDTree.create(Scene.Meshes.FindAll(m => !m.Name.Contains("Box")), Scene.BoundingBox);
-            KDTree.createDebugKdTreeMeshes();
-
             mp3Player = new TgcMp3Player();
             //mp3Player.FileName = Env.MediaDir + "\\Sound\\song.mp3";
             mp3Player.FileName = Env.MediaDir + "\\Sound\\crash.mp3";
@@ -76,6 +74,17 @@ namespace TGC.Group.Model.GameObjects
             //1er plataforma
             plataforma1 = Scene.Meshes.Find(m => m.Name.Contains("Box_1"));
             plataforma1.AutoTransform = true;
+
+            pGiratorias = new List<PlataformaGiratoria>();
+            pGiratorias.Add(new PlataformaGiratoria(20, plataforma1.clone("pGira"), new TGCVector3(275f,0f,275f), 5f));
+            foreach (var pGira in pGiratorias)
+            {
+                ListaPlataformasGiratorias.Add(pGira.Mesh);
+            }
+
+            KDTree = new KdTree();
+            KDTree.create(Scene.Meshes.FindAll(m => !m.Name.Contains("Box")), Scene.BoundingBox);
+            KDTree.createDebugKdTreeMeshes();
         }
         public override void Update()
         {
@@ -84,12 +93,16 @@ namespace TGC.Group.Model.GameObjects
 
             //para que la plataforma se mueva
             plataforma1.Move(MOVEMENT_SPEED * currentMoveDir, 0, 0);
-            if (FastMath.Abs(plataforma1.Position.X) > 30f)
+            if (FastMath.Abs(plataforma1.Position.X) > 26f)
             {
                 currentMoveDir *= -1;
             }
             plataforma1.getVertexPositions();
             ShowKdTree = Env.Input.keyDown(Key.F3);
+            foreach (var pGira in pGiratorias)
+            {
+                pGira.Update(Env.ElapsedTime);
+            }
         }
         public override void Render()
         {
@@ -98,6 +111,10 @@ namespace TGC.Group.Model.GameObjects
 
             //1er plataforma
             plataforma1.Render();
+            foreach (var pGira in pGiratorias)
+            {
+                pGira.Mesh.Render();
+            }
         }
         public override void Dispose()
         {
@@ -123,6 +140,12 @@ namespace TGC.Group.Model.GameObjects
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                         Env.Personaje.setposition(posicion);
                     }
+                    else if(ListaPlataformasGiratorias.Contains(Mesh))
+                    {
+                        var Plataforma = pGiratorias.Find(p=> p.Mesh == Mesh);
+                        Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
+                        Env.Personaje.setposition(Plataforma.deltaPosicion());
+                    }
                     else if (ListaPisosResbalosos.Contains(Mesh))
                     {
                         Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
@@ -142,7 +165,19 @@ namespace TGC.Group.Model.GameObjects
             foreach (var Mesh in ListaPisos) {
                 if (Escenario.testAABBAABB(Mesh.BoundingBox, boundingBox))
                 {
+                    Env.Personaje.setposition(posicion);
+                    Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                     Colisionador = Mesh.BoundingBox;
+                    break;
+                }
+            }
+            foreach (var pGira in pGiratorias)
+            {
+                if (Escenario.testAABBAABB(pGira.Mesh.BoundingBox, boundingBox))
+                {
+                    Env.Personaje.setposition(pGira.deltaPosicion());
+                    Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
+                    Colisionador = pGira.Mesh.BoundingBox;
                     break;
                 }
             }

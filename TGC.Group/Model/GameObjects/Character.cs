@@ -7,6 +7,7 @@ using TGC.Core.BoundingVolumes;
 using System.Drawing;
 using System.Collections.Generic;
 using Microsoft.DirectX.Direct3D;
+using TGC.Core.Direct3D;
 using TGC.Core.SceneLoader;
 
 namespace TGC.Group.Model.GameObjects
@@ -78,6 +79,7 @@ namespace TGC.Group.Model.GameObjects
                 CanJump = false;
             }
 
+            D3DDevice.Instance.Device.RenderState.FillMode = Input.keyDown(Key.F4) ? FillMode.WireFrame : FillMode.Solid;
             if (Input.keyDown(Key.W) || Input.keyDown(Key.UpArrow))
                 VelocidadAdelante += VelocidadMovimiento;
             if (Input.keyDown(Key.S) || Input.keyDown(Key.DownArrow))
@@ -109,6 +111,10 @@ namespace TGC.Group.Model.GameObjects
             {
                 Mesh.Position = new TGCVector3(Mesh.Position.X, FastMath.Clamp(Mesh.Position.Y, Collider.PMax.Y, Collider.PMax.Y+2), Mesh.Position.Z);
                 CanJump = VelocidadY < 0;
+                if (TipoColisionActual == TiposColision.Caja)
+                {
+                    Mesh.Move(posicionPlataforma);
+                }
             }
 
             var PosBeforeMovingInXZ = Mesh.Position;
@@ -118,6 +124,7 @@ namespace TGC.Group.Model.GameObjects
                 ultimoDesplazamientoAdelante = 0;
 
             MoveXZ(versorAdelante * VelocidadAdelante * ElapsedTime);
+            UltimoTipoColision = TipoColisionActual;
             ultimoDesplazamientoAdelante += VelocidadAdelante * ElapsedTime;
 
             updateAnimation = true;
@@ -159,6 +166,7 @@ namespace TGC.Group.Model.GameObjects
             Env.DrawText.drawText("F10/F11: +/- salto (" + VelocidadSalto + ")", 0, 140, Color.OrangeRed);
             Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.KDTree.DrawCount+"/"+Env.Escenario.KDTree.modelos.Count, 0, 160, Color.OrangeRed);
             Env.DrawText.drawText("F3: Mostrar KdTree", 0, 180, Color.OrangeRed);
+            Env.DrawText.drawText("F4: WireFrame", 0, 200, Color.OrangeRed);
             Mesh.Render();
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
                 Mesh.BoundingBox.Render();
@@ -198,11 +206,7 @@ namespace TGC.Group.Model.GameObjects
             var PosBeforeMovingInXZ = Mesh.Position;
             Mesh.Position += movimiento;
             var Collider = Env.Escenario.ColisionXZ(Mesh.BoundingBox);
-            UltimoTipoColision = TipoColisionActual;
-            if ((Collider != null && lastCollider != null && 
-                    Collider.PMax == lastCollider.PMax && Collider.PMin == lastCollider.PMin)
-                || movimiento == TGCVector3.Empty) {
-                Mesh.Position = PosBeforeMovingInXZ;
+            if (movimiento == TGCVector3.Empty) {
                 return;
             }
             if (Collider == null && TipoColisionActual == TiposColision.Pozo)
