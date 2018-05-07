@@ -95,32 +95,26 @@ namespace TGC.Group.Model.GameObjects
             TgcBoundingAxisAlignBox Colisionador = null;
             foreach (var Mesh in Scene.Meshes)
             {
-                if (ListaMeshesSinColision.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
+                if (!ListaMeshesSinColision.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
                 {
-                    break;
-                }
-                else if (ListaPozos.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
-                {
-                    Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
-                    break;
-                }
-                else if (ListaPisos.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
-                {
-					//Para la 1era plataforma
-                    Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
-                    Env.Personaje.setposition(posicion);
-                    break;
-                }
-
-                else if (ListaPisosResbalosos.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
-                {
-                    Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
-                    break;
-                }
-
-                else if (TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
-                {
-                    Colisionador = Mesh.BoundingBox;
+                    if (ListaPozos.Contains(Mesh))
+                    {
+                        Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
+                    }
+                    else if (ListaPisos.Contains(Mesh))
+                    {
+                        //Para la 1era plataforma
+                        Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
+                        Env.Personaje.setposition(posicion);
+                    }
+                    else if (ListaPisosResbalosos.Contains(Mesh))
+                    {
+                        Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
+                    }
+                    else
+                    {
+                        Colisionador = Mesh.BoundingBox;
+                    }
                     break;
                 }
             }
