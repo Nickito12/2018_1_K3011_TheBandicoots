@@ -44,7 +44,7 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Init()
         {
-            NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), 20, -75);
+            NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), 20, -75, Input);
             Camara = NuevaCamara;
             Personaje.Init(this);
             Escenario = new Escenario1();

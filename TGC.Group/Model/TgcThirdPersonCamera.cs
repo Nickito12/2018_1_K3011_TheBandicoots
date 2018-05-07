@@ -1,5 +1,6 @@
 ﻿using TGC.Core.Camara;
 using TGC.Core.Mathematica;
+using TGC.Core.Input;
 
 namespace TGC.Group.Model
 {
@@ -8,7 +9,9 @@ namespace TGC.Group.Model
     /// </summary>
     public class TgcThirdPersonCamera : TgcCamera
     {
-        private TGCVector3 Position;
+        //private TGCVector3 Position;
+        public static TGCVector3 DEFAULT_DOWN = new TGCVector3(0f, -1f, 0f);
+        public static float DEFAULT_ROTATION_SPEED = 5f;
 
         /// <summary>
         ///     Crear una nueva camara
@@ -18,22 +21,17 @@ namespace TGC.Group.Model
             ResetValues();
         }
 
-        public TgcThirdPersonCamera(TGCVector3 target, float offsetHeight, float offsetForward) : this()
+        public TgcThirdPersonCamera(TGCVector3 target, float offsetHeight, float offsetForward, TgcD3dInput input)
         {
             Target = target;
             OffsetHeight = offsetHeight;
             OffsetForward = offsetForward;
+            Input = input;
+            UpVector = new TGCVector3(0f, 1f, 0f);
+            RotationSpeed = DEFAULT_ROTATION_SPEED;
         }
 
-        public TgcThirdPersonCamera(TGCVector3 target, TGCVector3 targetDisplacement, float offsetHeight, float offsetForward)
-            : this()
-        {
-            Target = target;
-            TargetDisplacement = targetDisplacement;
-            OffsetHeight = offsetHeight;
-            OffsetForward = offsetForward;
-        }
-
+        #region Getters y Setters
         /// <summary>
         ///     Desplazamiento en altura de la camara respecto del target
         /// </summary>
@@ -46,12 +44,6 @@ namespace TGC.Group.Model
         public float OffsetForward { get; set; }
 
         /// <summary>
-        ///     Desplazamiento final que se le hace al target para acomodar la camara en un cierto
-        ///     rincon de la pantalla
-        /// </summary>
-        public TGCVector3 TargetDisplacement { get; set; }
-
-        /// <summary>
         ///     Rotacion absoluta en Y de la camara
         /// </summary>
         public float RotationY { get; set; }
@@ -60,12 +52,81 @@ namespace TGC.Group.Model
         ///     Objetivo al cual la camara tiene que apuntar
         /// </summary>
         public TGCVector3 Target { get; set; }
+        public TgcD3dInput Input { get; set; }
+        public float DiffX { get; set; }
+        public float DiffY { get; set; }
+        public float DiffZ { get; set; }
+        /// <summary>
+        ///     Velocidad de rotacion de la camara
+        /// </summary>
+        public float RotationSpeed { get; set; }
+
+        /// <summary>
+        ///     Centro de la camara sobre la cual se rota
+        /// </summary>
+        public TGCVector3 CameraCenter { get; set; }
+
+        public TGCVector3 NextPos { get; set; }
+
+        #endregion Getters y Setters
 
         public override void UpdateCamera(float elapsedTime)
         {
-            TGCVector3 targetCenter;
-            CalculatePositionTarget(out Position, out targetCenter);
-            SetCamera(Position, targetCenter);
+            //Obtener variacion XY del mouse
+            var mouseX = 0f;
+            var mouseY = 0f;
+            if (Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            {
+                mouseX = Input.XposRelative;
+                mouseY = Input.YposRelative;
+
+                DiffX += mouseX * elapsedTime * RotationSpeed;
+                DiffY += mouseY * elapsedTime * RotationSpeed;
+            }
+            else
+            {
+                DiffX += mouseX;
+                DiffY += mouseY;
+            }
+
+            //Calcular rotacion a aplicar
+            var rotX = -DiffY / FastMath.PI;
+            var rotY = DiffX / FastMath.PI;
+
+            //Truncar valores de rotacion fuera de rango
+            if (rotX > FastMath.PI * 2 || rotX < -FastMath.PI * 2)
+            {
+                DiffY = 0;
+                rotX = 0;
+            }
+
+            //Invertir Y de UpVector segun el angulo de rotacion
+            if (rotX < -FastMath.PI / 2 && rotX > -FastMath.PI * 3 / 2)
+            {
+                UpVector = DEFAULT_DOWN;
+            }
+            else if (rotX > FastMath.PI / 2 && rotX < FastMath.PI * 3 / 2)
+            {
+                UpVector = DEFAULT_DOWN;
+            }
+            else
+            {
+                UpVector = DEFAULT_UP_VECTOR;
+            }
+
+
+            CalculatePositionTarget(rotX, rotY);
+
+            //asigna las posiciones de la camara.
+            base.SetCamera(NextPos, Target, UpVector);
+
+        }
+
+        public override void SetCamera(TGCVector3 position, TGCVector3 target)
+        {
+            NextPos = position;
+            CameraCenter = target;
+            base.SetCamera(NextPos, CameraCenter, UpVector);
         }
 
         /// <summary>
@@ -76,7 +137,6 @@ namespace TGC.Group.Model
             OffsetHeight = 20;
             OffsetForward = -120;
             RotationY = 0;
-            TargetDisplacement = TGCVector3.Empty;
             Target = TGCVector3.Empty;
             Position = TGCVector3.Empty;
         }
@@ -87,11 +147,12 @@ namespace TGC.Group.Model
         /// <param name="target">Objetivo al cual la camara tiene que apuntar</param>
         /// <param name="offsetHeight">Desplazamiento en altura de la camara respecto del target</param>
         /// <param name="offsetForward">Desplazamiento hacia adelante o atras de la camara repecto del target.</param>
-        public void SetTargetOffsets(TGCVector3 target, float offsetHeight, float offsetForward)
+        public void SetTargetOffsets(TGCVector3 target, float offsetHeight, float offsetForward, TgcD3dInput input)
         {
             Target = target;
             OffsetHeight = offsetHeight;
             OffsetForward = offsetForward;
+            Input = input;
         }
 
         /// <summary>
@@ -99,14 +160,17 @@ namespace TGC.Group.Model
         /// </summary>
         /// <param name="pos">Futura posicion de camara generada</param>
         /// <param name="targetCenter">Futuro centro de camara a generada</param>
-        public void CalculatePositionTarget(out TGCVector3 pos, out TGCVector3 targetCenter)
+        public void CalculatePositionTarget(float rotX, float rotY)
         {
             //alejarse, luego rotar y lueg ubicar camara en el centro deseado
-            targetCenter = TGCVector3.Add(Target, TargetDisplacement);
-            var m = TGCMatrix.Translation(0, OffsetHeight, OffsetForward) * TGCMatrix.RotationY(RotationY) * TGCMatrix.Translation(targetCenter);
+            //targetCenter = TGCVector3.Add(Target, TargetDisplacement);
+            var m = TGCMatrix.Translation(0, OffsetHeight, OffsetForward)
+                       * TGCMatrix.RotationX(rotX)
+                       * TGCMatrix.RotationY(rotY)
+                       * TGCMatrix.Translation(Target);
 
             //Extraer la posicion final de la matriz de transformacion
-            pos = new TGCVector3(m.M41, m.M42, m.M43);
+            NextPos = new TGCVector3(m.M41, m.M42, m.M43);
         }
 
         /// <summary>
