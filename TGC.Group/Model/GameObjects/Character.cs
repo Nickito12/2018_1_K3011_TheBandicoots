@@ -212,7 +212,8 @@ namespace TGC.Group.Model.GameObjects
             Env.DrawText.drawText("R: Reiniciar Posición", 0, 100, Color.OrangeRed);
             Env.DrawText.drawText("F8/F9: +/- velocidad (" + VelocidadMovimiento + ")", 0, 120, Color.OrangeRed);
             Env.DrawText.drawText("F10/F11: +/- salto (" + VelocidadSalto + ")", 0, 140, Color.OrangeRed);
-            Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.grilla.DrawCount+"/"+Env.Escenario.grilla.modelos.Count, 0, 160, Color.OrangeRed);
+            Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.KDTree.DrawCount+"/"+Env.Escenario.KDTree.modelos.Count, 0, 160, Color.OrangeRed);
+            Env.DrawText.drawText("F3: Mostrar KdTree", 0, 180, Color.OrangeRed);
             Mesh.Render();
         }
 

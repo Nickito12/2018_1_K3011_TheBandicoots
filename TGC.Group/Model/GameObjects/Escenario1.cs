@@ -64,9 +64,9 @@ namespace TGC.Group.Model.GameObjects
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001233")));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
 
-            grilla = new GrillaRegular();
-            grilla.create(Scene.Meshes.FindAll(m => !m.Name.Contains("Box")), Scene.BoundingBox);
-            grilla.createDebugMeshes();
+            KDTree = new KdTree();
+            KDTree.create(Scene.Meshes.FindAll(m => !m.Name.Contains("Box")), Scene.BoundingBox);
+            KDTree.createDebugKdTreeMeshes();
 
             mp3Player = new TgcMp3Player();
             //mp3Player.FileName = Env.MediaDir + "\\Sound\\song.mp3";
@@ -89,7 +89,7 @@ namespace TGC.Group.Model.GameObjects
                 currentMoveDir *= -1;
             }
             plataforma1.getVertexPositions();
-            
+            ShowKdTree = Env.Input.keyDown(Key.F3);
         }
         public override void Render()
         {

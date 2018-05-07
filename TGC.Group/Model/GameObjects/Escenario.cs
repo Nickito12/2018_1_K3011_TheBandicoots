@@ -16,7 +16,8 @@ namespace TGC.Group.Model.GameObjects
         protected TgcSkyBox SkyBox;
         protected TgcScene Scene;
         protected TgcSceneLoader Loader;
-        public GrillaRegular grilla;
+        public KdTree KDTree;
+        public bool ShowKdTree = false;
 
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
         {
@@ -52,7 +53,7 @@ namespace TGC.Group.Model.GameObjects
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
                 foreach (TgcMesh mesh in Scene.Meshes)
                     mesh.BoundingBox.Render();
-            grilla.render(Env.Frustum, false);
+            KDTree.render(Env.Frustum, ShowKdTree);
         }
         public override void Dispose()
         {
