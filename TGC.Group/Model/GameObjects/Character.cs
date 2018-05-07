@@ -28,6 +28,9 @@ namespace TGC.Group.Model.GameObjects
         bool updateAnimation = true;
         TiposColision TipoColisionActual;
 
+        //posicion con respecto a la plataforma
+        private TGCVector3 posicionPlataforma;
+
         public override void Init(GameModel _env)
         {
             Env = _env;
@@ -115,6 +118,12 @@ namespace TGC.Group.Model.GameObjects
                 else VelocidadAdelante += VelocidadMovimiento;
                 Mesh.Position += versorAdelante * VelocidadAdelante * ElapsedTime;
             }
+			
+			 //El personaje se movera con la plataforma
+			else if (Collider == null && TipoColisionActual == TiposColision.Caja)
+            {
+                Mesh.Move(posicionPlataforma);
+            }
            
 
             else if (Collider != null)
@@ -184,6 +193,12 @@ namespace TGC.Group.Model.GameObjects
             Camara.RotateY(angulo);
             if (updateAnimation)
                 Mesh.updateAnimation(ElapsedTime);
+        }
+
+        //setPosicion con respecto a la plataforma
+        internal void setposition(TGCVector3 tGCVector3)
+        {
+            posicionPlataforma = tGCVector3;
         }
 
         public override void Render()

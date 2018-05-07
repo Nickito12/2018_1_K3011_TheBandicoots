@@ -23,6 +23,17 @@ namespace TGC.Group.Model.GameObjects
 
         private TgcMp3Player mp3Player;
 
+        //plataforma
+        private TgcMesh plataforma1;
+        private TGCMatrix escalaBase;
+        private readonly float baseDX = 1.0f;
+        private readonly float baseDY = 0.5f;
+        private readonly float baseDZ = 1.0f;
+        private const float ROTATION_SPEED = 1f;
+        private const float MOVEMENT_SPEED = 0.1f;
+        private float currentMoveDir = 1f;
+        private TGCVector3 posicion;
+
         public override void Init(GameModel _env)
         {
             Env = _env;
@@ -46,23 +57,47 @@ namespace TGC.Group.Model.GameObjects
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
 
             mp3Player = new TgcMp3Player();
-            mp3Player.FileName = Env.MediaDir + "\\Sound\\song.mp3";
+            //mp3Player.FileName = Env.MediaDir + "\\Sound\\song.mp3";
+            mp3Player.FileName = Env.MediaDir + "\\Sound\\crash.mp3";
             mp3Player.play(true);
+
+            //1er plataforma
+            plataforma1 = Scene.Meshes.Find(m => m.Name.Contains("Box_1"));
+            plataforma1.Transform = TGCMatrix.Identity;
+            plataforma1.AutoTransform = true;
         }
         public override void Update()
         {
+            //guardo la posicion para el personaje
+            posicion = new TGCVector3(MOVEMENT_SPEED * currentMoveDir, 0, 0);
+
+            //para que la plataforma se mueva
+            escalaBase = TGCMatrix.Scaling(baseDX, baseDY, baseDZ);
+            plataforma1.Move(MOVEMENT_SPEED * currentMoveDir, 0, 0);
+            if (FastMath.Abs(plataforma1.Position.X) > 30f)
+            {
+                currentMoveDir *= -1;
+            }
+            plataforma1.getVertexPositions();
             
         }
         public override void Render()
         {
             Piso.Render();
             base.Render();
+
+            //1er plataforma
+            plataforma1.Transform = escalaBase;
+            plataforma1.Render();
         }
         public override void Dispose()
         {
             Piso.Dispose();
             mp3Player.closeFile();
             base.Dispose();
+            
+            //1era plataforma
+            plataforma1.Dispose();
         }
         public override TgcBoundingAxisAlignBox ColisionXZ(TgcBoundingAxisAlignBox boundingBox)
         {
@@ -81,6 +116,9 @@ namespace TGC.Group.Model.GameObjects
                 }
                 else if (ListaPisos.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
                 {
+					//Para la 1era plataforma
+                    Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
+                    Env.Personaje.setposition(posicion);
                     break;
                 }
 
