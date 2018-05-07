@@ -60,5 +60,12 @@ namespace TGC.Group.Model.GameObjects
             SkyBox.Dispose();
             Scene.DisposeAll();
         }
+
+        public static bool testAABBAABB(TgcBoundingAxisAlignBox a, TgcBoundingAxisAlignBox b)
+        {
+            return (a.PMin.X <= b.PMax.X && a.PMax.X >= b.PMin.X) &&
+                   (a.PMin.Y <= b.PMax.Y && a.PMax.Y >= b.PMin.Y) &&
+                   (a.PMin.Z <= b.PMax.Z && a.PMax.Z >= b.PMin.Z);
+        }
     }
 }

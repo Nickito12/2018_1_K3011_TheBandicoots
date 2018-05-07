@@ -5,6 +5,7 @@ using TGC.Core.Collision;
 using TGC.Core.Geometry;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
+using TGC.Group.Model.GameObjects;
 
 namespace TGC.Group.Model.Estructuras
 {
@@ -94,7 +95,7 @@ namespace TGC.Group.Model.Estructuras
         {
             foreach (var mesh in modelos)
             {
-                if (TgcCollisionUtils.testAABBAABB(node.BoundingBox, mesh.BoundingBox))
+                if (Escenario.testAABBAABB(node.BoundingBox, mesh.BoundingBox))
                 {
                     node.Models.Add(mesh);
                 }

@@ -64,6 +64,7 @@ namespace TGC.Group.Model.GameObjects
 
         public override void Update()
         {
+            Mesh.BoundingBox = Mesh.Animations["Walk"].BoundingBox;
             var ElapsedTime = Env.ElapsedTime;
             var Input = Env.Input;
             float VelocidadAdelante = 0f;
@@ -115,65 +116,9 @@ namespace TGC.Group.Model.GameObjects
                 VelocidadAdelante += ultimoDesplazamientoAdelante;
             else
                 ultimoDesplazamientoAdelante = 0;
-            Mesh.Position += versorAdelante * VelocidadAdelante * ElapsedTime;
+
+            MoveXZ(versorAdelante * VelocidadAdelante * ElapsedTime);
             ultimoDesplazamientoAdelante += VelocidadAdelante * ElapsedTime;
-            Collider = Env.Escenario.ColisionXZ(Mesh.BoundingBox);
-            UltimoTipoColision = TipoColisionActual;
-
-            if (Collider == null && TipoColisionActual == TiposColision.Pozo)
-            {
-                Mesh.Position += new TGCVector3(0, -25f, 0);
-                //Esto estaria codeado a "Manopla", haciendo que el bbox del pj termine por debajo del bbox del Pozo, para que no haya problemas, ya que el analisis de la colision es en XZ
-            }
-			 //El personaje se movera con la plataforma
-			else if (Collider == null && TipoColisionActual == TiposColision.Caja)
-            {
-                Mesh.Move(posicionPlataforma);
-            }
-            else if (Collider != null)
-            {
-
-                var movementRay = PosBeforeMovingInXZ - Mesh.Position;
-                var rs = TGCVector3.Empty;
-
-                if (((Mesh.BoundingBox.PMax.X > Collider.PMax.X && movementRay.X > 0) ||
-                    (Mesh.BoundingBox.PMin.X < Collider.PMin.X && movementRay.X < 0)) &&
-                    ((Mesh.BoundingBox.PMax.Z > Collider.PMax.Z && movementRay.Z > 0) ||
-                    (Mesh.BoundingBox.PMin.Z < Collider.PMin.Z && movementRay.Z < 0)))
-                {
-                    //Este primero es un caso particularse dan las dos condiciones simultaneamente entonces para saber de que lado moverse hay que hacer algunos calculos mas.
-                    //por el momento solo se esta verificando que la posicion actual este dentro de un bounding para moverlo en ese plano.
-                    if (Mesh.Position.X > Collider.PMin.X && Mesh.Position.X < Collider.PMax.X)
-                    {
-                        //El personaje esta contenido en el bounding X
-                        //Sliding Z Dentro de X
-                        rs = new TGCVector3(movementRay.X, movementRay.Y, 0);
-                    }
-                    if (Mesh.Position.Z > Collider.PMin.Z && Mesh.Position.Z < Collider.PMax.Z)
-                    {
-                        //El personaje esta contenido en el bounding Z
-                        //Sliding X Dentro de Z
-                        rs = new TGCVector3(0, movementRay.Y, movementRay.Z);
-                    }
-                    //Seria ideal sacar el punto mas proximo al bounding que colisiona y chequear con eso, en ves que con la posicion.
-                }
-                else
-                {
-                    if ((Mesh.BoundingBox.PMax.X > Collider.PMax.X && movementRay.X > 0) ||
-                        (Mesh.BoundingBox.PMin.X < Collider.PMin.X && movementRay.X < 0))
-                    {
-                        //Sliding X
-                        rs = new TGCVector3(0, movementRay.Y, movementRay.Z);
-                    }
-                    if ((Mesh.BoundingBox.PMax.Z > Collider.PMax.Z && movementRay.Z > 0) ||
-                        (Mesh.BoundingBox.PMin.Z < Collider.PMin.Z && movementRay.Z < 0))
-                    {
-                        //Sliding Z
-                        rs = new TGCVector3(movementRay.X, movementRay.Y, 0);
-                    }
-                }
-                Mesh.Position = PosBeforeMovingInXZ - rs;
-            }
 
             updateAnimation = true;
             if (Mesh.Position.Y != LastPos.Y)
@@ -215,6 +160,8 @@ namespace TGC.Group.Model.GameObjects
             Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.KDTree.DrawCount+"/"+Env.Escenario.KDTree.modelos.Count, 0, 160, Color.OrangeRed);
             Env.DrawText.drawText("F3: Mostrar KdTree", 0, 180, Color.OrangeRed);
             Mesh.Render();
+            if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
+                Mesh.BoundingBox.Render();
         }
 
         public override void Dispose()
@@ -245,6 +192,75 @@ namespace TGC.Group.Model.GameObjects
         public void SetTipoColisionActual(TiposColision resultadoColision)
         {
             TipoColisionActual = resultadoColision;
+        }
+        public void MoveXZ(TGCVector3 movimiento, TgcBoundingAxisAlignBox lastCollider = null)
+        {
+            var PosBeforeMovingInXZ = Mesh.Position;
+            Mesh.Position += movimiento;
+            var Collider = Env.Escenario.ColisionXZ(Mesh.BoundingBox);
+            UltimoTipoColision = TipoColisionActual;
+            if ((Collider != null && lastCollider != null && 
+                    Collider.PMax == lastCollider.PMax && Collider.PMin == lastCollider.PMin)
+                || movimiento == TGCVector3.Empty) {
+                Mesh.Position = PosBeforeMovingInXZ;
+                return;
+            }
+            if (Collider == null && TipoColisionActual == TiposColision.Pozo)
+            {
+                Mesh.Position += new TGCVector3(0, -25f, 0);
+                //Esto estaria codeado a "Manopla", haciendo que el bbox del pj termine por debajo del bbox del Pozo, para que no haya problemas, ya que el analisis de la colision es en XZ
+            }
+            //El personaje se movera con la plataforma
+            else if (Collider == null && TipoColisionActual == TiposColision.Caja)
+            {
+                Mesh.Move(posicionPlataforma);
+            }
+            else if (Collider != null)
+            {
+                Collider = Collider.clone();
+                Collider.scaleTranslate(TGCVector3.Empty, new TGCVector3(1.05f, 1.05f, 1.05f));
+                var movementRay = PosBeforeMovingInXZ - Mesh.Position;
+                var rs = TGCVector3.Empty;
+
+                if (((Mesh.BoundingBox.PMax.X > Collider.PMax.X && movementRay.X > 0) ||
+                    (Mesh.BoundingBox.PMin.X < Collider.PMin.X && movementRay.X < 0)) &&
+                    ((Mesh.BoundingBox.PMax.Z > Collider.PMax.Z && movementRay.Z > 0) ||
+                    (Mesh.BoundingBox.PMin.Z < Collider.PMin.Z && movementRay.Z < 0)))
+                {
+                    //Este primero es un caso particularse dan las dos condiciones simultaneamente entonces para saber de que lado moverse hay que hacer algunos calculos mas.
+                    //por el momento solo se esta verificando que la posicion actual este dentro de un bounding para moverlo en ese plano.
+                    if (Mesh.Position.X > Collider.PMin.X && Mesh.Position.X < Collider.PMax.X)
+                    {
+                        //El personaje esta contenido en el bounding X
+                        //Sliding Z Dentro de X
+                        rs = new TGCVector3(movementRay.X, movementRay.Y, 0);
+                    }
+                    if (Mesh.Position.Z > Collider.PMin.Z && Mesh.Position.Z < Collider.PMax.Z)
+                    {
+                        //El personaje esta contenido en el bounding Z
+                        //Sliding X Dentro de Z
+                        rs = new TGCVector3(0, movementRay.Y, movementRay.Z);
+                    }
+                    //Seria ideal sacar el punto mas proximo al bounding que colisiona y chequear con eso, en ves que con la posicion.
+                }
+                else
+                {
+                    if ((Mesh.BoundingBox.PMax.X > Collider.PMax.X && movementRay.X > 0) ||
+                        (Mesh.BoundingBox.PMin.X < Collider.PMin.X && movementRay.X < 0))
+                    {
+                        //Sliding X
+                        rs = new TGCVector3(0, movementRay.Y, movementRay.Z);
+                    }
+                    if ((Mesh.BoundingBox.PMax.Z > Collider.PMax.Z && movementRay.Z > 0) ||
+                        (Mesh.BoundingBox.PMin.Z < Collider.PMin.Z && movementRay.Z < 0))
+                    {
+                        //Sliding Z
+                        rs = new TGCVector3(movementRay.X, movementRay.Y, 0);
+                    }
+                }
+                Mesh.Position = PosBeforeMovingInXZ;
+                MoveXZ(rs * -0.9f, Collider);
+            }
         }
     }
 }

@@ -111,7 +111,7 @@ namespace TGC.Group.Model.GameObjects
             TgcBoundingAxisAlignBox Colisionador = null;
             foreach (var Mesh in Scene.Meshes)
             {
-                if (!ListaMeshesSinColision.Contains(Mesh) && TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
+                if (!ListaMeshesSinColision.Contains(Mesh) && Escenario.testAABBAABB(Mesh.BoundingBox, boundingBox))
                 {
                     if (ListaPozos.Contains(Mesh))
                     {
@@ -140,13 +140,13 @@ namespace TGC.Group.Model.GameObjects
         {
             TgcBoundingAxisAlignBox Colisionador = null;
             foreach (var Mesh in ListaPisos) {
-                if (TgcCollisionUtils.testAABBAABB(Mesh.BoundingBox, boundingBox))
+                if (Escenario.testAABBAABB(Mesh.BoundingBox, boundingBox))
                 {
                     Colisionador = Mesh.BoundingBox;
                     break;
                 }
             }
-            if (Colisionador == null && TgcCollisionUtils.testAABBAABB(Piso.BoundingBox, boundingBox)) {
+            if (Colisionador == null && Escenario.testAABBAABB(Piso.BoundingBox, boundingBox)) {
                 Colisionador = Piso.BoundingBox;
             }
             return Colisionador;
