@@ -19,7 +19,7 @@ namespace TGC.Group.Model.GameObjects
         // El piso del mapa/escenario
         private TgcPlane Piso;
         private List<TgcMesh> ListaPozos = new List<TgcMesh>();
-        private List<TgcMesh> ListaPlataformasGiratorias = new List<TgcMesh>();
+        private List<TgcMesh> ListaPlataformas = new List<TgcMesh>();
         private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
 
@@ -70,7 +70,7 @@ namespace TGC.Group.Model.GameObjects
             Plataformas.Add(new PlataformaGiratoria(20, Plataformas[0].Mesh.clone("pGira"), new TGCVector3(260f, 0f, 275f), 5f));
             foreach (var plataforma in Plataformas)
             {
-                ListaPlataformasGiratorias.Add(plataforma.Mesh);
+                ListaPlataformas.Add(plataforma.Mesh);
             }
 
             KDTree = new KdTree();
@@ -119,7 +119,7 @@ namespace TGC.Group.Model.GameObjects
                     {
                         Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
                     }
-                    else if(ListaPlataformasGiratorias.Contains(Mesh))
+                    else if(ListaPlataformas.Contains(Mesh))
                     {
                         var Plataforma = Plataformas.Find(p=> p.Mesh == Mesh);
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
@@ -167,7 +167,7 @@ namespace TGC.Group.Model.GameObjects
             //Detectar colisiones entre el segmento de recta camara-personaje y todos los objetos del escenario
             TGCVector3 q;
             var minDistSq = FastMath.Pow2(Env.CameraOffsetForward);
-            foreach (var obstaculo in Scene.Meshes)
+            foreach (var obstaculo in Scene.Meshes.FindAll(m=>!(ListaPisosResbalosos.Exists(n=>n==m) || ListaPlataformas.Exists(n => n == m))))
             {
                 //Hay colision del segmento camara-personaje y el objeto
                 if (TgcCollisionUtils.intersectSegmentAABB(target, NextPos, obstaculo.BoundingBox, out q))
