@@ -218,12 +218,15 @@ namespace TGC.Group.Model.GameObjects
             {
                 if (Escenario.testAABBAABB(plataforma.Mesh.BoundingBox, boundingBox))
                 {
-                    if (plataforma.Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.BoundingBox.PMax.Y && plataforma.Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.BoundingBox.PMax.Y)
+                    if (plataforma.Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.BoundingBox.PMax.Y && plataforma.Mesh.BoundingBox.PMin.Y + (plataforma.Mesh.BoundingBox.PMax.Y - plataforma.Mesh.BoundingBox.PMin.Y) * 0.5f > Env.Personaje.Mesh.BoundingBox.PMax.Y)
                     {
+                        Env.Personaje.setposition(plataforma.Mesh.BoundingBox.PMin - (Env.Personaje.Mesh.BoundingBox.PMax - Env.Personaje.Mesh.BoundingBox.PMin));
                         Env.Personaje.SetTipoColisionActual(TiposColision.Techo);
                     }
                     else
                     {
+                        if (plataforma.Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.Position.Y)
+                            Colisionador = plataforma.Mesh.BoundingBox;
                         Env.Personaje.setposition(plataforma.deltaPosicion());
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                     }
@@ -237,7 +240,8 @@ namespace TGC.Group.Model.GameObjects
                     break;
                 }
             }
-            if (Colisionador == null && Escenario.testAABBAABB(Piso.BoundingBox, boundingBox)) {
+            if (Colisionador == null && Escenario.testAABBAABB(Piso.BoundingBox, boundingBox))
+            {
                 Colisionador = Piso.BoundingBox;
             }
             return Colisionador;

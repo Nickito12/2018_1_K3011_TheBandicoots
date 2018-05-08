@@ -22,17 +22,17 @@ namespace TGC.Group.Model.GameObjects
         float VelocidadY = 0f;
         float Gravedad = -60f;
         float VelocidadTerminal = -50f;
-        float DesplazamientoMaximoY = 10f;
-        float VelocidadSalto = 60f;
-        float VelocidadMovimiento = 35f;
+        float DesplazamientoMaximoY = 5f;
+        float VelocidadSalto = 90f;
+        float VelocidadMovimiento = 40f;
         float ultimoDesplazamientoAdelante = 0f;
         bool CanJump = true;
         bool updateAnimation = true;
         TiposColision TipoColisionActual;
         TiposColision UltimoTipoColision;
-
         //posicion con respecto a la plataforma
         private TGCVector3 posicionPlataforma;
+        private TGCVector3 oldPos;
 
         public override void Init(GameModel _env)
         {
@@ -110,30 +110,9 @@ namespace TGC.Group.Model.GameObjects
             VelocidadY = FastMath.Clamp(VelocidadY + Gravedad * ElapsedTime, VelocidadTerminal, -VelocidadTerminal);
             var LastPos = Mesh.Position;
             // Colision en Y
-            var oldPos = Mesh.Position;
+            oldPos = Mesh.Position;
             Mesh.Position += new TGCVector3(0, FastMath.Clamp(VelocidadY * ElapsedTime, -DesplazamientoMaximoY, DesplazamientoMaximoY), 0);
-            TgcBoundingAxisAlignBox Collider = Env.Escenario.ColisionY(Mesh.BoundingBox);
-
-            if (Collider != null)
-            {
-                Mesh.Position = new TGCVector3(Mesh.Position.X, FastMath.Clamp(Mesh.Position.Y, Collider.PMax.Y, Collider.PMax.Y+2), Mesh.Position.Z);
-                CanJump = VelocidadY < 0;
-            }
-            if (TipoColisionActual == TiposColision.Pozo)
-            {
-                Mesh.Position += new TGCVector3(0, -25f, 0);
-            }
-            else if (TipoColisionActual == TiposColision.Caja)
-            {
-                Mesh.Move(posicionPlataforma);
-            }
-            else if (TipoColisionActual == TiposColision.Techo)
-            {
-                Mesh.Position = oldPos;
-                VelocidadY = 0;
-            }
-
-            var PosBeforeMovingInXZ = Mesh.Position;
+            CheckColisionY(ElapsedTime);
             if (UltimoTipoColision == TiposColision.PisoResbaloso)
                 VelocidadAdelante += ultimoDesplazamientoAdelante;
             else
@@ -280,6 +259,28 @@ namespace TGC.Group.Model.GameObjects
                 }
                 Mesh.Position = PosBeforeMovingInXZ;
                 MoveXZ(rs * -0.9f, Collider);
+            }
+        }
+        private void CheckColisionY(float ElapsedTime)
+        {
+            TgcBoundingAxisAlignBox Collider = Env.Escenario.ColisionY(Mesh.BoundingBox);
+            if (Collider != null)
+            {
+                Mesh.Position = new TGCVector3(Mesh.Position.X, FastMath.Clamp(Mesh.Position.Y, Collider.PMax.Y, Collider.PMax.Y + 2), Mesh.Position.Z);
+                CanJump = VelocidadY < 0;
+            }
+            if (TipoColisionActual == TiposColision.Pozo)
+            {
+                Mesh.Position += new TGCVector3(0, -25f, 0);
+            }
+            else if (TipoColisionActual == TiposColision.Caja)
+            {
+                Mesh.Move(posicionPlataforma);
+            }
+            else if (TipoColisionActual == TiposColision.Techo)
+            {
+                Mesh.Position = new TGCVector3(oldPos.X, posicionPlataforma.Y, oldPos.Z);
+                VelocidadY = 0;
             }
         }
         public TGCVector3 Position() { return Mesh.Position; }
