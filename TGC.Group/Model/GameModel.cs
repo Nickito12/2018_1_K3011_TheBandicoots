@@ -25,6 +25,9 @@ namespace TGC.Group.Model
         // Para precargar todos los escenarios
         public List<GameObject> Escenarios = new List<GameObject>();
         public TgcThirdPersonCamera NuevaCamara;
+        public float CameraOffsetHeight = 20;
+        public float CameraOffsetForward = -75;
+
         /// <summary>
         ///     Constructor del juego.
         /// </summary>
@@ -44,7 +47,7 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Init()
         {
-            NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), 20, -75, Input);
+            NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), CameraOffsetHeight, CameraOffsetForward, Input);
             Camara = NuevaCamara;
             Personaje.Init(this);
             Escenario = new Escenario1();

@@ -11,7 +11,7 @@ namespace TGC.Group.Model
     {
         //private TGCVector3 Position;
         public static TGCVector3 DEFAULT_DOWN = new TGCVector3(0f, -1f, 0f);
-        public static float DEFAULT_ROTATION_SPEED = 5f;
+        public static float DEFAULT_ROTATION_SPEED = 2.5f;
         public float rotX;
         public float rotY;
         public float keyboardMovement;
@@ -74,6 +74,68 @@ namespace TGC.Group.Model
 
         public override void UpdateCamera(float elapsedTime)
         {
+
+        }
+        public void Update(float elapsedTime, out TGCVector3 next, out TGCVector3 target, out TGCVector3 up)
+        {
+            //Obtener variacion XY del mouse
+            var mouseX = 0f;
+            var mouseY = 0f;
+            var DiffX = this.DiffX;
+            var DiffY = this.DiffY;
+            var UpVector = this.UpVector;
+            var NextPos = this.NextPos;
+            var Target = this.Target;
+            if (Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            {
+                mouseX = Input.XposRelative;
+                mouseY = Input.YposRelative;
+
+                DiffX += mouseX * elapsedTime * RotationSpeed;
+                DiffY += mouseY * elapsedTime * RotationSpeed;
+            }
+            else
+            {
+                DiffX += mouseX;
+                DiffY += mouseY;
+            }
+            DiffX += keyboardMovement * elapsedTime * RotationSpeed;
+
+            //Calcular rotacion a aplicar
+            var rotX = -DiffY / FastMath.PI;
+            var rotY = DiffX / FastMath.PI;
+
+            //Truncar valores de rotacion fuera de rango
+            if (rotX > FastMath.PI * 2 || rotX < -FastMath.PI * 2)
+            {
+                DiffY = 0;
+                rotX = 0;
+            }
+            //Invertir Y de UpVector segun el angulo de rotacion
+            if (rotX < -FastMath.PI / 2 && rotX > -FastMath.PI * 3 / 2)
+            {
+                UpVector = DEFAULT_DOWN;
+            }
+            else if (rotX > FastMath.PI / 2 && rotX < FastMath.PI * 3 / 2)
+            {
+                UpVector = DEFAULT_DOWN;
+            }
+            else
+            {
+                UpVector = DEFAULT_UP_VECTOR;
+            }
+
+
+            CalculatePositionTarget(rotX, rotY);
+
+            next = NextPos;
+            target = Target;
+            up = UpVector;
+        }
+
+
+        public void Update(float elapsedTime)
+        {
             //Obtener variacion XY del mouse
             var mouseX = 0f;
             var mouseY = 0f;
@@ -102,7 +164,6 @@ namespace TGC.Group.Model
                 DiffY = 0;
                 rotX = 0;
             }
-
             //Invertir Y de UpVector segun el angulo de rotacion
             if (rotX < -FastMath.PI / 2 && rotX > -FastMath.PI * 3 / 2)
             {
@@ -122,7 +183,6 @@ namespace TGC.Group.Model
 
             //asigna las posiciones de la camara.
             base.SetCamera(NextPos, Target, UpVector);
-
         }
 
         public override void SetCamera(TGCVector3 position, TGCVector3 target)
@@ -184,5 +244,6 @@ namespace TGC.Group.Model
         {
             RotationY += angle;
         }
+        public void setLookAt(TGCVector3 p) { LookAt =p; }
     }
 }

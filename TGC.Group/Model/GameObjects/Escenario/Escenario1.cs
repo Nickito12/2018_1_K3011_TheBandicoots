@@ -88,6 +88,8 @@ namespace TGC.Group.Model.GameObjects
             {
                 plataforma.Update(Env.ElapsedTime);
             }
+            UpdateCamera();
+            UpdateCamera();
         }
         public override void Render()
         {
@@ -153,6 +155,42 @@ namespace TGC.Group.Model.GameObjects
                 Colisionador = Piso.BoundingBox;
             }
             return Colisionador;
+        }
+        private void UpdateCamera()
+        {
+
+            TGCVector3 NextPos, up, target;
+            var camaraInterna = Env.NuevaCamara;
+            camaraInterna.OffsetHeight = Env.CameraOffsetHeight;
+            camaraInterna.Update(Env.ElapsedTime, out NextPos, out target, out up);
+
+            //Detectar colisiones entre el segmento de recta camara-personaje y todos los objetos del escenario
+            TGCVector3 q;
+            var minDistSq = FastMath.Pow2(Env.CameraOffsetForward);
+            foreach (var obstaculo in Scene.Meshes)
+            {
+                //Hay colision del segmento camara-personaje y el objeto
+                if (TgcCollisionUtils.intersectSegmentAABB(target, NextPos, obstaculo.BoundingBox, out q))
+                {
+                    //Si hay colision, guardar la que tenga menor distancia
+                    var distSq = TGCVector3.Subtract(q, target).LengthSq();
+                    //Hay dos casos singulares, puede que tengamos mas de una colision hay que quedarse con el menor offset.
+                    //Si no dividimos la distancia por 2 se acerca mucho al target.
+                    minDistSq = FastMath.Min(distSq, minDistSq);
+                }
+            }
+
+            //Acercar la camara hasta la minima distancia de colision encontrada (pero ponemos un umbral maximo de cercania)
+            var newOffsetForward = -FastMath.Sqrt(minDistSq);
+            camaraInterna.Update(Env.ElapsedTime);
+
+            if (FastMath.Abs(newOffsetForward) < 10)
+            {
+                newOffsetForward = 10;
+            }
+            camaraInterna.OffsetForward = newOffsetForward;
+
+            camaraInterna.Update(Env.ElapsedTime);
         }
     }
 }
