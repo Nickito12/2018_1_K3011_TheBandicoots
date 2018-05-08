@@ -90,7 +90,7 @@ namespace TGC.Group.Model
             //Detectar colisiones entre el segmento de recta camara-personaje y todos los objetos del escenario
             TGCVector3 q;
             var minDistSq = FastMath.Pow2(Modelo.CameraOffsetForward);
-            foreach (var obstaculo in Modelo.Escenario.getScene().Meshes)
+            foreach (var obstaculo in Modelo.Escenario.listaColisionesConCamara())
             {
                 //Hay colision del segmento camara-personaje y el objeto
                 if (TgcCollisionUtils.intersectSegmentAABB(target, NextPos, obstaculo.BoundingBox, out q))
