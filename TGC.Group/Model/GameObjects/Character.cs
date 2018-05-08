@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
 using TGC.Core.SceneLoader;
+using TGC.Core.Sound;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -33,6 +34,7 @@ namespace TGC.Group.Model.GameObjects
         //posicion con respecto a la plataforma
         private TGCVector3 posicionPlataforma;
         private TGCVector3 oldPos;
+        TgcMp3Player woah = new TgcMp3Player();
 
         public override void Init(GameModel _env)
         {
@@ -206,8 +208,7 @@ namespace TGC.Group.Model.GameObjects
             }
             if (Collider == null && TipoColisionActual == TiposColision.Pozo)
             {
-                Mesh.Position += new TGCVector3(0, -25f, 0);
-                //Esto estaria codeado a "Manopla", haciendo que el bbox del pj termine por debajo del bbox del Pozo, para que no haya problemas, ya que el analisis de la colision es en XZ
+                Pozo();
             }
             //El personaje se movera con la plataforma
             else if (Collider == null && TipoColisionActual == TiposColision.Caja)
@@ -271,7 +272,7 @@ namespace TGC.Group.Model.GameObjects
             }
             if (TipoColisionActual == TiposColision.Pozo)
             {
-                Mesh.Position += new TGCVector3(0, -25f, 0);
+                Pozo();
             }
             else if (TipoColisionActual == TiposColision.Caja)
             {
@@ -285,5 +286,13 @@ namespace TGC.Group.Model.GameObjects
         }
         public TGCVector3 Position() { return Mesh.Position; }
         public void Position(TGCVector3 pos) { Mesh.Position = pos; }
+        public void Pozo()
+        {
+            Mesh.Position += new TGCVector3(0, -25f, 0);
+            //Esto estaria codeado a "Manopla", haciendo que el bbox del pj termine por debajo del bbox del Pozo, para que no haya problemas, ya que el analisis de la colision es en XZ
+            woah.closeFile();
+            woah.FileName = Env.MediaDir + "\\Sound\\woah.mp3";
+            woah.play(false);
+        }
     }
 }
