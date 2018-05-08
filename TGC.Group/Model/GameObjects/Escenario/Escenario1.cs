@@ -73,9 +73,9 @@ namespace TGC.Group.Model.GameObjects
                 ListaPlataformasGiratorias.Add(plataforma.Mesh);
             }
 
-            KDTree = new KdTree();
+            KDTree = new GrillaRegular();
             KDTree.create(Scene.Meshes.FindAll(m => !m.Name.Contains("Box")), Scene.BoundingBox);
-            KDTree.createDebugKdTreeMeshes();
+            KDTree.createDebugMeshes();
         }
         public override void Update()
         {

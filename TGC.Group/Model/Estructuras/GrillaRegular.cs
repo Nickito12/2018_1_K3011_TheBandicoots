@@ -14,11 +14,11 @@ namespace TGC.Group.Model.Estructuras
     /// </summary>
     public class GrillaRegular
     {
-        private readonly float CELL_HEIGHT = 400;
-        private readonly float CELL_LENGTH = 400;
+        private readonly float CELL_HEIGHT = 1000;
+        private readonly float CELL_LENGTH = 100;
 
         //Tamaños de celda de la grilla
-        private readonly float CELL_WIDTH = 400;
+        private readonly float CELL_WIDTH = 100;
 
         private List<TgcBoxDebug> debugBoxes;
         private GrillaRegularNode[,,] grid;

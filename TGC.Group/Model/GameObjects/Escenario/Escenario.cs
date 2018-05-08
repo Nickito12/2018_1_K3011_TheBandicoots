@@ -16,7 +16,7 @@ namespace TGC.Group.Model.GameObjects
         protected TgcSkyBox SkyBox;
         protected TgcScene Scene;
         protected TgcSceneLoader Loader;
-        public KdTree KDTree;
+        public GrillaRegular KDTree;
         public bool ShowKdTree = false;
 
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
