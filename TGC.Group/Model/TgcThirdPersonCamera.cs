@@ -13,7 +13,7 @@ namespace TGC.Group.Model
     public class TgcThirdPersonCamera : TgcCamera
     {
         //private TGCVector3 Position;
-        public static TGCVector3 DEFAULT_DOWN = new TGCVector3(0f, -1f, 0f);
+       public static TGCVector3 DEFAULT_DOWN = new TGCVector3(0f, -1f, 0f);
         public static float DEFAULT_ROTATION_SPEED = 2.5f;
         public float rotX;
         public float rotY;
@@ -81,7 +81,7 @@ namespace TGC.Group.Model
 
         }
 
-        public void UpdateCamera(GameModel Modelo, List<TgcMesh> meshes)
+        public void UpdateCamera(GameModel Modelo)
         {
 
             TGCVector3 NextPos, up, target;
@@ -92,7 +92,7 @@ namespace TGC.Group.Model
             //Detectar colisiones entre el segmento de recta camara-personaje y todos los objetos del escenario
             TGCVector3 q;
             var minDistSq = FastMath.Pow2(Modelo.CameraOffsetForward);
-            foreach (var obstaculo in meshes)
+            foreach (var obstaculo in Modelo.Escenario.listaColisionesConCamara())
             {
                 //Hay colision del segmento camara-personaje y el objeto
                 if (TgcCollisionUtils.intersectSegmentAABB(target, NextPos, obstaculo.BoundingBox, out q))
@@ -200,7 +200,7 @@ namespace TGC.Group.Model
             rotY = DiffX / FastMath.PI;
 
             //Truncar valores de rotacion fuera de rango
-            if (rotX > FastMath.PI * 2 || rotX < -FastMath.PI * 2)
+            if (rotX > FastMath.PI * 1/4 || rotX < -FastMath.PI * 0)
             {
                 DiffY = 0;
                 rotX = 0;
@@ -210,7 +210,7 @@ namespace TGC.Group.Model
             {
                 UpVector = DEFAULT_DOWN;
             }
-            else if (rotX > FastMath.PI / 2 && rotX < FastMath.PI * 3 / 2)
+            else if (rotX > FastMath.PI /2 && rotX < FastMath.PI * 3 / 2)
             {
                 UpVector = DEFAULT_DOWN;
             }
@@ -268,7 +268,6 @@ namespace TGC.Group.Model
         public void CalculatePositionTarget(float rotX, float rotY)
         {
             //alejarse, luego rotar y lueg ubicar camara en el centro deseado
-            //targetCenter = TGCVector3.Add(Target, TargetDisplacement);
             var m = TGCMatrix.Translation(0, OffsetHeight, OffsetForward)
                        * TGCMatrix.RotationX(rotX)
                        * TGCMatrix.RotationY(rotY)

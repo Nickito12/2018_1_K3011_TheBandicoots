@@ -24,7 +24,7 @@ namespace TGC.Group.Model.GameObjects
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
         private List<TgcMesh> MeshConMovimiento = new List<TgcMesh>();
 
-        private TgcMp3Player mp3Player;
+        TgcMp3Player cancionPcpal = new TgcMp3Player();
 
         private const float ROTATION_SPEED = 1f;
         private List<Plataforma> Plataformas;
@@ -60,10 +60,8 @@ namespace TGC.Group.Model.GameObjects
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001233")));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
 
-            mp3Player = new TgcMp3Player();
-            //mp3Player.FileName = Env.MediaDir + "\\Sound\\song.mp3";
-            mp3Player.FileName = Env.MediaDir + "\\Sound\\crash.mp3";
-            mp3Player.play(true);
+            cancionPcpal.FileName = Env.MediaDir + "\\Sound\\crash.mp3";
+            cancionPcpal.play(true);
 
 
             Plataformas = new List<Plataforma>();
@@ -154,7 +152,7 @@ namespace TGC.Group.Model.GameObjects
         public override void Dispose()
         {
             Piso.Dispose();
-            mp3Player.closeFile();
+            cancionPcpal.closeFile();
             base.Dispose();
         }
 
@@ -248,7 +246,9 @@ namespace TGC.Group.Model.GameObjects
             return Colisionador;
         }
 
-        public TgcScene getScene() { return Scene; }
-        public TgcPlane getPiso() { return Piso; } 
+        public List<TgcMesh> listaColisionesConCamara()
+        {
+            return Scene.Meshes.FindAll(m => !ListaMeshesSinColision.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m));
+        }
     }
 }
