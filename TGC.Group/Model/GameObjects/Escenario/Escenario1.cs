@@ -135,7 +135,7 @@ namespace TGC.Group.Model.GameObjects
             {
                 plataforma.Update(Env.ElapsedTime);
             }
-            Env.NuevaCamara.UpdateCamera(Env, Scene.Meshes.FindAll(m=>!ListaPisosResbalosos.Exists(pozo=>pozo == m)));
+            Env.NuevaCamara.UpdateCamera(Env);
         }
 
         public override void Render()
