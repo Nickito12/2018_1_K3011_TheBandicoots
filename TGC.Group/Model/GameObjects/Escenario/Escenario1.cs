@@ -43,7 +43,7 @@ namespace TGC.Group.Model.GameObjects
             CreateSkyBox(TGCVector3.Empty, new TGCVector3(10000, 10000, 10000), "SkyBox1");
 
             Loader = new TgcSceneLoader();
-            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd17-TgcScene.xml");
+            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd18-TgcScene.xml");
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
             foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto"))) {
                 mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
