@@ -15,7 +15,7 @@ namespace TGC.Group.Model.GameObjects
     public class Character : GameObject
     {
         // El mesh del personaje
-        private TgcSkeletalMesh Mesh;
+        public TgcSkeletalMesh Mesh;
         //Referencia a la camara para facil acceso
         TgcThirdPersonCamera Camara;
 
@@ -89,9 +89,15 @@ namespace TGC.Group.Model.GameObjects
             if (Input.keyDown(Key.F9))
                 VelocidadMovimiento -= 10 * ElapsedTime;
             if (Input.keyDown(Key.F10))
+            {
                 VelocidadSalto += 10 * ElapsedTime;
+                VelocidadTerminal -= 2 * ElapsedTime;
+            }
             if (Input.keyDown(Key.F11))
+            {
                 VelocidadSalto -= 10 * ElapsedTime;
+                VelocidadTerminal += 2 * ElapsedTime;
+            }
             Camara.keyboardMovement = 0;
             if (Input.keyDown(Key.D) || Input.keyDown(Key.RightArrow))
                 Camara.keyboardMovement += 1;
@@ -104,6 +110,7 @@ namespace TGC.Group.Model.GameObjects
             VelocidadY = FastMath.Clamp(VelocidadY + Gravedad * ElapsedTime, VelocidadTerminal, -VelocidadTerminal);
             var LastPos = Mesh.Position;
             // Colision en Y
+            var oldPos = Mesh.Position;
             Mesh.Position += new TGCVector3(0, FastMath.Clamp(VelocidadY * ElapsedTime, -DesplazamientoMaximoY, DesplazamientoMaximoY), 0);
             TgcBoundingAxisAlignBox Collider = Env.Escenario.ColisionY(Mesh.BoundingBox);
 
@@ -111,14 +118,19 @@ namespace TGC.Group.Model.GameObjects
             {
                 Mesh.Position = new TGCVector3(Mesh.Position.X, FastMath.Clamp(Mesh.Position.Y, Collider.PMax.Y, Collider.PMax.Y+2), Mesh.Position.Z);
                 CanJump = VelocidadY < 0;
-                if (TipoColisionActual == TiposColision.Caja)
-                {
-                    Mesh.Move(posicionPlataforma);
-                }
             }
-            else if (TipoColisionActual == TiposColision.Pozo)
+            if (TipoColisionActual == TiposColision.Pozo)
             {
                 Mesh.Position += new TGCVector3(0, -25f, 0);
+            }
+            else if (TipoColisionActual == TiposColision.Caja)
+            {
+                Mesh.Move(posicionPlataforma);
+            }
+            else if (TipoColisionActual == TiposColision.Techo)
+            {
+                Mesh.Position = oldPos;
+                VelocidadY = 0;
             }
 
             var PosBeforeMovingInXZ = Mesh.Position;

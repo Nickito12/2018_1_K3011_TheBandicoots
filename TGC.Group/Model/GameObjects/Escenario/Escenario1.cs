@@ -22,6 +22,7 @@ namespace TGC.Group.Model.GameObjects
         private List<TgcMesh> ListaPlataformas = new List<TgcMesh>();
         private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
+        private List<TgcMesh> MeshConMovimiento = new List<TgcMesh>();
 
         private TgcMp3Player mp3Player;
 
@@ -110,10 +111,14 @@ namespace TGC.Group.Model.GameObjects
             }
 
             //se agrega plataforma giratoria
-            Plataformas.Add(new PlataformaGiratoria(20, Plataformas[0].Mesh.clone("pGira"), new TGCVector3(260f, 0f, 275f), 5f));
+            var meshGiratorio = Plataformas[0].Mesh.clone("pGira");
+            Plataformas.Add(new PlataformaGiratoria(20, meshGiratorio,  new TGCVector3(260f, 0f, 275f), 5f));
+            Scene.Meshes.Add(meshGiratorio);
             foreach (var plataforma in Plataformas)
             {
                 ListaPlataformas.Add(plataforma.Mesh);
+                MeshConMovimiento.Add(plataforma.Mesh);
+                Scene.Meshes.Remove(plataforma.Mesh);
             }
 
             KDTree = new GrillaRegular();
@@ -166,9 +171,32 @@ namespace TGC.Group.Model.GameObjects
                     }
                     else if(ListaPlataformas.Contains(Mesh))
                     {
-                        var Plataforma = Plataformas.Find(p=> p.Mesh == Mesh);
-                        Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
-                        Env.Personaje.setposition(Plataforma.deltaPosicion());
+                        if(Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.Position.Y)
+                            Colisionador = Mesh.BoundingBox;
+                    }
+                    else if (ListaPisosResbalosos.Contains(Mesh))
+                    {
+                        Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
+                    }
+                    else
+                    {
+                        Colisionador = Mesh.BoundingBox;
+                    }
+                    break;
+                }
+            }
+            foreach (var Mesh in MeshConMovimiento)
+            {
+                if (!ListaMeshesSinColision.Contains(Mesh) && Escenario.testAABBAABB(Mesh.BoundingBox, boundingBox))
+                {
+                    if (ListaPozos.Contains(Mesh))
+                    {
+                        Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
+                    }
+                    else if (ListaPlataformas.Contains(Mesh))
+                    {
+                        if (Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || (Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.BoundingBox.PMax.Y && Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.BoundingBox.PMax.Y))
+                            Colisionador = Mesh.BoundingBox;
                     }
                     else if (ListaPisosResbalosos.Contains(Mesh))
                     {
@@ -190,10 +218,15 @@ namespace TGC.Group.Model.GameObjects
             {
                 if (Escenario.testAABBAABB(plataforma.Mesh.BoundingBox, boundingBox))
                 {
-                    Env.Personaje.setposition(plataforma.deltaPosicion());
-                    Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
-                    Colisionador = plataforma.Mesh.BoundingBox;
-                    break;
+                    if (plataforma.Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.BoundingBox.PMax.Y && plataforma.Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.BoundingBox.PMax.Y)
+                    {
+                        Env.Personaje.SetTipoColisionActual(TiposColision.Techo);
+                    }
+                    else
+                    {
+                        Env.Personaje.setposition(plataforma.deltaPosicion());
+                        Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
+                    }
                 }
             }
             foreach (var pozo in ListaPozos)
