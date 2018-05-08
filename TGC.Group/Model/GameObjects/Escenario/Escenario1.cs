@@ -22,10 +22,6 @@ namespace TGC.Group.Model.GameObjects
         private List<TgcMesh> ListaPlataformas = new List<TgcMesh>();
         private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
-        private List<TgcMesh> ListaPlataformaEstatica = new List<TgcMesh>();
-        private List<TgcMesh> ListaPlataformaX = new List<TgcMesh>();
-        private List<TgcMesh> ListaPlataformaZ = new List<TgcMesh>();
-        private List<TgcMesh> ListaMovibles = new List<TgcMesh>();
 
         private TgcMp3Player mp3Player;
 
@@ -71,6 +67,11 @@ namespace TGC.Group.Model.GameObjects
 
             Plataformas = new List<Plataforma>();
 
+
+            List<TgcMesh> ListaPlataformaEstatica = new List<TgcMesh>();
+            List<TgcMesh> ListaPlataformaX = new List<TgcMesh>();
+            List<TgcMesh> ListaPlataformaZ = new List<TgcMesh>();
+            List<TgcMesh> ListaMovibles = new List<TgcMesh>();
             ListaPlataformaEstatica = Scene.Meshes.FindAll(m => m.Name.Contains("Box_0"));
             ListaPlataformaX = Scene.Meshes.FindAll(m => m.Name.Contains("Box_1"));
             ListaPlataformaZ = Scene.Meshes.FindAll(m => m.Name.Contains("Box_2"));
