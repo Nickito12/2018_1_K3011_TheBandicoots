@@ -22,6 +22,7 @@ namespace TGC.Group.Model.GameObjects
         private List<TgcMesh> ListaPlataformas = new List<TgcMesh>();
         private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
+        private List<TgcMesh> ListaPlataformaEstatica = new List<TgcMesh>();
         private List<TgcMesh> ListaPlataformaX = new List<TgcMesh>();
         private List<TgcMesh> ListaPlataformaZ = new List<TgcMesh>();
         private List<TgcMesh> ListaMovibles = new List<TgcMesh>();
@@ -70,6 +71,7 @@ namespace TGC.Group.Model.GameObjects
 
             Plataformas = new List<Plataforma>();
 
+            ListaPlataformaEstatica = Scene.Meshes.FindAll(m => m.Name.Contains("Box_0"));
             ListaPlataformaX = Scene.Meshes.FindAll(m => m.Name.Contains("Box_1"));
             ListaPlataformaZ = Scene.Meshes.FindAll(m => m.Name.Contains("Box_2"));
             ListaMovibles = Scene.Meshes.FindAll(m => m.Name.Contains("Box_M"));
@@ -97,10 +99,15 @@ namespace TGC.Group.Model.GameObjects
             //agrego objetos moviles
             foreach (var p in ListaMovibles)
             {
-                Plataformas.Add(new ObjetosMovibles(p, new TGCVector3(0f, 0f, 0f)));
+                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false, 0f, false));
             }
 
-      
+            //agrego objetos estaticos
+            foreach (var p in ListaPlataformaEstatica)
+            {
+                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false, 0f, false));
+            }
+
             //se agrega plataforma giratoria
             Plataformas.Add(new PlataformaGiratoria(20, Plataformas[0].Mesh.clone("pGira"), new TGCVector3(260f, 0f, 275f), 5f));
             foreach (var plataforma in Plataformas)
@@ -159,11 +166,6 @@ namespace TGC.Group.Model.GameObjects
                     else if(ListaPlataformas.Contains(Mesh))
                     {
                         var Plataforma = Plataformas.Find(p=> p.Mesh == Mesh);
-                        if (Plataforma.nombreClase()=="MOVIL")
-                        {
-                            //puse stop para ver si entraba al if
-                            mp3Player.stop();
-                        }
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                         Env.Personaje.setposition(Plataforma.deltaPosicion());
                     }
