@@ -208,7 +208,7 @@ namespace TGC.Group.Model
             {
                 UpVector = DEFAULT_DOWN;
             }
-            else if (rotX >= FastMath.PI *1/4 && rotX < FastMath.PI * 3 / 2)
+            else if (rotX > FastMath.PI /2 && rotX < FastMath.PI * 3 / 2)
             {
                 UpVector = DEFAULT_DOWN;
             }
