@@ -22,6 +22,7 @@ namespace TGC.Group.Model.GameObjects
         private List<TgcMesh> ListaPlataformas = new List<TgcMesh>();
         private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
+        private List<TgcMesh> ListaP = new List<TgcMesh>();
 
         private TgcMp3Player mp3Player;
 
@@ -66,7 +67,22 @@ namespace TGC.Group.Model.GameObjects
 
 
             Plataformas = new List<Plataforma>();
-            Plataformas.Add(new PlataformaLineal(Scene.Meshes.Find(m => m.Name.Contains("Box_1")), new TGCVector3(0f, 0f, 0f), 26f, true, 12f));
+
+            ListaP = Scene.Meshes.FindAll(m => m.Name.Contains("Box"));
+            foreach (var p in ListaP)
+            {
+                if (p.Name != "Box_1")
+                {
+                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 26f, false, 12f));
+                }
+                else
+                {
+                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 26f, true, 12f));
+                }
+
+            }
+
+            //Plataformas.Add(new PlataformaLineal(Scene.Meshes.Find(m => m.Name.Contains("Box_1")), new TGCVector3(0f, 0f, 0f), 26f, true, 12f));
             Plataformas.Add(new PlataformaGiratoria(20, Plataformas[0].Mesh.clone("pGira"), new TGCVector3(260f, 0f, 275f), 5f));
             foreach (var plataforma in Plataformas)
             {
