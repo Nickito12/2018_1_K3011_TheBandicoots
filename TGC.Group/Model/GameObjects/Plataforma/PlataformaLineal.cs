@@ -15,7 +15,7 @@ namespace TGC.Group.Model.GameObjects
         private bool EjeX;
         private float Velocidad;
         private bool Sentido = false;
-        public PlataformaLineal(TgcMesh mesh, TGCVector3 pos, float rango, bool ejeX, float velocidad)
+        public PlataformaLineal(TgcMesh mesh, TGCVector3 pos, float rango, bool ejeX, float velocidad, bool direccion)
         {
             Mesh = mesh;
             Pos = pos;
@@ -23,6 +23,7 @@ namespace TGC.Group.Model.GameObjects
             EjeX = ejeX;
             Rango = rango;
             Velocidad = velocidad;
+            Sentido = direccion;
         }
         public override void Update(float ElapsedTime)
         {
@@ -41,5 +42,11 @@ namespace TGC.Group.Model.GameObjects
             }
             Delta = movimiento;
         }
+
+        public override String nombreClase()
+        {
+            return null;
+        }
+
     }
 }

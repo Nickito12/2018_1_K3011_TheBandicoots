@@ -22,7 +22,9 @@ namespace TGC.Group.Model.GameObjects
         private List<TgcMesh> ListaPlataformas = new List<TgcMesh>();
         private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
-        private List<TgcMesh> ListaP = new List<TgcMesh>();
+        private List<TgcMesh> ListaPlataformaX = new List<TgcMesh>();
+        private List<TgcMesh> ListaPlataformaZ = new List<TgcMesh>();
+        private List<TgcMesh> ListaMovibles = new List<TgcMesh>();
 
         private TgcMp3Player mp3Player;
 
@@ -68,21 +70,38 @@ namespace TGC.Group.Model.GameObjects
 
             Plataformas = new List<Plataforma>();
 
-            ListaP = Scene.Meshes.FindAll(m => m.Name.Contains("Box"));
-            foreach (var p in ListaP)
+            ListaPlataformaX = Scene.Meshes.FindAll(m => m.Name.Contains("Box_1"));
+            ListaPlataformaZ = Scene.Meshes.FindAll(m => m.Name.Contains("Box_2"));
+            ListaMovibles = Scene.Meshes.FindAll(m => m.Name.Contains("Box_M"));
+
+            //agrego plataforma que se mueven en X
+            foreach (var p in ListaPlataformaX)
             {
-                if (p.Name != "Box_1")
+                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 25f, true, 12f, false));
+            }
+
+            //agrego plataforma que se mueven en Z
+            foreach (var p in ListaPlataformaZ)
+            {
+                //-20f es para que este centrado en el camino
+                if(p.Name=="Box_202" || p.Name == "Box_204")
                 {
-                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 26f, false, 12f));
+                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false, 12f, true));
                 }
                 else
                 {
-                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 26f, true, 12f));
+                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false, 12f, false));
                 }
-
             }
 
-            //Plataformas.Add(new PlataformaLineal(Scene.Meshes.Find(m => m.Name.Contains("Box_1")), new TGCVector3(0f, 0f, 0f), 26f, true, 12f));
+            //agrego objetos moviles
+            foreach (var p in ListaMovibles)
+            {
+                Plataformas.Add(new ObjetosMovibles(p, new TGCVector3(0f, 0f, 0f)));
+            }
+
+      
+            //se agrega plataforma giratoria
             Plataformas.Add(new PlataformaGiratoria(20, Plataformas[0].Mesh.clone("pGira"), new TGCVector3(260f, 0f, 275f), 5f));
             foreach (var plataforma in Plataformas)
             {
@@ -93,6 +112,7 @@ namespace TGC.Group.Model.GameObjects
             KDTree.create(Scene.Meshes.FindAll(m => !m.Name.Contains("Box")), Scene.BoundingBox);
             KDTree.createDebugMeshes();
         }
+
         public override void Update()
         {
             if (Env.ElapsedTime > 10000)
@@ -105,6 +125,7 @@ namespace TGC.Group.Model.GameObjects
                 plataforma.Update(Env.ElapsedTime);
             }
         }
+
         public override void Render()
         {
             Piso.Render();
@@ -115,12 +136,14 @@ namespace TGC.Group.Model.GameObjects
                 plataforma.Mesh.Render();
             }
         }
+
         public override void Dispose()
         {
             Piso.Dispose();
             mp3Player.closeFile();
             base.Dispose();
         }
+
         public override TgcBoundingAxisAlignBox ColisionXZ(TgcBoundingAxisAlignBox boundingBox)
         {
             // null => no hay colision
@@ -136,6 +159,11 @@ namespace TGC.Group.Model.GameObjects
                     else if(ListaPlataformas.Contains(Mesh))
                     {
                         var Plataforma = Plataformas.Find(p=> p.Mesh == Mesh);
+                        if (Plataforma.nombreClase()=="MOVIL")
+                        {
+                            //puse stop para ver si entraba al if
+                            mp3Player.stop();
+                        }
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                         Env.Personaje.setposition(Plataforma.deltaPosicion());
                     }

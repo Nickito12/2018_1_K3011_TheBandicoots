@@ -30,5 +30,12 @@ namespace TGC.Group.Model.GameObjects
             Mesh.Position = new TGCVector3(Pos.X+Radio*FastMath.Cos((Moment/Period) * FastMath.TWO_PI), Pos.Y, Pos.Z + Radio * FastMath.Sin((Moment / Period) * FastMath.TWO_PI));
             Delta = Mesh.Position - old;
         }
+
+
+        public override String nombreClase()
+        {
+            return null;
+        }
+
     }
 }
