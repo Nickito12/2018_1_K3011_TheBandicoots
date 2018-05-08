@@ -149,6 +149,14 @@ namespace TGC.Group.Model.GameObjects
                     break;
                 }
             }
+            foreach (var pozo in ListaPozos)
+            {
+                if (Escenario.testAABBAABB(pozo.BoundingBox, boundingBox))
+                {
+                    Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
+                    break;
+                }
+            }
             if (Colisionador == null && Escenario.testAABBAABB(Piso.BoundingBox, boundingBox)) {
                 Colisionador = Piso.BoundingBox;
             }

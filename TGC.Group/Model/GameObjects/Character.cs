@@ -116,6 +116,10 @@ namespace TGC.Group.Model.GameObjects
                     Mesh.Move(posicionPlataforma);
                 }
             }
+            else if (TipoColisionActual == TiposColision.Pozo)
+            {
+                Mesh.Position += new TGCVector3(0, -25f, 0);
+            }
 
             var PosBeforeMovingInXZ = Mesh.Position;
             if (UltimoTipoColision == TiposColision.PisoResbaloso)
