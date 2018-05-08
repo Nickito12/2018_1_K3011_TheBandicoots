@@ -109,7 +109,7 @@ namespace TGC.Group.Model.GameObjects
         {
             // null => no hay colision
             TgcBoundingAxisAlignBox Colisionador = null;
-            foreach (var Mesh in Scene.Meshes)
+            foreach (var Mesh in Scene.Meshes.FindAll(m=>m.Enabled))
             {
                 if (!ListaMeshesSinColision.Contains(Mesh) && Escenario.testAABBAABB(Mesh.BoundingBox, boundingBox))
                 {

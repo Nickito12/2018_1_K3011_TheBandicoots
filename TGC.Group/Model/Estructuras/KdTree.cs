@@ -65,11 +65,12 @@ namespace TGC.Group.Model.Estructuras
             DrawCount = 0;
             //Renderizar
             foreach (var mesh in modelos)
+                mesh.Enabled = false;
+            foreach (var mesh in modelos)
             {
                 if (mesh.Enabled)
                 {
                     mesh.Render();
-                    mesh.Enabled = false;
                     DrawCount++;
                 }
             }

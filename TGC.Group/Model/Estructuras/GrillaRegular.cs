@@ -131,6 +131,8 @@ namespace TGC.Group.Model.Estructuras
         {
             var pMax = sceneBounds.PMax;
             var pMin = sceneBounds.PMin;
+            foreach (var mesh in modelos)
+                mesh.Enabled = false;
             findVisibleMeshes(frustum);
 
             DrawCount = 0;
@@ -140,7 +142,6 @@ namespace TGC.Group.Model.Estructuras
                 if (mesh.Enabled)
                 {
                     mesh.Render();
-                    mesh.Enabled = false;
                     DrawCount++;
                 }
             }
