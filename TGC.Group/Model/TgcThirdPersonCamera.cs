@@ -1,6 +1,7 @@
 ﻿using TGC.Core.Camara;
 using TGC.Core.Mathematica;
 using TGC.Core.Input;
+using TGC.Core.Collision;
 
 namespace TGC.Group.Model
 {
@@ -11,7 +12,7 @@ namespace TGC.Group.Model
     {
         //private TGCVector3 Position;
         public static TGCVector3 DEFAULT_DOWN = new TGCVector3(0f, -1f, 0f);
-        public static float DEFAULT_ROTATION_SPEED = 5f;
+        public static float DEFAULT_ROTATION_SPEED = 2.5f;
         public float rotX;
         public float rotY;
         public float keyboardMovement;
@@ -72,7 +73,107 @@ namespace TGC.Group.Model
 
         #endregion Getters y Setters
 
+
         public override void UpdateCamera(float elapsedTime)
+        {
+
+        }
+
+        public void UpdateCamera(GameModel Modelo)
+        {
+
+            TGCVector3 NextPos, up, target;
+
+            //OffsetHeight = Modelo.CameraOffsetHeight;
+            this.Update(Modelo.ElapsedTime, out NextPos, out target, out up);
+
+            //Detectar colisiones entre el segmento de recta camara-personaje y todos los objetos del escenario
+            TGCVector3 q;
+            var minDistSq = FastMath.Pow2(Modelo.CameraOffsetForward);
+            foreach (var obstaculo in Modelo.Escenario.getScene().Meshes)
+            {
+                //Hay colision del segmento camara-personaje y el objeto
+                if (TgcCollisionUtils.intersectSegmentAABB(target, NextPos, obstaculo.BoundingBox, out q))
+                {
+                    //Si hay colision, guardar la que tenga menor distancia
+                    var distSq = TGCVector3.Subtract(q, target).LengthSq();
+                    //Hay dos casos singulares, puede que tengamos mas de una colision hay que quedarse con el menor offset.
+                    //Si no dividimos la distancia por 2 se acerca mucho al target.
+                    minDistSq = FastMath.Min(distSq, minDistSq);
+                }
+            }
+
+            //Acercar la camara hasta la minima distancia de colision encontrada (pero ponemos un umbral maximo de cercania)
+            var newOffsetForward = -FastMath.Sqrt(minDistSq);
+            this.Update(Modelo.ElapsedTime);
+
+            if (FastMath.Abs(newOffsetForward) < 10)
+            {
+                newOffsetForward = 10;
+            }
+            OffsetForward = newOffsetForward;
+
+            this.Update(Modelo.ElapsedTime);
+        }
+
+        public void Update(float elapsedTime, out TGCVector3 next, out TGCVector3 target, out TGCVector3 up)
+        {
+            //Obtener variacion XY del mouse
+            var mouseX = 0f;
+            var mouseY = 0f;
+            var DiffX = this.DiffX;
+            var DiffY = this.DiffY;
+            var UpVector = this.UpVector;
+            var NextPos = this.NextPos;
+            var Target = this.Target;
+            if (Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            {
+                mouseX = Input.XposRelative;
+                mouseY = Input.YposRelative;
+
+                DiffX += mouseX * elapsedTime * RotationSpeed;
+                DiffY += mouseY * elapsedTime * RotationSpeed;
+            }
+            else
+            {
+                DiffX += mouseX;
+                DiffY += mouseY;
+            }
+            DiffX += keyboardMovement * elapsedTime * RotationSpeed;
+
+            //Calcular rotacion a aplicar
+            var rotX = -DiffY / FastMath.PI;
+            var rotY = DiffX / FastMath.PI;
+
+            //Truncar valores de rotacion fuera de rango
+            if (rotX > FastMath.PI * 2 || rotX < -FastMath.PI * 2)
+            {
+                DiffY = 0;
+                rotX = 0;
+            }
+            //Invertir Y de UpVector segun el angulo de rotacion
+            if (rotX < -FastMath.PI / 2 && rotX > -FastMath.PI * 3 / 2)
+            {
+                UpVector = DEFAULT_DOWN;
+            }
+            else if (rotX > FastMath.PI / 2 && rotX < FastMath.PI * 3 / 2)
+            {
+                UpVector = DEFAULT_DOWN;
+            }
+            else
+            {
+                UpVector = DEFAULT_UP_VECTOR;
+            }
+
+
+            CalculatePositionTarget(rotX, rotY);
+
+            next = NextPos;
+            target = Target;
+            up = UpVector;
+        }
+
+        public void Update(float elapsedTime)
         {
             //Obtener variacion XY del mouse
             var mouseX = 0f;
@@ -102,7 +203,6 @@ namespace TGC.Group.Model
                 DiffY = 0;
                 rotX = 0;
             }
-
             //Invertir Y de UpVector segun el angulo de rotacion
             if (rotX < -FastMath.PI / 2 && rotX > -FastMath.PI * 3 / 2)
             {
@@ -122,8 +222,8 @@ namespace TGC.Group.Model
 
             //asigna las posiciones de la camara.
             base.SetCamera(NextPos, Target, UpVector);
-
         }
+
 
         public override void SetCamera(TGCVector3 position, TGCVector3 target)
         {

@@ -137,6 +137,7 @@ namespace TGC.Group.Model.GameObjects
             {
                 plataforma.Update(Env.ElapsedTime);
             }
+            Env.NuevaCamara.UpdateCamera(Env);
         }
 
         public override void Render()
@@ -246,5 +247,8 @@ namespace TGC.Group.Model.GameObjects
             }
             return Colisionador;
         }
+
+        public TgcScene getScene() { return Scene; }
+        public TgcPlane getPiso() { return Piso; } 
     }
 }
