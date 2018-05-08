@@ -2,6 +2,8 @@
 using TGC.Core.Mathematica;
 using TGC.Core.Input;
 using TGC.Core.Collision;
+using System.Collections.Generic;
+using TGC.Core.SceneLoader;
 
 namespace TGC.Group.Model
 {
@@ -79,7 +81,7 @@ namespace TGC.Group.Model
 
         }
 
-        public void UpdateCamera(GameModel Modelo)
+        public void UpdateCamera(GameModel Modelo, List<TgcMesh> meshes)
         {
 
             TGCVector3 NextPos, up, target;
@@ -90,7 +92,7 @@ namespace TGC.Group.Model
             //Detectar colisiones entre el segmento de recta camara-personaje y todos los objetos del escenario
             TGCVector3 q;
             var minDistSq = FastMath.Pow2(Modelo.CameraOffsetForward);
-            foreach (var obstaculo in Modelo.Escenario.getScene().Meshes)
+            foreach (var obstaculo in meshes)
             {
                 //Hay colision del segmento camara-personaje y el objeto
                 if (TgcCollisionUtils.intersectSegmentAABB(target, NextPos, obstaculo.BoundingBox, out q))
