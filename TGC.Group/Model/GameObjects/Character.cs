@@ -210,11 +210,6 @@ namespace TGC.Group.Model.GameObjects
             {
                 Pozo();
             }
-            //El personaje se movera con la plataforma
-            else if (Collider == null && TipoColisionActual == TiposColision.Caja)
-            {
-                Mesh.Move(posicionPlataforma);
-            }
             else if (Collider != null)
             {
                 Collider = Collider.clone();
