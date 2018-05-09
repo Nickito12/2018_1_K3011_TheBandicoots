@@ -61,7 +61,6 @@ namespace TGC.Group.Model.GameObjects
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
 
             cancionPcpal.FileName = Env.MediaDir + "\\Sound\\crash.mp3";
-            cancionPcpal.play(true);
 
 
             Plataformas = new List<Plataforma>();
@@ -136,6 +135,11 @@ namespace TGC.Group.Model.GameObjects
                 plataforma.Update(Env.ElapsedTime);
             }
             Env.NuevaCamara.UpdateCamera(Env);
+            if (cancionPcpal.getStatus() != TgcMp3Player.States.Playing)
+            {
+                cancionPcpal.closeFile();
+                cancionPcpal.play(true);
+            }
         }
 
         public override void Render()
