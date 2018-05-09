@@ -1,8 +1,8 @@
 <tgcScene>
-  <name>asd182-TgcScene-TgcScene</name>
+  <name>asd18</name>
   <texturesExport enabled="True" dir="Textures" />
   <lightmapExport enabled="False" dir="LightMaps" />
-  <sceneBoundingBox min="[-66.3185,-1.8,-159.6017]" max="[955.8686,148.051,537.0325]" />
+  <sceneBoundingBox min="[-66.3185,-1.8,-159.6017]" max="[955.8686,148.051,559.2748]" />
   <materials count="16">
     <m name="Standardmaterial" type="Standardmaterial">
       <ambient>[0,0,0,0]</ambient>
@@ -3448,14 +3448,14 @@
       </texCoordsLightMap>
     </mesh>
     <mesh name="PozoRocoso_2" layer="Default" type="Original" matId="12" color="[1,1,1]" visibility="1.0" lightmap="">
-      <boundingBox min="[-43.7642,0.7999,90.4257]" max="[47.2983,0.7999,137.3036]" />
+      <boundingBox min="[-43.7642,0.7999,73.2371]" max="[47.2983,0.7999,143.5539]" />
       <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
       <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
       <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
       <matIds count="1">0 </matIds>
       <textCoordsLightMapIdx count="0">
       </textCoordsLightMapIdx>
-      <vertices count="12">-43.7642 0.7999 137.3036 47.2982 0.7999 137.3036 47.2982 0.7999 90.4257 -43.7642 0.7999 90.4257 </vertices>
+      <vertices count="12">-43.7642 0.7999 143.5539 47.2982 0.7999 143.5539 47.2982 0.7999 73.2371 -43.7642 0.7999 73.2371 </vertices>
       <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
       <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
       <colors count="3">255 255 255 </colors>
@@ -3896,14 +3896,14 @@
       <userProps count="0" />
     </mesh>
     <mesh name="ParedEnvolvente001248" layer="Paredes" type="Original" matId="14" color="[1,1,1]" visibility="1.0" lightmap="">
-      <boundingBox min="[765.5908,0,373.1823]" max="[934.9594,82.9296,510.3343]" />
+      <boundingBox min="[739.1919,0,446.6956]" max="[883.3743,82.9296,559.2748]" />
       <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
       <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
       <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
       <matIds count="1">0 </matIds>
       <textCoordsLightMapIdx count="0">
       </textCoordsLightMapIdx>
-      <vertices count="12">765.5908 0 510.3342 934.9594 0 373.1822 934.9594 82.9296 373.1822 765.5908 82.9296 510.3342 </vertices>
+      <vertices count="12">739.192 0 515.2714 883.3743 0 490.6988 883.3743 82.9296 490.6988 739.192 82.9296 515.2714 </vertices>
       <normals count="12">0 0 1 0 0 1 0 0 1 0 0 1 </normals>
       <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
       <colors count="3">255 255 255 </colors>
@@ -3976,14 +3976,14 @@
       <userProps count="0" />
     </mesh>
     <mesh name="PisoResbaloso" layer="Default" type="Original" matId="15" color="[1,1,1]" visibility="1.0" lightmap="">
-      <boundingBox min="[-44.0307,0.6,220.4363]" max="[44.6468,0.6,260.2808]" />
+      <boundingBox min="[-44.0307,0.6,202.847]" max="[44.6468,0.6,262.6137]" />
       <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
       <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
       <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
       <matIds count="1">0 </matIds>
       <textCoordsLightMapIdx count="0">
       </textCoordsLightMapIdx>
-      <vertices count="12">-44.0307 0.6 220.4361 44.6468 0.6 220.4361 44.6468 0.6 260.2808 -44.0307 0.6 260.2808 </vertices>
+      <vertices count="12">-44.0307 0.6 202.8467 44.6468 0.6 202.8467 44.6468 0.6 262.6137 -44.0307 0.6 262.6137 </vertices>
       <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
       <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
       <colors count="3">255 255 255 </colors>
@@ -3999,7 +3999,7 @@
       <matIds count="1">0 </matIds>
       <textCoordsLightMapIdx count="0">
       </textCoordsLightMapIdx>
-      <vertices count="12">409.0157 0.5 352.3186 609.5688 0.5 352.3186 609.5688 0.5 431.0185 409.0157 0.5 431.0185 </vertices>
+      <vertices count="12">409.0157 0.5 352.3186 609.5687 0.5 352.3186 609.5687 0.5 431.0185 409.0157 0.5 431.0185 </vertices>
       <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
       <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
       <colors count="3">255 255 255 </colors>
@@ -4072,14 +4072,14 @@
       <userProps count="0" />
     </mesh>
     <mesh name="PozoRocoso" layer="Default" type="Original" matId="12" color="[1,1,1]" visibility="1.0" lightmap="">
-      <boundingBox min="[242.0098,0.5,351.1009]" max="[282.1205,0.5,429.8008]" />
+      <boundingBox min="[216.8195,0.5,351.1009]" max="[297.041,0.5,429.8008]" />
       <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
       <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
       <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
       <matIds count="1">0 </matIds>
       <textCoordsLightMapIdx count="0">
       </textCoordsLightMapIdx>
-      <vertices count="12">242.0098 0.5 351.1009 282.1204 0.5 351.1009 282.1204 0.5 429.8008 242.0098 0.5 429.8008 </vertices>
+      <vertices count="12">216.8195 0.5 351.1009 297.0407 0.5 351.1009 297.0407 0.5 429.8008 216.8195 0.5 429.8008 </vertices>
       <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
       <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
       <colors count="3">255 255 255 </colors>
@@ -7437,22 +7437,6 @@
       </texCoordsLightMap>
     </mesh>
     <mesh name="PozoRocoso_2" layer="Default" type="Original" matId="12" color="[1,1,1]" visibility="1.0" lightmap="">
-      <boundingBox min="[-43.7642,0.7999,90.4257]" max="[47.2983,0.7999,137.3036]" />
-      <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
-      <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
-      <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
-      <matIds count="1">0 </matIds>
-      <textCoordsLightMapIdx count="0">
-      </textCoordsLightMapIdx>
-      <vertices count="12">-43.7642 0.7999 137.3036 47.2982 0.7999 137.3036 47.2982 0.7999 90.4257 -43.7642 0.7999 90.4257 </vertices>
-      <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
-      <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
-      <colors count="3">255 255 255 </colors>
-      <texCoordsLightMap count="0">
-      </texCoordsLightMap>
-      <userProps count="0" />
-    </mesh>
-    <mesh name="PozoRocoso_2" layer="Default" type="Original" matId="12" color="[1,1,1]" visibility="1.0" lightmap="">
       <boundingBox min="[-45.7642,0.2,261.4528]" max="[45.2983,0.2,280.204]" />
       <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
       <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
@@ -7901,14 +7885,14 @@
       <userProps count="0" />
     </mesh>
     <mesh name="ParedEnvolvente001248" layer="Paredes" type="Original" matId="14" color="[1,1,1]" visibility="1.0" lightmap="">
-      <boundingBox min="[765.5908,0,373.1823]" max="[934.9594,82.9296,510.3343]" />
+      <boundingBox min="[858.3478,0,359.1823]" max="[943.032,82.9296,496.3343]" />
       <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
       <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
       <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
       <matIds count="1">0 </matIds>
       <textCoordsLightMapIdx count="0">
       </textCoordsLightMapIdx>
-      <vertices count="12">765.5908 0 510.3342 934.9594 0 373.1822 934.9594 82.9296 373.1822 765.5908 82.9296 510.3342 </vertices>
+      <vertices count="12">858.3477 0 496.3342 943.0319 0 359.1822 943.0319 82.9296 359.1822 858.3477 82.9296 496.3342 </vertices>
       <normals count="12">0 0 1 0 0 1 0 0 1 0 0 1 </normals>
       <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
       <colors count="3">255 255 255 </colors>
@@ -7974,22 +7958,6 @@
       </textCoordsLightMapIdx>
       <vertices count="12">933.9564 0 50.1137 933.9564 0 -47.9578 933.9564 82.9296 -47.9578 933.9564 82.9296 50.1137 </vertices>
       <normals count="12">0 0 1 0 0 1 0 0 1 0 0 1 </normals>
-      <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
-      <colors count="3">255 255 255 </colors>
-      <texCoordsLightMap count="0">
-      </texCoordsLightMap>
-      <userProps count="0" />
-    </mesh>
-    <mesh name="PisoResbaloso" layer="Default" type="Original" matId="15" color="[1,1,1]" visibility="1.0" lightmap="">
-      <boundingBox min="[-44.0307,0.6,220.4363]" max="[44.6468,0.6,260.2808]" />
-      <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
-      <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
-      <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
-      <matIds count="1">0 </matIds>
-      <textCoordsLightMapIdx count="0">
-      </textCoordsLightMapIdx>
-      <vertices count="12">-44.0307 0.6 220.4361 44.6468 0.6 220.4361 44.6468 0.6 260.2808 -44.0307 0.6 260.2808 </vertices>
-      <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
       <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
       <colors count="3">255 255 255 </colors>
       <texCoordsLightMap count="0">
@@ -8071,22 +8039,6 @@
       <vertices count="24">436.3719 8.1394 422.9348 436.3719 0.3 422.9348 453.6496 8.1394 422.9348 453.6496 0.3 422.9348 436.3719 8.1394 402.5385 453.6496 8.1394 402.5385 436.3719 0.3 402.5385 453.6496 0.3 402.5385 </vertices>
       <normals count="24">0 0 1 0 0 1 0 0 1 0 0 1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 </normals>
       <texCoords count="8">0 0 0 1 1 0 1 1 </texCoords>
-      <colors count="3">255 255 255 </colors>
-      <texCoordsLightMap count="0">
-      </texCoordsLightMap>
-      <userProps count="0" />
-    </mesh>
-    <mesh name="PozoRocoso" layer="Default" type="Original" matId="12" color="[1,1,1]" visibility="1.0" lightmap="">
-      <boundingBox min="[242.0098,0.5,351.1009]" max="[282.1205,0.5,429.8008]" />
-      <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
-      <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
-      <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
-      <matIds count="1">0 </matIds>
-      <textCoordsLightMapIdx count="0">
-      </textCoordsLightMapIdx>
-      <vertices count="12">242.0098 0.5 351.1009 282.1204 0.5 351.1009 282.1204 0.5 429.8008 242.0098 0.5 429.8008 </vertices>
-      <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
-      <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
       <colors count="3">255 255 255 </colors>
       <texCoordsLightMap count="0">
       </texCoordsLightMap>
