@@ -46,6 +46,10 @@ namespace TGC.Group.Model.GameObjects
             Loader = new TgcSceneLoader();
             Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd19-TgcScene.xml");
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
+            foreach (var mesh in ListaPozos)
+            {
+                Scene.Meshes.Remove(mesh);
+            }
             foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto"))) {
                 mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
             }
@@ -69,7 +73,6 @@ namespace TGC.Group.Model.GameObjects
             ///////////
 
             cancionPcpal.FileName = Env.MediaDir + "\\Sound\\crash.mp3";
-            cancionPcpal.play(true);
 
 
             Plataformas = new List<Plataforma>();
@@ -144,6 +147,11 @@ namespace TGC.Group.Model.GameObjects
                 plataforma.Update(Env.ElapsedTime);
             }
             Env.NuevaCamara.UpdateCamera(Env);
+            if (cancionPcpal.getStatus() != TgcMp3Player.States.Playing)
+            {
+                cancionPcpal.closeFile();
+                cancionPcpal.play(true);
+            }
         }
 
         public override void Render()
@@ -155,6 +163,13 @@ namespace TGC.Group.Model.GameObjects
             {
                 plataforma.Mesh.Render();
             }
+            foreach (var pozo in ListaPozos)
+            {
+                pozo.Render();
+            }
+            if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
+                foreach (TgcMesh mesh in ListaPozos)
+                    mesh.BoundingBox.Render();
         }
 
         public override void Dispose()
@@ -254,17 +269,20 @@ namespace TGC.Group.Model.GameObjects
                     }
                 }
             }
-            foreach (var pozo in ListaPozos)
-            {
-                if (Escenario.testAABBAABB(pozo.BoundingBox, boundingBox))
-                {
-                    Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
-                    break;
-                }
-            }
             if (Colisionador == null && Escenario.testAABBAABB(Piso.BoundingBox, boundingBox))
             {
-                Colisionador = Piso.BoundingBox;
+                bool agujero = false;
+                foreach (var pozo in ListaPozos)
+                {
+                    if (Escenario.testAABBAABBXZIn(boundingBox, pozo.BoundingBox))
+                    {
+                        Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
+                        agujero = true;
+                        break;
+                    }
+                }
+                if(!agujero)
+                    Colisionador = Piso.BoundingBox;
             }
             return Colisionador;
         }

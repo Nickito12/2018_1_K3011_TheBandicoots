@@ -24,6 +24,7 @@ namespace TGC.Group.Model.GameObjects
         float Gravedad = -60f;
         float VelocidadTerminal = -50f;
         float DesplazamientoMaximoY = 5f;
+        float DesplazamientoMaximoXZ = 5f; // El maximo queda (Max, 0, Max), no el modulo (Para no andar calculando modulos)
         float VelocidadSalto = 90f;
         float VelocidadMovimiento = 40f;
         float ultimoDesplazamientoAdelante = 0f;
@@ -35,6 +36,7 @@ namespace TGC.Group.Model.GameObjects
         private TGCVector3 posicionPlataforma;
         private TGCVector3 oldPos;
         TgcMp3Player woah = new TgcMp3Player();
+        bool ShowHelp = false;
 
         private TGCVector3 PosBeforeMovingInXZ;  // global 
 
@@ -93,6 +95,8 @@ namespace TGC.Group.Model.GameObjects
                 VelocidadMovimiento += 10 * ElapsedTime;
             if (Input.keyDown(Key.F9))
                 VelocidadMovimiento -= 10 * ElapsedTime;
+            if (Input.keyPressed(Key.H))
+                ShowHelp = !ShowHelp;
             if (Input.keyDown(Key.F10))
             {
                 VelocidadSalto += 10 * ElapsedTime;
@@ -123,7 +127,7 @@ namespace TGC.Group.Model.GameObjects
             else
                 ultimoDesplazamientoAdelante = 0;
 
-            MoveXZ(versorAdelante * VelocidadAdelante * ElapsedTime);
+            MoveXZ(versorAdelante * FastMath.Clamp(VelocidadAdelante * ElapsedTime, -DesplazamientoMaximoXZ, DesplazamientoMaximoXZ));
             UltimoTipoColision = TipoColisionActual;
             ultimoDesplazamientoAdelante += VelocidadAdelante * ElapsedTime;
 
@@ -157,16 +161,22 @@ namespace TGC.Group.Model.GameObjects
 
         public override void Render()
         {
-            Env.DrawText.drawText("[Pos pj]: " + TGCVector3.PrintVector3(Mesh.Position), 0, 20, Color.OrangeRed);
-            Env.DrawText.drawText("Velocidad Y: " + VelocidadY.ToString(), 0, 40, Color.OrangeRed);
-            Env.DrawText.drawText("Ctrl: Render BB", 0, 60, Color.OrangeRed);
-            Env.DrawText.drawText("Shift: Crouch", 0, 80, Color.OrangeRed);
-            Env.DrawText.drawText("R: Reiniciar Posición", 0, 100, Color.OrangeRed);
-            Env.DrawText.drawText("F8/F9: +/- velocidad (" + VelocidadMovimiento + ")", 0, 120, Color.OrangeRed);
-            Env.DrawText.drawText("F10/F11: +/- salto (" + VelocidadSalto + ")", 0, 140, Color.OrangeRed);
-            Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.KDTree.DrawCount+"/"+Env.Escenario.KDTree.modelos.Count, 0, 160, Color.OrangeRed);
-            Env.DrawText.drawText("F3: Mostrar KdTree", 0, 180, Color.OrangeRed);
-            Env.DrawText.drawText("F4: WireFrame", 0, 200, Color.OrangeRed);
+            int textY = 20;
+            Env.DrawText.drawText("H: Mostrar Ayuda", 0, textY, Color.OrangeRed); textY += 20;
+            if (ShowHelp)
+            {
+                Env.DrawText.drawText("[Pos pj]: " + TGCVector3.PrintVector3(Mesh.Position), 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("Velocidad Y: " + VelocidadY.ToString(), 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("Ctrl: Render BB", 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("Shift: Crouch", 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("R: Reiniciar Posición", 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("F8/F9: +/- velocidad (" + VelocidadMovimiento + ")", 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("F10/F11: +/- salto (" + VelocidadSalto + ")", 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.KDTree.DrawCount + "/" + Env.Escenario.KDTree.modelos.Count, 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("F3: Mostrar KdTree", 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("F4: WireFrame", 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("F5: Activar/Desactivar colisiones de camara /n asdasd", 0, textY, Color.OrangeRed); textY += 20;
+            }
             Mesh.Render();
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
                 Mesh.BoundingBox.Render();
@@ -217,9 +227,7 @@ namespace TGC.Group.Model.GameObjects
             else if (Collider == null && TipoColisionActual == TiposColision.Caja)
             {
                 Mesh.Move(posicionPlataforma);
-            }
-            
-
+            }        
             else if (Collider != null)
             {
                 Collider = Collider.clone();
@@ -293,8 +301,7 @@ namespace TGC.Group.Model.GameObjects
         public void Position(TGCVector3 pos) { Mesh.Position = pos; }
         public void Pozo()
         {
-            Mesh.Position += new TGCVector3(0, -25f, 0);
-            //Esto estaria codeado a "Manopla", haciendo que el bbox del pj termine por debajo del bbox del Pozo, para que no haya problemas, ya que el analisis de la colision es en XZ
+            CanJump = false;
             woah.closeFile();
             woah.FileName = Env.MediaDir + "\\Sound\\woah.mp3";
             woah.play(false);

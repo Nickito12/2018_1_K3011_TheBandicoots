@@ -67,5 +67,17 @@ namespace TGC.Group.Model.GameObjects
                    (a.PMin.Y <= b.PMax.Y && a.PMax.Y >= b.PMin.Y) &&
                    (a.PMin.Z <= b.PMax.Z && a.PMax.Z >= b.PMin.Z);
         }
+
+        public static bool testAABBAABBXZ(TgcBoundingAxisAlignBox a, TgcBoundingAxisAlignBox b)
+        {
+            return (a.PMin.X <= b.PMax.X && a.PMax.X >= b.PMin.X) &&
+                   (a.PMin.Z <= b.PMax.Z && a.PMax.Z >= b.PMin.Z);
+        }
+
+        public static bool testAABBAABBXZIn(TgcBoundingAxisAlignBox a, TgcBoundingAxisAlignBox b)
+        {
+            return (a.PMin.X <= b.PMax.X && a.PMin.X >= b.PMin.X && a.PMax.X >= b.PMin.X && a.PMax.X <= b.PMax.X) &&
+                   (a.PMin.Z <= b.PMax.Z && a.PMin.Z >= b.PMin.Z && a.PMax.Z >= b.PMin.Z && a.PMax.Z <= b.PMax.Z);
+        }
     }
 }
