@@ -24,6 +24,7 @@ namespace TGC.Group.Model.GameObjects
         float Gravedad = -60f;
         float VelocidadTerminal = -50f;
         float DesplazamientoMaximoY = 5f;
+        float DesplazamientoMaximoXZ = 5f; // El maximo queda (Max, 0, Max), no el modulo (Para no andar calculando modulos)
         float VelocidadSalto = 90f;
         float VelocidadMovimiento = 40f;
         float ultimoDesplazamientoAdelante = 0f;
@@ -120,7 +121,7 @@ namespace TGC.Group.Model.GameObjects
             else
                 ultimoDesplazamientoAdelante = 0;
 
-            MoveXZ(versorAdelante * VelocidadAdelante * ElapsedTime);
+            MoveXZ(versorAdelante * FastMath.Clamp(VelocidadAdelante * ElapsedTime, -DesplazamientoMaximoXZ, DesplazamientoMaximoXZ));
             UltimoTipoColision = TipoColisionActual;
             ultimoDesplazamientoAdelante += VelocidadAdelante * ElapsedTime;
 
@@ -284,7 +285,7 @@ namespace TGC.Group.Model.GameObjects
         public void Position(TGCVector3 pos) { Mesh.Position = pos; }
         public void Pozo()
         {
-            //Esto estaria codeado a "Manopla", haciendo que el bbox del pj termine por debajo del bbox del Pozo, para que no haya problemas, ya que el analisis de la colision es en XZ
+            CanJump = false;
             woah.closeFile();
             woah.FileName = Env.MediaDir + "\\Sound\\woah.mp3";
             woah.play(false);
