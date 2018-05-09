@@ -285,7 +285,7 @@ namespace TGC.Group.Model.GameObjects
         public void Position(TGCVector3 pos) { Mesh.Position = pos; }
         public void Pozo()
         {
-            //Esto estaria codeado a "Manopla", haciendo que el bbox del pj termine por debajo del bbox del Pozo, para que no haya problemas, ya que el analisis de la colision es en XZ
+            CanJump = false;
             woah.closeFile();
             woah.FileName = Env.MediaDir + "\\Sound\\woah.mp3";
             woah.play(false);
