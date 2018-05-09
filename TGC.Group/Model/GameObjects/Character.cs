@@ -36,6 +36,9 @@ namespace TGC.Group.Model.GameObjects
         private TGCVector3 oldPos;
         TgcMp3Player woah = new TgcMp3Player();
 
+        private TGCVector3 PosBeforeMovingInXZ;  // global 
+
+
         public override void Init(GameModel _env)
         {
             Env = _env;
@@ -200,7 +203,7 @@ namespace TGC.Group.Model.GameObjects
         }
         public void MoveXZ(TGCVector3 movimiento, TgcBoundingAxisAlignBox lastCollider = null)
         {
-            var PosBeforeMovingInXZ = Mesh.Position;
+            PosBeforeMovingInXZ = Mesh.Position;
             Mesh.Position += movimiento;
             var Collider = Env.Escenario.ColisionXZ(Mesh.BoundingBox);
             if (movimiento == TGCVector3.Empty) {
@@ -215,6 +218,8 @@ namespace TGC.Group.Model.GameObjects
             {
                 Mesh.Move(posicionPlataforma);
             }
+            
+
             else if (Collider != null)
             {
                 Collider = Collider.clone();
@@ -293,6 +298,11 @@ namespace TGC.Group.Model.GameObjects
             woah.closeFile();
             woah.FileName = Env.MediaDir + "\\Sound\\woah.mp3";
             woah.play(false);
+        }
+
+        public TGCVector3 posBeforeMovingInXZ()
+        {
+            return PosBeforeMovingInXZ;
         }
     }
 }

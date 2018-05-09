@@ -23,6 +23,7 @@ namespace TGC.Group.Model.GameObjects
         private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
         private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
         private List<TgcMesh> MeshConMovimiento = new List<TgcMesh>();
+        private List<CajaEmpujable> ListaCajasEmpujables = new List<CajaEmpujable>();
 
         TgcMp3Player cancionPcpal = new TgcMp3Player();
 
@@ -43,7 +44,7 @@ namespace TGC.Group.Model.GameObjects
             CreateSkyBox(TGCVector3.Empty, new TGCVector3(10000, 10000, 10000), "SkyBox1");
 
             Loader = new TgcSceneLoader();
-            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd18-TgcScene.xml");
+            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd19-TgcScene.xml");
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
             foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto"))) {
                 mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
@@ -59,6 +60,13 @@ namespace TGC.Group.Model.GameObjects
             ListaPisosResbalosos = Scene.Meshes.FindAll(m => m.Name.Contains("PisoResbaloso"));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001233")));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
+
+            // por el momento agrego una sola.. 
+            TgcMesh MeshEmpujable = Scene.Meshes.Find(m => m.Name.Contains("Caja3"));
+            TGCVector3 PosicionMeshEmpujable = MeshEmpujable.Position;
+            CajaEmpujable CajaEmpujable = new CajaEmpujable(MeshEmpujable,PosicionMeshEmpujable);
+            ListaCajasEmpujables.Add(CajaEmpujable);
+            ///////////
 
             cancionPcpal.FileName = Env.MediaDir + "\\Sound\\crash.mp3";
             cancionPcpal.play(true);
@@ -167,16 +175,31 @@ namespace TGC.Group.Model.GameObjects
                     if (ListaPozos.Contains(Mesh))
                     {
                         Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
+                        break;
                     }
                     else if(ListaPlataformas.Contains(Mesh))
                     {
-                        if(Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.Position.Y)
+                        if (Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.Position.Y)
+                        {
                             Colisionador = Mesh.BoundingBox;
+                            break;
+                        }
+                        
                     }
                     else if (ListaPisosResbalosos.Contains(Mesh))
                     {
                         Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
+                        break;
                     }
+                    else if (ListaCajasEmpujables.Exists(UnaCajaEmpujable => UnaCajaEmpujable.Mesh.Equals(Mesh)))
+                    {
+                                          
+                       CajaEmpujable cajaMoverse =  ListaCajasEmpujables.Find(UnaCajaEmpujable => UnaCajaEmpujable.Mesh.Equals(Mesh));
+
+                        cajaMoverse.ColisionXZ(Env.Personaje);
+                        break;
+                    }
+
                     else
                     {
                         Colisionador = Mesh.BoundingBox;
