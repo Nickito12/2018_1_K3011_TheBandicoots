@@ -4,6 +4,7 @@ using TGC.Core.Input;
 using TGC.Core.Collision;
 using System.Collections.Generic;
 using TGC.Core.SceneLoader;
+using Microsoft.DirectX.DirectInput;
 
 namespace TGC.Group.Model
 {
@@ -18,6 +19,7 @@ namespace TGC.Group.Model
         public float rotX;
         public float rotY;
         public float keyboardMovement;
+        public bool colisiones = true;
         /// <summary>
         ///     Crear una nueva camara
         /// </summary>
@@ -83,7 +85,14 @@ namespace TGC.Group.Model
 
         public void UpdateCamera(GameModel Modelo)
         {
-
+            if (Modelo.Input.keyPressed(Key.F5))
+                colisiones = !colisiones;
+            if(!colisiones)
+            { 
+                OffsetForward = Modelo.CameraOffsetForward;
+                Update(Modelo.ElapsedTime);
+                return;
+            }
             TGCVector3 NextPos, up, target;
 
             //OffsetHeight = Modelo.CameraOffsetHeight;

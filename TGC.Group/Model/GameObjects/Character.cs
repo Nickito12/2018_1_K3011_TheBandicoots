@@ -164,6 +164,7 @@ namespace TGC.Group.Model.GameObjects
             Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.KDTree.DrawCount+"/"+Env.Escenario.KDTree.modelos.Count, 0, 160, Color.OrangeRed);
             Env.DrawText.drawText("F3: Mostrar KdTree", 0, 180, Color.OrangeRed);
             Env.DrawText.drawText("F4: WireFrame", 0, 200, Color.OrangeRed);
+            Env.DrawText.drawText("F5: Activar/Desactivar colisiones de camara", 0, 220, Color.OrangeRed);
             Mesh.Render();
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
                 Mesh.BoundingBox.Render();
