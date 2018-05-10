@@ -11,7 +11,7 @@ using TGC.Core.BoundingVolumes;
 
 namespace TGC.Group.Model.GameObjects
 {
-    class CajaEmpujable 
+    public class CajaEmpujable 
     {
         public TgcMesh Mesh;
         private TGCVector3 Delta;

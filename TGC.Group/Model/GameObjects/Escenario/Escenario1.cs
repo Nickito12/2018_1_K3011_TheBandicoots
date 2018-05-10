@@ -18,17 +18,7 @@ namespace TGC.Group.Model.GameObjects
     {
         // El piso del mapa/escenario
         private TgcPlane Piso;
-        private List<TgcMesh> ListaPozos = new List<TgcMesh>();
-        private List<TgcMesh> ListaPlataformas = new List<TgcMesh>();
-        private List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
-        private List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
-        private List<TgcMesh> MeshConMovimiento = new List<TgcMesh>();
-        private List<CajaEmpujable> ListaCajasEmpujables = new List<CajaEmpujable>();
 
-        TgcMp3Player cancionPcpal = new TgcMp3Player();
-
-        private const float ROTATION_SPEED = 1f;
-        private List<Plataforma> Plataformas;
         public override void Init(GameModel _env)
         {
             Env = _env;
@@ -43,13 +33,18 @@ namespace TGC.Group.Model.GameObjects
             //Crear SkyBox
             CreateSkyBox(TGCVector3.Empty, new TGCVector3(10000, 10000, 10000), "SkyBox1");
 
+            // Cargar escena
             Loader = new TgcSceneLoader();
             Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd19-TgcScene.xml");
+
+            // Pozos
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
             foreach (var mesh in ListaPozos)
             {
                 Scene.Meshes.Remove(mesh);
             }
+
+            // Alargar algunas AABB
             foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto"))) {
                 mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
             }
@@ -65,20 +60,18 @@ namespace TGC.Group.Model.GameObjects
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001233")));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
 
-            // por el momento agrego una sola.. 
+            // Cajas Empujables
             TgcMesh MeshEmpujable = Scene.Meshes.Find(m => m.Name.Contains("Caja3"));
             Scene.Meshes.Remove(Scene.Meshes.Find(m => m.Name.Contains("Caja3")));
             TGCVector3 PosicionMeshEmpujable = MeshEmpujable.Position;
-            CajaEmpujable CajaEmpujable = new CajaEmpujable(MeshEmpujable,new TGCVector3(0f, 0f, 0f));
+            CajaEmpujable CajaEmpujable = new CajaEmpujable(MeshEmpujable, new TGCVector3(0f, 0f, 0f));
             ListaCajasEmpujables.Add(CajaEmpujable);
-            ///////////
 
+            // Setear cancion
             cancionPcpal.FileName = Env.MediaDir + "\\Sound\\crash.mp3";
 
-
+            // Setear plataformas
             Plataformas = new List<Plataforma>();
-
-
             List<TgcMesh> ListaPlataformaEstatica = new List<TgcMesh>();
             List<TgcMesh> ListaPlataformaX = new List<TgcMesh>();
             List<TgcMesh> ListaPlataformaZ = new List<TgcMesh>();
@@ -98,7 +91,7 @@ namespace TGC.Group.Model.GameObjects
             foreach (var p in ListaPlataformaZ)
             {
                 //-20f es para que este centrado en el camino
-                if(p.Name=="Box_202" || p.Name == "Box_204")
+                if (p.Name == "Box_202" || p.Name == "Box_204")
                 {
                     Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false, 12f, true));
                 }
@@ -122,7 +115,7 @@ namespace TGC.Group.Model.GameObjects
 
             //se agrega plataforma giratoria
             var meshGiratorio = Plataformas[0].Mesh.clone("pGira");
-            Plataformas.Add(new PlataformaGiratoria(20, meshGiratorio,  new TGCVector3(260f, 0f, 275f), 5f));
+            Plataformas.Add(new PlataformaGiratoria(20, meshGiratorio, new TGCVector3(260f, 0f, 275f), 5f));
             Scene.Meshes.Add(meshGiratorio);
             foreach (var plataforma in Plataformas)
             {
@@ -131,194 +124,26 @@ namespace TGC.Group.Model.GameObjects
                 Scene.Meshes.Remove(plataforma.Mesh);
             }
 
-            KDTree = new GrillaRegular();
-            KDTree.create(Scene.Meshes.FindAll(m => !m.Name.Contains("Box")), Scene.BoundingBox);
-            KDTree.createDebugMeshes();
-        }
-
-        public override void Update()
-        {
-            if (Env.ElapsedTime > 10000)
-                return;
-            if (Env.Personaje.Position().Y <= -100)
-                Env.Personaje.Position(new TGCVector3(0, 1, 0));
-            ShowKdTree = Env.Input.keyDown(Key.F3);
-            foreach (var plataforma in Plataformas)
-            {
-                plataforma.Update(Env.ElapsedTime);
-            }
-            Env.NuevaCamara.UpdateCamera(Env);
-            if (cancionPcpal.getStatus() != TgcMp3Player.States.Playing)
-            {
-                cancionPcpal.closeFile();
-                cancionPcpal.play(true);
-            }
+            Grilla = new GrillaRegular();
+            Grilla.create(Scene.Meshes.FindAll(m => !m.Name.Contains("Box")), Scene.BoundingBox);
+            Grilla.createDebugMeshes();
         }
 
         public override void Render()
         {
             Piso.Render();
             base.Render();
-
-            foreach (var plataforma in Plataformas)
-            {
-                plataforma.Mesh.Render();
-            }
-            foreach (var pozo in ListaPozos)
-            {
-                pozo.Render();
-            }
-            foreach (var caja in ListaCajasEmpujables)
-            {
-                caja.Mesh.Render();
-            }
-            
-            if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
-                foreach (TgcMesh mesh in ListaPozos)
-                    mesh.BoundingBox.Render();
         }
 
         public override void Dispose()
         {
             Piso.Dispose();
-            cancionPcpal.closeFile();
             base.Dispose();
         }
 
-        public override TgcBoundingAxisAlignBox ColisionXZ(TgcBoundingAxisAlignBox boundingBox)
+        public override TgcBoundingAxisAlignBox ColisionConPiso(TgcBoundingAxisAlignBox boundingBox)
         {
-            // null => no hay colision
-            TgcBoundingAxisAlignBox Colisionador = null;
-            foreach (var Mesh in Scene.Meshes.FindAll(m=>m.Enabled))
-            {
-                if (!ListaMeshesSinColision.Contains(Mesh) && Escenario.testAABBAABB(Mesh.BoundingBox, boundingBox))
-                {
-                    if (ListaPozos.Contains(Mesh))
-                    {
-                        Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
-                        break;
-                    }
-                    else if(ListaPlataformas.Contains(Mesh))
-                    {
-                        if (Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.Position.Y)
-                        {
-                            Colisionador = Mesh.BoundingBox;
-                            break;
-                        }
-                        
-                    }
-                    else if (ListaPisosResbalosos.Contains(Mesh))
-                    {
-                        Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
-                        break;
-                    }
-                    else
-                    {
-                        Colisionador = Mesh.BoundingBox;
-                    }
-                    break;
-                }
-            }
-            foreach (var caja in ListaCajasEmpujables)
-            {
-                var aabb = caja.Mesh.BoundingBox;
-                if (!Escenario.testAABBAABB(aabb, boundingBox))
-                    break;
-                var oldCajaPos = caja.Mesh.Position;
-                caja.ColisionXZ(Env.Personaje);
-                bool colisionDeCaja = false;
-                foreach (var Mesh in Scene.Meshes.FindAll(m => m.Enabled))
-                {
-                    if (Escenario.testAABBAABB(aabb, Mesh.BoundingBox))
-                    {
-                        colisionDeCaja = true;
-                        break;
-                    }
-                }
-                if (colisionDeCaja)
-                {
-                    Colisionador = aabb;
-                    caja.Mesh.Position = oldCajaPos;
-                    break;
-                }
-                foreach (var pozo in ListaPozos)
-                {
-                    if (Escenario.testAABBAABBXZIn(aabb, pozo.BoundingBox))
-                    {
-                        caja.caer();
-                        break;
-                    }
-                }
-            }
-            foreach (var Mesh in MeshConMovimiento)
-            {
-                if (!ListaMeshesSinColision.Contains(Mesh) && Escenario.testAABBAABB(Mesh.BoundingBox, boundingBox))
-                {
-                    if (ListaPozos.Contains(Mesh))
-                    {
-                        Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
-                    }
-                    else if (ListaPlataformas.Contains(Mesh))
-                    {
-                        if (Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || (Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.BoundingBox.PMax.Y && Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.BoundingBox.PMax.Y))
-                            Colisionador = Mesh.BoundingBox;
-                    }
-                    else if (ListaPisosResbalosos.Contains(Mesh))
-                    {
-                        Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
-                    }
-                    else
-                    {
-                        Colisionador = Mesh.BoundingBox;
-                    }
-                    break;
-                }
-            }
-            return Colisionador;
-        }
-        public override TgcBoundingAxisAlignBox ColisionY(TgcBoundingAxisAlignBox boundingBox)
-        {
-            TgcBoundingAxisAlignBox Colisionador = null;
-            foreach (var plataforma in Plataformas)
-            {
-                if (Escenario.testAABBAABB(plataforma.Mesh.BoundingBox, boundingBox))
-                {
-                    if (plataforma.Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.BoundingBox.PMax.Y && plataforma.Mesh.BoundingBox.PMin.Y + (plataforma.Mesh.BoundingBox.PMax.Y - plataforma.Mesh.BoundingBox.PMin.Y) * 0.5f > Env.Personaje.Mesh.BoundingBox.PMax.Y)
-                    {
-                        Env.Personaje.setposition(plataforma.Mesh.BoundingBox.PMin - (Env.Personaje.Mesh.BoundingBox.PMax - Env.Personaje.Mesh.BoundingBox.PMin));
-                        Env.Personaje.SetTipoColisionActual(TiposColision.Techo);
-                    }
-                    else
-                    {
-                        if (plataforma.Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.Position.Y)
-                            Colisionador = plataforma.Mesh.BoundingBox;
-                        Env.Personaje.setposition(plataforma.deltaPosicion());
-                        Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
-                    }
-                }
-            }
-            foreach(var caja in ListaCajasEmpujables)
-            {
-                var colision = caja.ColisionY(Env.Personaje, Env.ElapsedTime);
-                if(colision != null)
-                    Colisionador = colision;
-            }
-            if (Colisionador == null && Escenario.testAABBAABB(Piso.BoundingBox, boundingBox))
-            {
-                bool agujero = false;
-                foreach (var pozo in ListaPozos)
-                {
-                    if (Escenario.testAABBAABBXZIn(boundingBox, pozo.BoundingBox))
-                    {
-                        Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
-                        agujero = true;
-                        break;
-                    }
-                }
-                if(!agujero)
-                    Colisionador = Piso.BoundingBox;
-            }
-            return Colisionador;
+            return Escenario.testAABBAABB(Piso.BoundingBox, boundingBox) ? Piso.BoundingBox : null;
         }
 
         public List<TgcMesh> listaColisionesConCamara()

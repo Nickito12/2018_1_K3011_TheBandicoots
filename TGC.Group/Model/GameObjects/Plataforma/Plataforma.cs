@@ -9,7 +9,7 @@ using TGC.Core.Mathematica;
 
 namespace TGC.Group.Model.GameObjects
 {
-    abstract class Plataforma
+    public abstract class Plataforma
     {
         public TgcMesh Mesh;
         protected TGCVector3 Pos;

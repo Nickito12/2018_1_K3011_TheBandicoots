@@ -172,7 +172,7 @@ namespace TGC.Group.Model.GameObjects
                 Env.DrawText.drawText("R: Reiniciar Posición", 0, textY, Color.OrangeRed); textY += 20;
                 Env.DrawText.drawText("F8/F9: +/- velocidad (" + VelocidadMovimiento + ")", 0, textY, Color.OrangeRed); textY += 20;
                 Env.DrawText.drawText("F10/F11: +/- salto (" + VelocidadSalto + ")", 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.KDTree.DrawCount + "/" + Env.Escenario.KDTree.modelos.Count, 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.Grilla.DrawCount + "/" + Env.Escenario.Grilla.modelos.Count, 0, textY, Color.OrangeRed); textY += 20;
                 Env.DrawText.drawText("F3: Mostrar KdTree", 0, textY, Color.OrangeRed); textY += 20;
                 Env.DrawText.drawText("F4: WireFrame", 0, textY, Color.OrangeRed); textY += 20;
                 Env.DrawText.drawText("F5: Activar/Desactivar colisiones de camara /n asdasd", 0, textY, Color.OrangeRed); textY += 20;
