@@ -67,8 +67,9 @@ namespace TGC.Group.Model.GameObjects
 
             // por el momento agrego una sola.. 
             TgcMesh MeshEmpujable = Scene.Meshes.Find(m => m.Name.Contains("Caja3"));
+            Scene.Meshes.Remove(Scene.Meshes.Find(m => m.Name.Contains("Caja3")));
             TGCVector3 PosicionMeshEmpujable = MeshEmpujable.Position;
-            CajaEmpujable CajaEmpujable = new CajaEmpujable(MeshEmpujable,PosicionMeshEmpujable);
+            CajaEmpujable CajaEmpujable = new CajaEmpujable(MeshEmpujable,new TGCVector3(0f, 0f, 0f));
             ListaCajasEmpujables.Add(CajaEmpujable);
             ///////////
 
@@ -167,6 +168,11 @@ namespace TGC.Group.Model.GameObjects
             {
                 pozo.Render();
             }
+            foreach (var caja in ListaCajasEmpujables)
+            {
+                caja.Mesh.Render();
+            }
+            
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
                 foreach (TgcMesh mesh in ListaPozos)
                     mesh.BoundingBox.Render();
@@ -206,20 +212,42 @@ namespace TGC.Group.Model.GameObjects
                         Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
                         break;
                     }
-                    else if (ListaCajasEmpujables.Exists(UnaCajaEmpujable => UnaCajaEmpujable.Mesh.Equals(Mesh)))
-                    {
-                                          
-                       CajaEmpujable cajaMoverse =  ListaCajasEmpujables.Find(UnaCajaEmpujable => UnaCajaEmpujable.Mesh.Equals(Mesh));
-
-                        cajaMoverse.ColisionXZ(Env.Personaje);
-                        break;
-                    }
-
                     else
                     {
                         Colisionador = Mesh.BoundingBox;
                     }
                     break;
+                }
+            }
+            foreach (var caja in ListaCajasEmpujables)
+            {
+                var aabb = caja.Mesh.BoundingBox;
+                if (!Escenario.testAABBAABB(aabb, boundingBox))
+                    break;
+                var oldCajaPos = caja.Mesh.Position;
+                caja.ColisionXZ(Env.Personaje);
+                bool colisionDeCaja = false;
+                foreach (var Mesh in Scene.Meshes.FindAll(m => m.Enabled))
+                {
+                    if (Escenario.testAABBAABB(aabb, Mesh.BoundingBox))
+                    {
+                        colisionDeCaja = true;
+                        break;
+                    }
+                }
+                if (colisionDeCaja)
+                {
+                    Colisionador = aabb;
+                    caja.Mesh.Position = oldCajaPos;
+                    break;
+                }
+                foreach (var pozo in ListaPozos)
+                {
+                    if (Escenario.testAABBAABBXZIn(aabb, pozo.BoundingBox))
+                    {
+                        caja.caer();
+                        break;
+                    }
                 }
             }
             foreach (var Mesh in MeshConMovimiento)
@@ -268,6 +296,12 @@ namespace TGC.Group.Model.GameObjects
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                     }
                 }
+            }
+            foreach(var caja in ListaCajasEmpujables)
+            {
+                var colision = caja.ColisionY(Env.Personaje, Env.ElapsedTime);
+                if(colision != null)
+                    Colisionador = colision;
             }
             if (Colisionador == null && Escenario.testAABBAABB(Piso.BoundingBox, boundingBox))
             {
