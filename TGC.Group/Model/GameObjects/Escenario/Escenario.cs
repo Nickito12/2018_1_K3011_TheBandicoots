@@ -29,6 +29,7 @@ namespace TGC.Group.Model.GameObjects
         protected TgcMp3Player cancionPcpal = new TgcMp3Player();
         protected const float ROTATION_SPEED = 1f;
         protected List<Plataforma> Plataformas;
+        protected List<TgcPlane> ListaPlanos = new List<TgcPlane>();
 
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
         {
@@ -199,7 +200,10 @@ namespace TGC.Group.Model.GameObjects
             }
             return Colisionador;
         }
-        abstract public TgcBoundingAxisAlignBox ColisionConPiso(TgcBoundingAxisAlignBox boundingBox);
+        abstract public TgcBoundingAxisAlignBox ColisionConPisoSelva(TgcBoundingAxisAlignBox boundingBox);
+        abstract public TgcBoundingAxisAlignBox ColisionConPisoCastillo(TgcBoundingAxisAlignBox boundingBox);
+        abstract public TgcBoundingAxisAlignBox ColisionConPisoCastilloMain(TgcBoundingAxisAlignBox boundingBox);
+
         public override TgcBoundingAxisAlignBox ColisionY(TgcBoundingAxisAlignBox boundingBox)
         {
             TgcBoundingAxisAlignBox Colisionador = null;
@@ -229,8 +233,8 @@ namespace TGC.Group.Model.GameObjects
             }
             if (Colisionador != null)
                 return Colisionador;
-            var piso = ColisionConPiso(boundingBox);
-            if (piso != null)
+            var pisoSelva = ColisionConPisoSelva(boundingBox);
+            if (pisoSelva != null)
             {
                 bool agujero = false;
                 foreach (var pozo in ListaPozos)
@@ -243,7 +247,39 @@ namespace TGC.Group.Model.GameObjects
                     }
                 }
                 if (!agujero)
-                    Colisionador = piso;
+                    Colisionador = pisoSelva;
+            }
+            var pisoCastillo = ColisionConPisoCastillo(boundingBox);
+            if (pisoCastillo != null)
+            {
+                bool agujero = false;
+                foreach (var pozo in ListaPozos)
+                {
+                    if (Escenario.testAABBAABBXZIn(boundingBox, pozo.BoundingBox))
+                    {
+                        Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
+                        agujero = true;
+                        break;
+                    }
+                }
+                if (!agujero)
+                    Colisionador = pisoCastillo;
+            }
+            var pisoCastilloMain = ColisionConPisoCastilloMain(boundingBox);
+            if (pisoCastilloMain != null)
+            {
+                bool agujero = false;
+                foreach (var pozo in ListaPozos)
+                {
+                    if (Escenario.testAABBAABBXZIn(boundingBox, pozo.BoundingBox))
+                    {
+                        Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
+                        agujero = true;
+                        break;
+                    }
+                }
+                if (!agujero)
+                    Colisionador = pisoCastilloMain;
             }
             return Colisionador;
         }

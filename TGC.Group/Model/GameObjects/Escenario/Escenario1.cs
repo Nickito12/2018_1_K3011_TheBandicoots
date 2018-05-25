@@ -17,25 +17,41 @@ namespace TGC.Group.Model.GameObjects
     public class Escenario1 : Escenario
     {
         // El piso del mapa/escenario
-        private TgcPlane Piso;
+        private TgcPlane PisoSelva;
+        private TgcPlane PisoCastilloEntrada;
+        private TgcPlane PisoCastilloMain;
 
         public override void Init(GameModel _env)
         {
             Env = _env;
             // Reset pj (Moverlo a la posicion inicial del escenario)
             Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
-            //Crear piso
-            var PisoWidth = 1200f;
-            var PisoLength = PisoWidth;
-            var PisoTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "pasto.jpg");
-            Piso = new TgcPlane(new TGCVector3(/*PisoWidth * -0.5f*/-200, 0f, PisoWidth * -0.5f), new TGCVector3(PisoWidth, 5f, PisoWidth), TgcPlane.Orientations.XZplane, PisoTexture, 15, 15);
+            //Crear pisos
+            var PisoSelvaWidth = 1200f;
+            var PisoSelvaLength = PisoSelvaWidth;
+            var PisoSelvaTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "pasto.jpg");
+            PisoSelva = new TgcPlane(new TGCVector3(-200f, 0f, -100f), new TGCVector3(PisoSelvaWidth, 5f, PisoSelvaWidth), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva);
+
+            var PisoCastilloEntradaWidth = 250f;
+            var PisoCastilloEntradaLength = 550f;
+            var PisoCastilloEntradaTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "rockfloor.jpg");
+            PisoCastilloEntrada = new TgcPlane(new TGCVector3(700f, 0f, -650f), new TGCVector3(PisoCastilloEntradaWidth, 5f, PisoCastilloEntradaLength), TgcPlane.Orientations.XZplane, PisoCastilloEntradaTexture, 15, 15);
+            ListaPlanos.Add(PisoCastilloEntrada);
+
+            var PisoCastilloMainWidth = 800f;
+            var PisoCastilloMainLength = 800f;
+            var PisoCastilloMainTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "rockfloor.jpg");
+            PisoCastilloMain = new TgcPlane(new TGCVector3(950f, 0.1f, -650f), new TGCVector3(PisoCastilloMainWidth, 5f, PisoCastilloMainLength), TgcPlane.Orientations.XZplane, PisoCastilloMainTexture, 15, 15);
+            ListaPlanos.Add(PisoCastilloMain);
+
 
             //Crear SkyBox
             CreateSkyBox(TGCVector3.Empty, new TGCVector3(10000, 10000, 10000), "SkyBox1");
 
             // Cargar escena
             Loader = new TgcSceneLoader();
-            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd19-TgcScene.xml");
+            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd30-TgcScene.xml");
 
             // Pozos
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
@@ -61,11 +77,18 @@ namespace TGC.Group.Model.GameObjects
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
 
             // Cajas Empujables
-            TgcMesh MeshEmpujable = Scene.Meshes.Find(m => m.Name.Contains("Caja3"));
+            /*TgcMesh MeshEmpujable = Scene.Meshes.Find(m => m.Name.Contains("Caja3"));
             Scene.Meshes.Remove(Scene.Meshes.Find(m => m.Name.Contains("Caja3")));
             TGCVector3 PosicionMeshEmpujable = MeshEmpujable.Position;
             CajaEmpujable CajaEmpujable = new CajaEmpujable(MeshEmpujable, new TGCVector3(0f, 0f, 0f));
-            ListaCajasEmpujables.Add(CajaEmpujable);
+            ListaCajasEmpujables.Add(CajaEmpujable);*/
+            foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Caja3")))
+            {
+                Scene.Meshes.Remove(mesh);
+                TGCVector3 PosicionMeshEmpujable = mesh.Position;
+                CajaEmpujable CajaEmpujable = new CajaEmpujable(mesh, new TGCVector3(0f, 0f, 0f));
+                ListaCajasEmpujables.Add(CajaEmpujable);
+            }
 
             // Setear cancion
             cancionPcpal.FileName = Env.MediaDir + "\\Sound\\crash.mp3";
@@ -113,10 +136,17 @@ namespace TGC.Group.Model.GameObjects
                 Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false, 0f, false));
             }
 
-            //se agrega plataforma giratoria
+            //se agregan plataformas giratorias
             var meshGiratorio = Plataformas[0].Mesh.clone("pGira");
             Plataformas.Add(new PlataformaGiratoria(20, meshGiratorio, new TGCVector3(260f, 0f, 275f), 5f));
             Scene.Meshes.Add(meshGiratorio);
+            var meshGiratorio2 = ListaPlataformaZ[4].clone("pGira2");
+            Plataformas.Add(new PlataformaGiratoria(32, meshGiratorio2, new TGCVector3(75f, 0f, -20f), 5f));
+            Scene.Meshes.Add(meshGiratorio2);
+            var meshGiratorio3 = ListaPlataformaZ[4].clone("pGira3");
+            Plataformas.Add(new PlataformaGiratoria(31, meshGiratorio3, new TGCVector3(-135f, 0f, 575f), 5f));
+            Scene.Meshes.Add(meshGiratorio3);
+
             foreach (var plataforma in Plataformas)
             {
                 ListaPlataformas.Add(plataforma.Mesh);
@@ -131,19 +161,36 @@ namespace TGC.Group.Model.GameObjects
 
         public override void Render()
         {
-            Piso.Render();
+            foreach(var plano in ListaPlanos)
+            {
+                plano.Render();
+            }
             base.Render();
         }
 
         public override void Dispose()
         {
-            Piso.Dispose();
+            foreach(var plano in ListaPlanos)
+            {
+                plano.Dispose();
+            }
             base.Dispose();
         }
 
-        public override TgcBoundingAxisAlignBox ColisionConPiso(TgcBoundingAxisAlignBox boundingBox)
+        //hacer funcionar con planos distintos
+        public override TgcBoundingAxisAlignBox ColisionConPisoSelva(TgcBoundingAxisAlignBox boundingBox)
         {
-            return Escenario.testAABBAABB(Piso.BoundingBox, boundingBox) ? Piso.BoundingBox : null;
+            return Escenario.testAABBAABB(PisoSelva.BoundingBox, boundingBox) ? PisoSelva.BoundingBox : null;
+        }
+
+        public override TgcBoundingAxisAlignBox ColisionConPisoCastillo(TgcBoundingAxisAlignBox boundingBox)
+        {
+            return Escenario.testAABBAABB(PisoCastilloEntrada.BoundingBox, boundingBox) ? PisoCastilloEntrada.BoundingBox : null;
+        }
+
+        public override TgcBoundingAxisAlignBox ColisionConPisoCastilloMain(TgcBoundingAxisAlignBox boundingBox)
+        {
+            return Escenario.testAABBAABB(PisoCastilloMain.BoundingBox, boundingBox) ? PisoCastilloMain.BoundingBox : null;
         }
 
         public List<TgcMesh> listaColisionesConCamara()
