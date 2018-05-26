@@ -147,7 +147,7 @@ namespace TGC.Group.Model.GameObjects
             {
                 var aabb = caja.Mesh.BoundingBox;
                 if (!Escenario.testAABBAABB(aabb, boundingBox))
-                    break;
+                    continue;
                 var oldCajaPos = caja.Mesh.Position;
                 caja.ColisionXZ(Env.Personaje);
                 bool colisionDeCaja = false;
@@ -156,7 +156,7 @@ namespace TGC.Group.Model.GameObjects
                     if (Escenario.testAABBAABB(aabb, Mesh.BoundingBox))
                     {
                         colisionDeCaja = true;
-                        break;
+                        continue;
                     }
                 }
                 if (colisionDeCaja)
@@ -170,7 +170,7 @@ namespace TGC.Group.Model.GameObjects
                     if (Escenario.testAABBAABBXZIn(aabb, pozo.BoundingBox))
                     {
                         caja.caer();
-                        break;
+                        continue;
                     }
                 }
             }
@@ -200,9 +200,7 @@ namespace TGC.Group.Model.GameObjects
             }
             return Colisionador;
         }
-        abstract public TgcBoundingAxisAlignBox ColisionConPisoSelva(TgcBoundingAxisAlignBox boundingBox);
-        abstract public TgcBoundingAxisAlignBox ColisionConPisoCastillo(TgcBoundingAxisAlignBox boundingBox);
-        abstract public TgcBoundingAxisAlignBox ColisionConPisoCastilloMain(TgcBoundingAxisAlignBox boundingBox);
+        abstract public TgcBoundingAxisAlignBox ColisionConPiso(TgcBoundingAxisAlignBox boundingBox);
 
         public override TgcBoundingAxisAlignBox ColisionY(TgcBoundingAxisAlignBox boundingBox)
         {
@@ -233,8 +231,8 @@ namespace TGC.Group.Model.GameObjects
             }
             if (Colisionador != null)
                 return Colisionador;
-            var pisoSelva = ColisionConPisoSelva(boundingBox);
-            if (pisoSelva != null)
+            var piso = ColisionConPiso(boundingBox);
+            if (piso != null)
             {
                 bool agujero = false;
                 foreach (var pozo in ListaPozos)
@@ -247,39 +245,7 @@ namespace TGC.Group.Model.GameObjects
                     }
                 }
                 if (!agujero)
-                    Colisionador = pisoSelva;
-            }
-            var pisoCastillo = ColisionConPisoCastillo(boundingBox);
-            if (pisoCastillo != null)
-            {
-                bool agujero = false;
-                foreach (var pozo in ListaPozos)
-                {
-                    if (Escenario.testAABBAABBXZIn(boundingBox, pozo.BoundingBox))
-                    {
-                        Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
-                        agujero = true;
-                        break;
-                    }
-                }
-                if (!agujero)
-                    Colisionador = pisoCastillo;
-            }
-            var pisoCastilloMain = ColisionConPisoCastilloMain(boundingBox);
-            if (pisoCastilloMain != null)
-            {
-                bool agujero = false;
-                foreach (var pozo in ListaPozos)
-                {
-                    if (Escenario.testAABBAABBXZIn(boundingBox, pozo.BoundingBox))
-                    {
-                        Env.Personaje.SetTipoColisionActual(TiposColision.Pozo);
-                        agujero = true;
-                        break;
-                    }
-                }
-                if (!agujero)
-                    Colisionador = pisoCastilloMain;
+                    Colisionador = piso;
             }
             return Colisionador;
         }

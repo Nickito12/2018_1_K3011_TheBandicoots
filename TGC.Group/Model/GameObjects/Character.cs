@@ -95,6 +95,12 @@ namespace TGC.Group.Model.GameObjects
                 VelocidadMovimiento += 10 * ElapsedTime;
             if (Input.keyDown(Key.F9))
                 VelocidadMovimiento -= 10 * ElapsedTime;
+            if (Input.keyDown(Key.G))
+            {
+                VelocidadMovimiento = 250;
+                VelocidadSalto = 250;
+                VelocidadTerminal = -150;
+            }
             if (Input.keyPressed(Key.H))
                 ShowHelp = !ShowHelp;
             if (Input.keyDown(Key.F10))
@@ -175,7 +181,8 @@ namespace TGC.Group.Model.GameObjects
                 Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.Grilla.DrawCount + "/" + Env.Escenario.Grilla.modelos.Count, 0, textY, Color.OrangeRed); textY += 20;
                 Env.DrawText.drawText("F3: Mostrar KdTree", 0, textY, Color.OrangeRed); textY += 20;
                 Env.DrawText.drawText("F4: WireFrame", 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("F5: Activar/Desactivar colisiones de camara /n asdasd", 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("F5: Activar/Desactivar colisiones de camara", 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("G: Modo god", 0, textY, Color.OrangeRed); textY += 20;
             }
             Mesh.Render();
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))

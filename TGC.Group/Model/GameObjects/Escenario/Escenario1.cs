@@ -53,6 +53,10 @@ namespace TGC.Group.Model.GameObjects
             Loader = new TgcSceneLoader();
             Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd30-TgcScene.xml");
 
+            foreach(var m in Scene.Meshes.FindAll(m=>m.Name.Contains("ParedCastillo"))) {
+                m.BoundingBox = new TgcBoundingAxisAlignBox(m.BoundingBox.PMin - new TGCVector3(5, 0, 5), m.BoundingBox.PMax+ new TGCVector3(5, 0, 5));
+            }
+
             // Pozos
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
             foreach (var mesh in ListaPozos)
@@ -177,20 +181,12 @@ namespace TGC.Group.Model.GameObjects
             base.Dispose();
         }
 
-        //hacer funcionar con planos distintos
-        public override TgcBoundingAxisAlignBox ColisionConPisoSelva(TgcBoundingAxisAlignBox boundingBox)
+        public override TgcBoundingAxisAlignBox ColisionConPiso(TgcBoundingAxisAlignBox boundingBox)
         {
-            return Escenario.testAABBAABB(PisoSelva.BoundingBox, boundingBox) ? PisoSelva.BoundingBox : null;
-        }
-
-        public override TgcBoundingAxisAlignBox ColisionConPisoCastillo(TgcBoundingAxisAlignBox boundingBox)
-        {
-            return Escenario.testAABBAABB(PisoCastilloEntrada.BoundingBox, boundingBox) ? PisoCastilloEntrada.BoundingBox : null;
-        }
-
-        public override TgcBoundingAxisAlignBox ColisionConPisoCastilloMain(TgcBoundingAxisAlignBox boundingBox)
-        {
-            return Escenario.testAABBAABB(PisoCastilloMain.BoundingBox, boundingBox) ? PisoCastilloMain.BoundingBox : null;
+            foreach (var p in ListaPlanos)
+                if (Escenario.testAABBAABB(p.BoundingBox, boundingBox))
+                    return p.BoundingBox;
+            return null;
         }
 
         public List<TgcMesh> listaColisionesConCamara()
