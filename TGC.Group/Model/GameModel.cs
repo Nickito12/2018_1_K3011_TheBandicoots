@@ -78,11 +78,11 @@ namespace TGC.Group.Model
         public override void Render()
         {
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
-            PreRender();
-            Personaje.Render();
+            //PreRender();
+            
             Escenario.Render();
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
-            PostRender();
+            //PostRender();
         }
 
         /// <summary>
@@ -96,5 +96,8 @@ namespace TGC.Group.Model
             foreach(GameObject Esc in Escenarios)
                 Esc.Dispose();
         }
+        public void limpiarTexturas() { ClearTextures(); }
+        public void RenderizaAxis() { RenderAxis(); }
+        public void RenderizaFPS() { RenderFPS(); }
     }
 }

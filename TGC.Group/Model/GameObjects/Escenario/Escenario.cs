@@ -1,15 +1,17 @@
 ﻿using TGC.Core.Geometry;
 using TGC.Core.Mathematica;
 using TGC.Core.Textures;
+using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
 using TGC.Core.Terrain;
 using TGC.Core.SceneLoader;
-using Microsoft.DirectX.DirectInput;
 using TGC.Group.Model.Estructuras;
 using System.Collections.Generic;
 using TGC.Core.Sound;
+using System.Drawing;
+using Microsoft.DirectX.DirectInput;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -30,7 +32,38 @@ namespace TGC.Group.Model.GameObjects
         protected const float ROTATION_SPEED = 1f;
         protected List<Plataforma> Plataformas;
         protected List<TgcPlane> ListaPlanos = new List<TgcPlane>();
+        protected Microsoft.DirectX.Direct3D.Effect EfectoRender3D;
+        protected Microsoft.DirectX.Direct3D.Effect EfectoRender2D;
+        protected Texture Text;
+        public Surface pOldRT;
+        public Surface pSurf;
+        public VertexBuffer g_pVBV3D;
+        public Surface g_pDepthStencil;
+        public Surface pOldDS;
 
+        public Escenario()
+        {
+            var d3dDevice = D3DDevice.Instance.Device;
+            g_pVBV3D = new VertexBuffer(typeof(CustomVertex.PositionTextured),
+                4, d3dDevice , Usage.Dynamic | Usage.WriteOnly,
+                CustomVertex.PositionTextured.Format, Pool.Default);
+            //FullScreen Quad
+            CustomVertex.PositionTextured[] vertices =
+            {
+                new CustomVertex.PositionTextured(-1, 1, 1, 0, 0),
+                new CustomVertex.PositionTextured(1, 1, 1, 1, 0),
+                new CustomVertex.PositionTextured(-1, -1, 1, 0, 1),
+                new CustomVertex.PositionTextured(1, -1, 1, 1, 1)
+            };
+            g_pVBV3D.SetData(vertices, 0, LockFlags.None);
+            // inicializo el render target
+            Text = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
+                , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                Format.X8R8G8B8, Pool.Default);
+            g_pDepthStencil = d3dDevice.CreateDepthStencilSurface(d3dDevice.PresentationParameters.BackBufferWidth,
+                d3dDevice.PresentationParameters.BackBufferHeight,
+                DepthFormat.D24S8, MultiSampleType.None, 0, true);
+        }
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
         {
             scale = scale ?? new TGCVector3(1, 1, 1);
@@ -249,7 +282,63 @@ namespace TGC.Group.Model.GameObjects
             }
             return Colisionador;
         }
+        public void preRender3D()
+        {
 
+            Env.limpiarTexturas();
+            var device = D3DDevice.Instance.Device;
+
+            //Cargar variables de shader
+
+            // dibujo la escena una textura
+            EfectoRender3D.Technique = "DefaultTechnique";
+            // guardo el Render target anterior y seteo la textura como render target
+            pOldRT = device.GetRenderTarget(0);
+            pSurf = Text.GetSurfaceLevel(0);
+            device.SetRenderTarget(0, pSurf);
+            pOldDS = device.DepthStencilSurface;
+            device.DepthStencilSurface = g_pDepthStencil;
+
+            device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+
+            device.BeginScene();
+        }
+        public void postRender3D()
+        {
+            D3DDevice.Instance.Device.EndScene();
+            //TextureLoader.Save(Env.ShadersDir + "render_target.bmp", ImageFileFormat.Bmp, Text);
+            pSurf.Dispose();
+        }
+        public void render2D()
+        {
+            var device = D3DDevice.Instance.Device;
+            device.DepthStencilSurface = pOldDS;
+            device.SetRenderTarget(0, pOldRT);
+
+            device.BeginScene();
+
+            EfectoRender2D.Technique = "Sharpen";
+            if(Env.Input.keyDown(Key.F6))
+                EfectoRender2D.Technique = "Copy";
+            device.VertexFormat = CustomVertex.PositionTextured.Format;
+            device.SetStreamSource(0, g_pVBV3D, 0);
+            EfectoRender2D.SetValue("g_RenderTarget", Text);
+
+            device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            EfectoRender2D.Begin(FX.None);
+            EfectoRender2D.BeginPass(0);
+            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            EfectoRender2D.EndPass();
+            EfectoRender2D.End();
+            device.EndScene();
+
+            device.BeginScene();
+            Env.RenderizaAxis();
+            Env.RenderizaFPS();
+            device.EndScene();
+
+            device.Present();
+        }
         public override void Update()
         {
             if (Env.ElapsedTime > 10000)

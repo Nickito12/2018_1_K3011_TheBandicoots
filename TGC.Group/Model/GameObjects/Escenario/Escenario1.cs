@@ -7,10 +7,10 @@ using TGC.Core.Collision;
 using TGC.Core.Sound;
 using TGC.Core.Terrain;
 using TGC.Core.SceneLoader;
-using Microsoft.DirectX.DirectInput;
 using System.Collections.Generic;
 using TGC.Group.Model.Estructuras;
 using Microsoft.DirectX.Direct3D;
+using System;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -24,6 +24,22 @@ namespace TGC.Group.Model.GameObjects
         public override void Init(GameModel _env)
         {
             Env = _env;
+            string compilationErrors;
+            var d3dDevice = D3DDevice.Instance.Device;
+            EfectoRender3D = Effect.FromFile(d3dDevice, Env.ShadersDir + "render3D.fx",
+                null, null, ShaderFlags.PreferFlowControl, null, out compilationErrors);
+            if (EfectoRender3D == null)
+            {
+                throw new Exception("Error al cargar shader. Errores: " + compilationErrors);
+            }
+            EfectoRender2D = Effect.FromFile(d3dDevice, Env.ShadersDir + "render2D.fx",
+                null, null, ShaderFlags.PreferFlowControl, null, out compilationErrors);
+            if (EfectoRender2D == null)
+            {
+                throw new Exception("Error al cargar shader. Errores: " + compilationErrors);
+            }
+            EfectoRender2D.SetValue("screen_dx", d3dDevice.PresentationParameters.BackBufferWidth);
+            EfectoRender2D.SetValue("screen_dy", d3dDevice.PresentationParameters.BackBufferHeight);
             // Reset pj (Moverlo a la posicion inicial del escenario)
             Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
             //Crear pisos
@@ -165,11 +181,15 @@ namespace TGC.Group.Model.GameObjects
 
         public override void Render()
         {
-            foreach(var plano in ListaPlanos)
+            preRender3D();
+            base.Render();
+            foreach (var plano in ListaPlanos)
             {
                 plano.Render();
             }
-            base.Render();
+            Env.Personaje.Render();
+            postRender3D();
+            render2D(); 
         }
 
         public override void Dispose()

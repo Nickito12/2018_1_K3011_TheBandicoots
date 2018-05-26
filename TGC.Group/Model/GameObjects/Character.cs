@@ -168,21 +168,23 @@ namespace TGC.Group.Model.GameObjects
         public override void Render()
         {
             int textY = 20;
-            Env.DrawText.drawText("H: Mostrar Ayuda", 0, textY, Color.OrangeRed); textY += 20;
+            var c = Color.BlanchedAlmond;
+            Env.DrawText.drawText("H: Mostrar Ayuda", 0, textY, c); textY += 20;
             if (ShowHelp)
             {
-                Env.DrawText.drawText("[Pos pj]: " + TGCVector3.PrintVector3(Mesh.Position), 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("Velocidad Y: " + VelocidadY.ToString(), 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("Ctrl: Render BB", 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("Shift: Crouch", 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("R: Reiniciar Posición", 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("F8/F9: +/- velocidad (" + VelocidadMovimiento + ")", 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("F10/F11: +/- salto (" + VelocidadSalto + ")", 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.Grilla.DrawCount + "/" + Env.Escenario.Grilla.modelos.Count, 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("F3: Mostrar KdTree", 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("F4: WireFrame", 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("F5: Activar/Desactivar colisiones de camara", 0, textY, Color.OrangeRed); textY += 20;
-                Env.DrawText.drawText("G: Modo god", 0, textY, Color.OrangeRed); textY += 20;
+                Env.DrawText.drawText("[Pos pj]: " + TGCVector3.PrintVector3(Mesh.Position), 0, textY, c); textY += 20;
+                Env.DrawText.drawText("Velocidad Y: " + VelocidadY.ToString(), 0, textY, c); textY += 20;
+                Env.DrawText.drawText("Ctrl: Render BB", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("Shift: Crouch", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("R: Reiniciar Posición", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("F8/F9: +/- velocidad (" + VelocidadMovimiento + ")", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("F10/F11: +/- salto (" + VelocidadSalto + ")", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("Mesh renderizados: " + Env.Escenario.Grilla.DrawCount + "/" + Env.Escenario.Grilla.modelos.Count, 0, textY, c); textY += 20;
+                Env.DrawText.drawText("F3: Mostrar KdTree", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("F4: WireFrame", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("F5: Activar/Desactivar colisiones de camara", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("G: Modo god", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("F6: Desactivar sharpen", 0, textY, c); textY += 20;
             }
             Mesh.Render();
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
