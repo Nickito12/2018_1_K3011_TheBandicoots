@@ -73,6 +73,9 @@ namespace TGC.Group.Model.GameObjects
                 m.BoundingBox = new TgcBoundingAxisAlignBox(m.BoundingBox.PMin - new TGCVector3(5, 0, 5), m.BoundingBox.PMax+ new TGCVector3(5, 0, 5));
             }
 
+            var columnaSinBB = Scene.Meshes.Find(m => m.Name.Contains("ParedCastillo441"));
+            columnaSinBB.BoundingBox = new TgcBoundingAxisAlignBox(columnaSinBB.BoundingBox.PMin + new TGCVector3(5, 0, 5), columnaSinBB.BoundingBox.PMax - new TGCVector3(5, 0, 5));
+            
             // Pozos
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
             foreach (var mesh in ListaPozos)
