@@ -28,6 +28,7 @@ namespace TGC.Group.Model.GameObjects
         protected List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
         protected List<TgcMesh> MeshConMovimiento = new List<TgcMesh>();
         protected List<CajaEmpujable> ListaCajasEmpujables = new List<CajaEmpujable>();
+        protected List<TgcMesh> ListaParedes = new List<TgcMesh>();
         protected TgcMp3Player cancionPcpal = new TgcMp3Player();
         protected const float ROTATION_SPEED = 1f;
         protected List<Plataforma> Plataformas;
