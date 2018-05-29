@@ -317,6 +317,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
             device.DepthStencilSurface = pOldDS;
             device.SetRenderTarget(0, pOldRT);
 
+            var oldFillMode = D3DDevice.Instance.Device.RenderState.FillMode;
+            D3DDevice.Instance.Device.RenderState.FillMode = FillMode.Solid;
             device.BeginScene();
 
             EfectoRender2D.Technique = "Sharpen";
@@ -340,6 +342,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             device.EndScene();
 
             device.Present();
+            D3DDevice.Instance.Device.RenderState.FillMode = oldFillMode;
         }
         public override void Update()
         {
