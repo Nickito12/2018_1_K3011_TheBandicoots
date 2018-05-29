@@ -6,6 +6,7 @@ using TGC.Core.Geometry;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Group.Model.GameObjects;
+using TGC.Group.Model.GameObjects.Escenario;
 
 namespace TGC.Group.Model.Estructuras
 {

@@ -13,7 +13,7 @@ using TGC.Core.Sound;
 using System.Drawing;
 using Microsoft.DirectX.DirectInput;
 
-namespace TGC.Group.Model.GameObjects
+namespace TGC.Group.Model.GameObjects.Escenario
 {
     public abstract class Escenario : GameObject
     {
@@ -92,7 +92,8 @@ namespace TGC.Group.Model.GameObjects
             SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, TexturesPath + "Front.jpg");
             SkyBox.Init();
         }
-        public override void Render()
+        public override void Render() { baseRender(); }
+        public void baseRender()
         {
             SkyBox.Render();
             //Dibujar bounding boxes de los mesh (Debugging)
@@ -351,12 +352,21 @@ namespace TGC.Group.Model.GameObjects
             {
                 plataforma.Update(Env.ElapsedTime);
             }
-            Env.NuevaCamara.UpdateCamera(Env);
+            Env.NuevaCamara.UpdateCamera(this);
             if (cancionPcpal.getStatus() != TgcMp3Player.States.Playing)
             {
                 cancionPcpal.closeFile();
                 cancionPcpal.play(true);
             }
+            Env.Personaje.Update();
+        }
+        public virtual List<TgcMesh> listaColisionesConCamara()
+        {
+            return new List<TgcMesh>();
+        }
+        public virtual void Reset()
+        {
+            Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
         }
     }
 }

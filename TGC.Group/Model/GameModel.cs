@@ -8,6 +8,7 @@ using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Group.Model.GameObjects;
 using TGC.Core.Collision;
+using TGC.Group.Model.GameObjects.Escenario;
 
 namespace TGC.Group.Model
 {
@@ -21,9 +22,9 @@ namespace TGC.Group.Model
     {
         // El personaje principal
         public Character Personaje = new Character();
-        public Escenario1 Escenario;
+        public Escenario Escenario;
         // Para precargar todos los escenarios
-        public List<GameObject> Escenarios = new List<GameObject>();
+        public List<Escenario> Escenarios = new List<Escenario>();
         public TgcThirdPersonCamera NuevaCamara;
         public float CameraOffsetHeight = 20;
         public float CameraOffsetForward = -75;
@@ -52,6 +53,9 @@ namespace TGC.Group.Model
             Camara = NuevaCamara;
             Personaje.Init(this);
             Escenario = new Escenario1();
+            Escenario.Init(this);
+            Escenarios.Add(Escenario);
+            Escenario = new EscenarioMenu();
             Escenarios.Add(Escenario);
             Personaje.Init(this);
             Escenario.Init(this);
@@ -66,7 +70,6 @@ namespace TGC.Group.Model
         {
             PreUpdate();
             Escenario.Update();
-            Personaje.Update();
             PostUpdate();
         }
 
@@ -99,5 +102,10 @@ namespace TGC.Group.Model
         public void limpiarTexturas() { ClearTextures(); }
         public void RenderizaAxis() { RenderAxis(); }
         public void RenderizaFPS() { RenderFPS(); }
+        public void CambiarEscenario(int num)
+        {
+            Escenario = Escenarios[0];
+            Escenario.Reset();
+        }
     }
 }

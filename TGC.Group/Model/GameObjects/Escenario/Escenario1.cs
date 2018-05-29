@@ -12,7 +12,7 @@ using TGC.Group.Model.Estructuras;
 using Microsoft.DirectX.Direct3D;
 using System;
 
-namespace TGC.Group.Model.GameObjects
+namespace TGC.Group.Model.GameObjects.Escenario
 {
     public class Escenario1 : Escenario
     {
@@ -40,8 +40,7 @@ namespace TGC.Group.Model.GameObjects
             }
             EfectoRender2D.SetValue("screen_dx", d3dDevice.PresentationParameters.BackBufferWidth);
             EfectoRender2D.SetValue("screen_dy", d3dDevice.PresentationParameters.BackBufferHeight);
-            // Reset pj (Moverlo a la posicion inicial del escenario)
-            Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
+            Reset();
             //Crear pisos
             var PisoSelvaWidth = 1200f;
             var PisoSelvaLength = PisoSelvaWidth;
@@ -183,6 +182,14 @@ namespace TGC.Group.Model.GameObjects
             Grilla.createDebugMeshes();
         }
 
+        public override void Reset()
+        {
+            // Reset pj (Moverlo a la posicion inicial del escenario)
+            Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
+            Env.NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0, 0, 0), 20, -75, Env.Input);
+            Env.Camara = Env.NuevaCamara;
+        }
+
         public override void Render()
         {
             preRender3D();
@@ -213,7 +220,7 @@ namespace TGC.Group.Model.GameObjects
             return null;
         }
 
-        public List<TgcMesh> listaColisionesConCamara()
+        public override List<TgcMesh> listaColisionesConCamara()
         {
             return Scene.Meshes.FindAll(m => !ListaMeshesSinColision.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m));
         }

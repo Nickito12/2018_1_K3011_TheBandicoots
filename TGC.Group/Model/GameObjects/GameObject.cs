@@ -10,7 +10,7 @@ namespace TGC.Group.Model.GameObjects
     public abstract class GameObject
     {
         // La referencia al GameModel del juego
-        protected GameModel Env;
+        public GameModel Env;
         public enum TiposColision { SinColision, Pozo, Caja, PisoResbaloso, Techo };
 
         public abstract void Init(GameModel _env);

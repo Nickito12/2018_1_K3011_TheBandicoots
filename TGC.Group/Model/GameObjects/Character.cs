@@ -17,8 +17,6 @@ namespace TGC.Group.Model.GameObjects
     {
         // El mesh del personaje
         public TgcSkeletalMesh Mesh;
-        //Referencia a la camara para facil acceso
-        TgcThirdPersonCamera Camara;
 
         float VelocidadY = 0f;
         float Gravedad = -60f;
@@ -44,7 +42,6 @@ namespace TGC.Group.Model.GameObjects
         public override void Init(GameModel _env)
         {
             Env = _env;
-            Camara = Env.NuevaCamara;
 
             var SkeletalLoader = new TgcSkeletalLoader();
             Mesh =
@@ -76,7 +73,7 @@ namespace TGC.Group.Model.GameObjects
             var ElapsedTime = Env.ElapsedTime;
             var Input = Env.Input;
             float VelocidadAdelante = 0f;
-            var Diff = Camara.LookAt - Camara.Position;
+            var Diff = Env.NuevaCamara.LookAt - Env.NuevaCamara.Position;
             Diff.Y = 0;
             TipoColisionActual = TiposColision.SinColision;
 
@@ -113,11 +110,11 @@ namespace TGC.Group.Model.GameObjects
                 VelocidadSalto -= 10 * ElapsedTime;
                 VelocidadTerminal += 2 * ElapsedTime;
             }
-            Camara.keyboardMovement = 0;
+            Env.NuevaCamara.keyboardMovement = 0;
             if (Input.keyDown(Key.D) || Input.keyDown(Key.RightArrow))
-                Camara.keyboardMovement += 1;
+                Env.NuevaCamara.keyboardMovement += 1;
             if (Input.keyDown(Key.A) || Input.keyDown(Key.LeftArrow))
-                Camara.keyboardMovement -= 1;
+                Env.NuevaCamara.keyboardMovement -= 1;
             if (Input.keyDown(Key.R))
                 Mesh.Position = new TGCVector3(0, 1, 0);
 
@@ -153,8 +150,8 @@ namespace TGC.Group.Model.GameObjects
                     SetAnimation("StandBy");
             
 
-            Camara.Target = Mesh.Position;
-            Mesh.Rotation = new TGCVector3(0, Camara.rotY + FastMath.PI, 0);
+            Env.NuevaCamara.Target = Mesh.Position;
+            Mesh.Rotation = new TGCVector3(0, Env.NuevaCamara.rotY + FastMath.PI, 0);
             if (updateAnimation)
                 Mesh.updateAnimation(ElapsedTime);
         }
@@ -206,7 +203,7 @@ namespace TGC.Group.Model.GameObjects
         internal void Move(TGCVector3 posPj, TGCVector3 posCamara)
         { 
             Mesh.Position = posPj;
-            Camara.SetCamera(posCamara, Mesh.Position); 
+            Env.NuevaCamara.SetCamera(posCamara, Mesh.Position); 
         }
 
         public bool SetAnimation(string animationName, bool loop=true)

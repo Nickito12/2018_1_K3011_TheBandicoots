@@ -94,6 +94,7 @@
     <Compile Include="Model\Estructuras\KdTreeBuilder.cs" />
     <Compile Include="Model\Estructuras\KdTreeNode.cs" />
     <Compile Include="Model\GameObjects\CajasEmpujables.cs" />
+    <Compile Include="Model\GameObjects\Escenario\EscenarioMenu.cs" />
     <Compile Include="Model\GameObjects\Plataforma\Plataforma.cs" />
     <Compile Include="Model\GameObjects\Plataforma\PlataformaLineal.cs" />
     <Compile Include="Model\GameObjects\Plataforma\PlataformaGiratoria.cs" />

@@ -5,6 +5,7 @@ using TGC.Core.Collision;
 using System.Collections.Generic;
 using TGC.Core.SceneLoader;
 using Microsoft.DirectX.DirectInput;
+using TGC.Group.Model.GameObjects.Escenario;
 
 namespace TGC.Group.Model
 {
@@ -83,8 +84,9 @@ namespace TGC.Group.Model
 
         }
 
-        public void UpdateCamera(GameModel Modelo)
+        public void UpdateCamera(Escenario Escenario)
         {
+            var Modelo = Escenario.Env;
             if (Modelo.Input.keyPressed(Key.F5))
                 colisiones = !colisiones;
             if(!colisiones)
@@ -101,7 +103,7 @@ namespace TGC.Group.Model
             //Detectar colisiones entre el segmento de recta camara-personaje y todos los objetos del escenario
             TGCVector3 q;
             var minDistSq = FastMath.Pow2(Modelo.CameraOffsetForward);
-            foreach (var obstaculo in Modelo.Escenario.listaColisionesConCamara())
+            foreach (var obstaculo in Escenario.listaColisionesConCamara())
             {
                 //Hay colision del segmento camara-personaje y el objeto
                 if (TgcCollisionUtils.intersectSegmentAABB(target, NextPos, obstaculo.BoundingBox, out q))
