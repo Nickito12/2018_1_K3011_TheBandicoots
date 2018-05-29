@@ -84,8 +84,14 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }
 
             // Alargar algunas AABB
+            var r = new Random();
             foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto"))) {
                 mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
+                mesh.AutoTransform = false;
+                var ang = r.Next(0, 180);
+                var p = (mesh.BoundingBox.PMax + mesh.BoundingBox.PMin)*0.5f;
+                var s = new TGCVector3(((float)r.Next(90, 110))/100f, 1, ((float)r.Next(90, 110))/100f);
+                mesh.Transform = TGCMatrix.Translation(-1 * p) * TGCMatrix.Scaling(s) * TGCMatrix.RotationY(ang)  * TGCMatrix.Translation(p);
             }
             foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto2")))
             {
