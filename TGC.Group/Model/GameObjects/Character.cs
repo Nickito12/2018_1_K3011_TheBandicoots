@@ -62,7 +62,6 @@ namespace TGC.Group.Model.GameObjects
 
             Mesh.playAnimation("StandBy", true);
             // Eventualmente esto lo vamos a hacer manual
-            Mesh.AutoTransform = true;
             Mesh.Scale = new TGCVector3(0.3f, 0.3f, 0.3f);
             Mesh.RotateY(FastMath.ToRad(180f));
         }
@@ -183,6 +182,9 @@ namespace TGC.Group.Model.GameObjects
                 Env.DrawText.drawText("G: Modo god", 0, textY, c); textY += 20;
                 Env.DrawText.drawText("F6: Desactivar sharpen", 0, textY, c); textY += 20;
             }
+            Mesh.Transform = TGCMatrix.Scaling(Mesh.Scale)
+                            * TGCMatrix.RotationYawPitchRoll(Mesh.Rotation.Y, Mesh.Rotation.X, Mesh.Rotation.Z)
+                            * TGCMatrix.Translation(Mesh.Position);
             Mesh.Render();
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
                 Mesh.BoundingBox.Render();
