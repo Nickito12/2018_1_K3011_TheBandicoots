@@ -45,7 +45,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             Env.Camara.SetCamera(pos, new TGCVector3(pos.X, 0, pos.Z-1));
             addButton(0,-15,"Start", ()=> { Env.CambiarEscenario(0); }, Color.YellowGreen);
             //addButton(0, 0, "Options", () => { }, Color.Aqua);
-            addButton(0, 15, "Exit", () => { Application.Exit(); throw new Exception("Closing"); }, Color.Red);
+            addButton(0, 15, "Exit", () => { Environment.Exit(0);  }, Color.Red);
             pickingRay = new TgcPickingRay(Env.Input);
         }
         public override void Render()
