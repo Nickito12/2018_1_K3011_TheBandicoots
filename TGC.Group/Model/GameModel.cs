@@ -8,6 +8,8 @@ using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Group.Model.GameObjects;
 using TGC.Core.Collision;
+using TGC.Group.Model.GameObjects.Menu;
+using Microsoft.DirectX.Direct3D;
 
 namespace TGC.Group.Model
 {
@@ -26,7 +28,8 @@ namespace TGC.Group.Model
         public List<GameObject> Escenarios = new List<GameObject>();
         public TgcThirdPersonCamera NuevaCamara;
         public float CameraOffsetHeight = 20;
-        public float CameraOffsetForward = -75;
+        public float CameraOffsetForward = -75;     
+        public GameMenu menu;
 
 
         /// <summary>
@@ -48,13 +51,16 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Init()
         {
+            var d3dDevice = D3DDevice.Instance.Device;
+            menu = new GameMenu(MediaDir + "\\Menu\\FondoMenu.png", d3dDevice, this);
+           
             NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0,0,0), 20, -75, Input);
             Camara = NuevaCamara;
             Personaje.Init(this);
             Escenario = new Escenario1();
             Escenarios.Add(Escenario);
             Personaje.Init(this);
-            Escenario.Init(this);
+            Escenario.Init(this); 
         }
 
         /// <summary>
@@ -66,6 +72,7 @@ namespace TGC.Group.Model
         {
             PreUpdate();
             Escenario.Update();
+            
             Personaje.Update();
             PostUpdate();
         }
@@ -78,11 +85,11 @@ namespace TGC.Group.Model
         public override void Render()
         {
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
-            //PreRender();
-            
+            PreRender();
+            menu.Render();
             Escenario.Render();
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
-            //PostRender();
+            PostRender();
         }
 
         /// <summary>
@@ -94,8 +101,8 @@ namespace TGC.Group.Model
         {
             Personaje.Dispose();
             foreach(GameObject Esc in Escenarios)
-                Esc.Dispose();
-        }
+                Esc.Dispose(); 
+        } 
         public void limpiarTexturas() { ClearTextures(); }
         public void RenderizaAxis() { RenderAxis(); }
         public void RenderizaFPS() { RenderFPS(); }

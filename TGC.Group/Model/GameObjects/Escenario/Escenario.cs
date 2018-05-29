@@ -70,7 +70,7 @@ namespace TGC.Group.Model.GameObjects
             var Mesh = Loader.loadSceneFromFile(Env.MediaDir + 
                 "Meshes\\" + carpeta + "\\" + nombre + "\\" + 
                 nombre + "-TgcScene.xml").Meshes[0];
-            Mesh.AutoTransform = true;
+            Mesh.AutoTransform = true; //hay que usar matrices segun la correcion del tp.
             Mesh.Position = pos;
             Mesh.Scale = scale.Value;
             Mesh.RotateY(FastMath.ToRad(rotation));
