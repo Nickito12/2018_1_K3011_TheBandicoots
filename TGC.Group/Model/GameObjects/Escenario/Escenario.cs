@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using TGC.Core.Sound;
 using System.Drawing;
 using Microsoft.DirectX.DirectInput;
+using System;
 
 namespace TGC.Group.Model.GameObjects.Escenario
 {
@@ -41,6 +42,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public VertexBuffer g_pVBV3D;
         public Surface g_pDepthStencil;
         public Surface pOldDS;
+        public Texture texturaVida;
 
         public Escenario()
         {
@@ -95,6 +97,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public override void Render() { baseRender(); }
         public void baseRender()
         {
+            RenderHUD();
             SkyBox.Render();
             //Dibujar bounding boxes de los mesh (Debugging)
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
@@ -349,7 +352,13 @@ namespace TGC.Group.Model.GameObjects.Escenario
             if (Env.ElapsedTime > 10000)
                 return;
             if (Env.Personaje.Position().Y <= -100)
-                Env.Personaje.Position(new TGCVector3(0, 1, 0));
+            {
+                Env.Personaje.vidas--;
+                if (Env.Personaje.vidas <= 0)
+                    Env.CambiarEscenario(1);
+                else
+                    Reset();
+            }
             ShowGrilla = Env.Input.keyDown(Key.F3);
             foreach (var plataforma in Plataformas)
             {
@@ -370,6 +379,17 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public virtual void Reset()
         {
             Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
+        }
+        public void RenderHUD()
+        {
+
+            var d3dDevice = D3DDevice.Instance.Device;
+            //TgcTexture textura;
+            var sprite = new Sprite(d3dDevice);
+            sprite.Begin(SpriteFlags.AlphaBlend);
+            for (var i = 0; i < Env.Personaje.vidas; i++)
+                sprite.Draw2D(texturaVida, Rectangle.Empty, new SizeF(32, 32), new PointF(10+32*i, 10), Color.Red);
+            sprite.End();
         }
     }
 }

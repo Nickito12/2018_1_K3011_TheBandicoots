@@ -35,7 +35,7 @@ namespace TGC.Group.Model.GameObjects
         private TGCVector3 oldPos;
         TgcMp3Player woah = new TgcMp3Player();
         bool ShowHelp = false;
-
+        public int vidas = 3;
         private TGCVector3 PosBeforeMovingInXZ;  // global 
 
 

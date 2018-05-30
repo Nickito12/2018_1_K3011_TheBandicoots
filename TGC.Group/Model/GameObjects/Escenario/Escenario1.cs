@@ -20,6 +20,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
         private TgcPlane PisoSelva;
         private TgcPlane PisoCastilloEntrada;
         private TgcPlane PisoCastilloMain;
+        private TgcBoundingAxisAlignBox checkpoint = new TgcBoundingAxisAlignBox(
+             new TGCVector3(799, 0, -97), new TGCVector3(870, 1000, -4));
+        private bool checkpointReached = false;
 
         public override void Init(GameModel _env)
         {
@@ -40,6 +43,14 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }
             EfectoRender2D.SetValue("screen_dx", d3dDevice.PresentationParameters.BackBufferWidth);
             EfectoRender2D.SetValue("screen_dy", d3dDevice.PresentationParameters.BackBufferHeight);
+            try
+            {
+                texturaVida = TextureLoader.FromFile(d3dDevice, Env.MediaDir + "\\Menu\\heart.png");
+            }
+            catch
+            {
+                throw new Exception(string.Format("Error at loading texture: {0}", Env.MediaDir + "\\Menu\\heart.png"));
+            }
             Reset();
             //Crear pisos
             var PisoSelvaWidth = 1200f;
@@ -190,14 +201,19 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         public override void Reset()
         {
-            // Reset pj (Moverlo a la posicion inicial del escenario)
-            Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
+            // Reset pj (Moverlo a la posicion inicial del escenario
+            if (checkpointReached)
+                Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
+            else
+                Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
             Env.NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0, 0, 0), 20, -75, Env.Input);
             Env.Camara = Env.NuevaCamara;
         }
 
         public override void Render()
         {
+            if (!checkpointReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint))
+                checkpointReached = true;
             preRender3D();
             base.Render();
             foreach (var plano in ListaPlanos)

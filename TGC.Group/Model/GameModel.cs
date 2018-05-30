@@ -69,7 +69,8 @@ namespace TGC.Group.Model
         public override void Update()
         {
             PreUpdate();
-            Escenario.Update();
+            if(Escenario!=null)
+                Escenario.Update();
             PostUpdate();
         }
 
@@ -104,7 +105,7 @@ namespace TGC.Group.Model
         public void RenderizaFPS() { RenderFPS(); }
         public void CambiarEscenario(int num)
         {
-            Escenario = Escenarios[0];
+            Escenario = Escenarios[num];
             Escenario.Reset();
         }
     }

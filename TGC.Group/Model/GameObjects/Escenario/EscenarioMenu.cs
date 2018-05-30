@@ -121,9 +121,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public override void Init(GameModel _env)
         {
             base.Init(_env);
-            Env.Camara = new Core.Camara.TgcCamera();
-            pos = new TGCVector3(1200, 800, -300);
-            Env.Camara.SetCamera(pos, new TGCVector3(pos.X, 0, pos.Z-1));
+            Reset();
             buttons.Add(new SpriteButton(pos, 0, -15, Env.MediaDir + "\\Menu\\BotonIniciarPartida.jpg", () => { Env.CambiarEscenario(0); }));
             buttons.Add(new QuadButton(pos, 0, 15, "Exit", () => { Environment.Exit(0); }, Color.Red));
             pickingRay = new TgcPickingRay(Env.Input);
@@ -176,6 +174,12 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 cancionPcpal.closeFile();
                 cancionPcpal.play(true);
             }
+        }
+        public override void Reset()
+        {
+            Env.Camara = new Core.Camara.TgcCamera();
+            pos = new TGCVector3(1200, 800, -300);
+            Env.Camara.SetCamera(pos, new TGCVector3(pos.X, 0, pos.Z - 1));
         }
     }
 }
