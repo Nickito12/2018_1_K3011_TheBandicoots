@@ -97,7 +97,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public override void Render() { baseRender(); }
         public void baseRender()
         {
-            RenderHUD();
             SkyBox.Render();
             //Dibujar bounding boxes de los mesh (Debugging)
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))

@@ -35,7 +35,7 @@ namespace TGC.Group.Model.GameObjects
         private TGCVector3 oldPos;
         TgcMp3Player woah = new TgcMp3Player();
         bool ShowHelp = false;
-        public int vidas = 3;
+        public int vidas;
         private TGCVector3 PosBeforeMovingInXZ;  // global 
 
 
@@ -64,6 +64,7 @@ namespace TGC.Group.Model.GameObjects
             // Eventualmente esto lo vamos a hacer manual
             Mesh.Scale = new TGCVector3(0.3f, 0.3f, 0.3f);
             Mesh.RotateY(FastMath.ToRad(180f));
+            Reset();
         }
 
         public override void Update()
@@ -318,6 +319,10 @@ namespace TGC.Group.Model.GameObjects
         public TGCVector3 posBeforeMovingInXZ()
         {
             return PosBeforeMovingInXZ;
+        }
+        public void Reset()
+        {
+            vidas = 3;
         }
     }
 }

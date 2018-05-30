@@ -201,6 +201,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         public override void Reset()
         {
+            checkpointReached = false;
             // Reset pj (Moverlo a la posicion inicial del escenario
             if (checkpointReached)
                 Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
@@ -215,6 +216,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             if (!checkpointReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint))
                 checkpointReached = true;
             preRender3D();
+            RenderHUD();
             base.Render();
             foreach (var plano in ListaPlanos)
             {

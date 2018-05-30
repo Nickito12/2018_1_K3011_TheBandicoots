@@ -122,7 +122,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             base.Init(_env);
             Reset();
-            buttons.Add(new SpriteButton(pos, 0, -15, Env.MediaDir + "\\Menu\\BotonIniciarPartida.jpg", () => { Env.CambiarEscenario(0); }));
+            buttons.Add(new SpriteButton(pos, 0, -15, Env.MediaDir + "\\Menu\\BotonIniciarPartida.jpg", () => {
+                Env.Personaje.Reset();
+                Env.CambiarEscenario(0);
+            }));
             buttons.Add(new QuadButton(pos, 0, 15, "Exit", () => { Environment.Exit(0); }, Color.Red));
             pickingRay = new TgcPickingRay(Env.Input);
         }
