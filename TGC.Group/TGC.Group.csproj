@@ -28,6 +28,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -53,6 +55,10 @@
     <StartupObject>TGC.Group.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BulletSharp, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BulletSharp.0.10\lib\net40-client\BulletSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Windows\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll</HintPath>
@@ -74,8 +80,9 @@
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="TGC.Core, Version=2.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TGC.Core.2.3.1\lib\net471\TGC.Core.dll</HintPath>
+    <Reference Include="TGC.Core, Version=2.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TGC.Core.2.3.3\lib\net471\TGC.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -90,15 +97,19 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Game.settings</DependentUpon>
     </Compile>
+    <Compile Include="Model\GameObjects\Escenario\Escenario.cs" />
+    <Compile Include="Model\GameObjects\Escenario\EscenarioBullet.cs" />
     <Compile Include="Model\Estructuras\KdTree.cs" />
     <Compile Include="Model\Estructuras\KdTreeBuilder.cs" />
     <Compile Include="Model\Estructuras\KdTreeNode.cs" />
     <Compile Include="Model\GameObjects\CajasEmpujables.cs" />
+    <Compile Include="Model\GameObjects\Escenario\Escenario2.cs" />
     <Compile Include="Model\GameObjects\Escenario\EscenarioMenu.cs" />
     <Compile Include="Model\GameObjects\Plataforma\Plataforma.cs" />
+    <Compile Include="Model\GameObjects\Plataforma\PlataformaGiratoriaBullet.cs" />
     <Compile Include="Model\GameObjects\Plataforma\PlataformaLineal.cs" />
     <Compile Include="Model\GameObjects\Plataforma\PlataformaGiratoria.cs" />
-    <Compile Include="Model\GameObjects\Escenario\Escenario.cs" />
+    <Compile Include="Model\GameObjects\Escenario\EscenarioManual.cs" />
     <Compile Include="Model\GameObjects\Escenario\Escenario1.cs" />
     <Compile Include="Model\GameObjects\Character.cs" />
     <Compile Include="Model\GameModel.cs" />
@@ -187,6 +198,13 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\BulletSharp.0.10\build\net40-client\BulletSharp.targets" Condition="Exists('..\packages\BulletSharp.0.10\build\net40-client\BulletSharp.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\BulletSharp.0.10\build\net40-client\BulletSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BulletSharp.0.10\build\net40-client\BulletSharp.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -96,7 +96,7 @@ namespace TGC.Group.Model.Estructuras
         {
             foreach (var mesh in modelos)
             {
-                if (Escenario.testAABBAABB(node.BoundingBox, mesh.BoundingBox))
+                if (EscenarioManual.testAABBAABB(node.BoundingBox, mesh.BoundingBox))
                 {
                     node.Models.Add(mesh);
                 }

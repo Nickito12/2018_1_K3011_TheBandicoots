@@ -106,7 +106,7 @@ namespace TGC.Group.Model
             foreach (var obstaculo in Escenario.listaColisionesConCamara())
             {
                 //Hay colision del segmento camara-personaje y el objeto
-                if (TgcCollisionUtils.intersectSegmentAABB(target, NextPos, obstaculo.BoundingBox, out q))
+                if (TgcCollisionUtils.intersectSegmentAABB(target, NextPos, obstaculo, out q))
                 {
                     //Si hay colision, guardar la que tenga menor distancia
                     var distSq = TGCVector3.Subtract(q, target).LengthSq();

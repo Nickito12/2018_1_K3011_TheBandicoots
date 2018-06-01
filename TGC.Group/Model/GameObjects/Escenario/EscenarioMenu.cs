@@ -36,7 +36,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         public QuadButton(TGCVector3 pos, float X, float Y, string text, ClickDelegate onClick, Color color, float sizeX = 15, float sizeY = 8)
         {
-
             quad = new TGC.Core.Geometry.TGCQuad();
             quad.Center = new TGCVector3(pos.X + X, pos.Y - 50, pos.Z + Y);
             quad.Size = new TGCVector2(sizeX, sizeY);
@@ -45,7 +44,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             quad.updateValues();
             var s = quad.Size * 0.5f;
             aabb = new TgcBoundingAxisAlignBox(quad.Center - new TGCVector3(s.X, 0, s.Y), quad.Center + new TGCVector3(s.X, 0, s.Y), quad.Center, new TGCVector3(1, 1, 1));
-            x = (int)(X * 650 / 20 + 650);
+            x = (int)(X* 650 / 20 + 650 - font.Size/5*text.Length);
             y= (int)(Y * 350 / 20 + 350);
             this.onClick = onClick;
             this.text = text;
@@ -92,9 +91,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
             Size = new TGCVector2(sizeX, sizeY);
             var s = Size * 0.5f;
             aabb = new TgcBoundingAxisAlignBox(Center - new TGCVector3(s.X, 0, s.Y), Center + new TGCVector3(s.X, 0, s.Y), Center, new TGCVector3(1, 1, 1)); ;
-            x = (int)(X * 650 / 40 + 675);
+            x = (int)(X * 650 / 40 + 680);
             y = (int)(Y * 350 / 20 + 365);
-            Size = Size * 18;
+            Size = Size * 17;
             x -= (int)(Size.X * 0.5);
             y -= (int)(Size.Y * 0.5);
             this.onClick = onClick;
@@ -124,8 +123,12 @@ namespace TGC.Group.Model.GameObjects.Escenario
             Reset();
             buttons.Add(new SpriteButton(pos, 0, -15, Env.MediaDir + "\\Menu\\BotonIniciarPartida.jpg", () => {
                 Env.Personaje.Reset();
-                Env.CambiarEscenario(0);
+                Env.CambiarEscenario("Escenario1");
             }));
+            buttons.Add(new QuadButton(pos, 0, -5, "Modo Bullet", () => {
+                Env.Personaje.Reset();
+                Env.CambiarEscenario("Bullet1");
+            }, Color.BurlyWood));
             buttons.Add(new QuadButton(pos, 0, 15, "Exit", () => { Environment.Exit(0); }, Color.Red));
             pickingRay = new TgcPickingRay(Env.Input);
         }

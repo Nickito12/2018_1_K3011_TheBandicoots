@@ -19,7 +19,6 @@ namespace TGC.Group.Model.GameObjects
         {
             return Delta;
         }
-        abstract public String nombreClase();
         
     }
 }

@@ -42,11 +42,5 @@ namespace TGC.Group.Model.GameObjects
             }
             Delta = movimiento;
         }
-
-        public override String nombreClase()
-        {
-            return null;
-        }
-
     }
 }
