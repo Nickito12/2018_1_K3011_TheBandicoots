@@ -23,7 +23,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public List<Tuple<TGCBox, RigidBody>> Paredes;
         private RigidBody capsulePJ;
         List<Tuple<TGCBox,RigidBody>> boxes;
-        PlataformaGiratoriaBullet box;
+        List<PlataformaGiratoriaBullet> giratorias = new List<PlataformaGiratoriaBullet>();
 
         public override void Init(GameModel _env)
         {
@@ -52,7 +52,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             base.Init(Env);
             Env.Personaje.Mesh.updateBoundingBox();
             var aabb = Env.Personaje.Mesh.BoundingBox;
-            capsulePJ = BulletRigidBodyConstructor.CreateCapsule(aabb.PMax.X - aabb.PMin.X, aabb.PMax.Y-aabb.PMin.Y, new TGCVector3(0,0,0));
+            capsulePJ = BulletRigidBodyConstructor.CreateCapsule((aabb.PMax.X - aabb.PMin.X)/2, (aabb.PMax.Y-aabb.PMin.Y)/2, new TGCVector3(0,0, 0));
             capsulePJ.CollisionFlags = CollisionFlags.CharacterObject | capsulePJ.CollisionFlags;
             dynamicsWorld.AddRigidBody(capsulePJ);
             boxes = new List<Tuple<TGCBox,RigidBody>>();
@@ -85,9 +85,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
             addBox(new TGCVector3(217f, 130f, 100f), new TGCVector3(75, 75, 75), PiedraTexture);
             addBox(new TGCVector3(217f, 210f, 180f), new TGCVector3(75, 75, 75), PiedraTexture);
 
-            // Plataforma Giratoria
-            var b = addBox(new TGCVector3(0f, 225f, 0f), new TGCVector3(100, 50, 100), PiedraTexture, 100000000000f, 1f, 0f);
-            this.box = new PlataformaGiratoriaBullet(100f, b.Item1, b.Item2, new TGCVector3(b.Item2.CenterOfMassPosition), 5f);
+            // Plataformas Giratorias
+            addSpinningPlatform(new TGCVector3(0f, 225f, 0f), new TGCVector3(100, 50, 100), PiedraTexture, 100000000000f);
+            addSpinningPlatform(new TGCVector3(0f, 610f, 0f), new TGCVector3(60, 30, 60), PiedraTexture, 100000000000f);
+            addSpinningPlatform(new TGCVector3(0f, 660f, 0f), new TGCVector3(50, 25, 50), PiedraTexture, 100000000000f);
 
             // Escalones segunda pared
             addBox(new TGCVector3(-217f, 210f, 180f), new TGCVector3(75, 75, 75), PiedraTexture);
@@ -101,16 +102,31 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 for (int i = 0; i < world.Dispatcher.NumManifolds; i++)
                 {
                     var manifold = world.Dispatcher.GetManifoldByIndexInternal(i);
-                    if ((manifold.Body0 == capsulePJ && manifold.Body1 == box.Body)
-                        || (manifold.Body1 == capsulePJ && manifold.Body0 == box.Body))
+                    PlataformaGiratoriaBullet giratoria = null;
+                    if (manifold.Body0 == capsulePJ)
+                        giratoria = giratorias.Find(g => g.Body == manifold.Body1);
+                    else if (manifold.Body1 == capsulePJ)
+                        giratoria = giratorias.Find(g => g.Body == manifold.Body0);
+                    if (giratoria != null)
                     {
-                        var t = capsulePJ.CenterOfMassTransform;
-                        t.Origin += box.Delta;
-                        capsulePJ.CenterOfMassTransform = t;
+                        Vector3 pmax, pmin, aux;
+                        giratoria.Body.CollisionShape.GetAabb(giratoria.Body.WorldTransform, out aux, out pmax);
+                        capsulePJ.CollisionShape.GetAabb(capsulePJ.WorldTransform, out pmin, out aux);
+                        if (pmin.Y >= pmax.Y - 1)
+                        {
+                            var t = capsulePJ.CenterOfMassTransform;
+                            t.Origin += giratoria.Delta;
+                            capsulePJ.CenterOfMassTransform = t;
+                        }
                     }
                 }
             }
             );
+        }
+        public void addSpinningPlatform(TGCVector3 pos, TGCVector3 size, TgcTexture text, float mass = 1f, float friction=0f, float inertia=0f)
+        {
+            var b = addBox(pos, size, text, mass, friction, inertia);
+            this.giratorias.Add(new PlataformaGiratoriaBullet(50f, b.Item1, b.Item2, new TGCVector3(b.Item2.CenterOfMassPosition), 3f));
         }
         public Tuple<TGCBox, RigidBody> addBox(TGCVector3 pos, TGCVector3 size, TgcTexture text, float mass = 0f, float friction = 0f, float? inertia = null)
         {
@@ -159,7 +175,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             var Mesh = Env.Personaje.Mesh;
             Env.Personaje.Mesh.Transform = TGCMatrix.Scaling(Mesh.Scale) *
                 TGCMatrix.RotationYawPitchRoll(Mesh.Rotation.Y, Mesh.Rotation.X, Mesh.Rotation.Z) *
-                TGCMatrix.Translation(new TGCVector3(0, (Mesh.BoundingBox.PMin.Y - Mesh.BoundingBox.PMax.Y), 0)) *
+                TGCMatrix.Translation(new TGCVector3(0, (Mesh.BoundingBox.PMin.Y - Mesh.BoundingBox.PMax.Y)/2, 0)) *
                 new TGCMatrix(capsulePJ.InterpolationWorldTransform);
             foreach (var pair in boxes)
             {
@@ -167,8 +183,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 box.Transform = new TGCMatrix(pair.Item2.CenterOfMassTransform);
                 box.AutoTransform = false;
             }
-            var old = box.Body.CenterOfMassPosition;
-            box.Update(Env.ElapsedTime);
+            foreach(var giratoria in giratorias)
+                giratoria.Update(Env.ElapsedTime);
         }
 
         public override RigidBody cuerpoPJ()
