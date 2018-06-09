@@ -9,6 +9,8 @@ using TGC.Core.Mathematica;
 using TGC.Group.Model.GameObjects;
 using TGC.Core.Collision;
 using TGC.Group.Model.GameObjects.Escenario;
+using System.IO;
+using System;
 
 namespace TGC.Group.Model
 {
@@ -28,7 +30,7 @@ namespace TGC.Group.Model
         public TgcThirdPersonCamera NuevaCamara;
         public float CameraOffsetHeight = 20;
         public float CameraOffsetForward = -75;
-
+        bool guardadoPartida;
 
         /// <summary>
         ///     Constructor del juego.
@@ -83,7 +85,7 @@ namespace TGC.Group.Model
         {
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
             //PreRender();
-            
+           
             Escenario.Render();
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
             //PostRender();
@@ -107,6 +109,60 @@ namespace TGC.Group.Model
         {
             Escenario = Escenarios[num];
             Escenario.Reset();
+        }
+
+        public void guardarPartida()
+        {
+            try
+            {
+                String PathDirectorio = MediaDir + "PartidasGuardadas\\";
+                string[] filePaths = Directory.GetFiles(@PathDirectorio);
+                int cantidadArchivos = filePaths.Length;
+                StreamWriter arch = new StreamWriter(PathDirectorio + "Partida" + cantidadArchivos.ToString() + ".txt");
+                arch.WriteLine(Personaje.Position().X + "-" + Personaje.Position().Y + "-" + Personaje.Position().Z);
+                arch.WriteLine(Personaje.vidas);
+                arch.Close();
+
+               
+            }
+            catch (Exception e)
+            {
+                
+                //DrawText.drawText("Error al guardar Partida", D3DDevice.Instance.Width / 2,0, Color.Red);
+                
+            }
+            finally
+            {
+
+                // DrawText.drawText("Partida Guardada Correctamente!", 50, 0, Color.Red); //habria que hacer una impresion en pantalla para que se notifique que se guardo la partida.
+               
+               
+            }
+    
+        }
+        public void LoadPartida()
+        {
+            String line;
+            String PathDirectorio = MediaDir + "PartidasGuardadas\\";
+            StreamReader reader = new StreamReader(PathDirectorio + "Partida0" + ".txt");
+            line = reader.ReadLine();
+          
+                Personaje.yaJugo = true;
+                string[] posicionGuardada = line.Split('-');
+                float X = Convert.ToSingle(posicionGuardada[0]);
+                float Y = Convert.ToSingle(posicionGuardada[1]);
+                float Z = Convert.ToSingle(posicionGuardada[2]);
+                TGCVector3 posicion = new TGCVector3(X, Y, Z);
+                Personaje.Position(posicion);
+            line = reader.ReadLine();
+
+            Personaje.Vidas(Convert.ToInt32(line));
+                //setear al personaje la posicion y las vidas
+
+
+            
+
+
         }
     }
 }

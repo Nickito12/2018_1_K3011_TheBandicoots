@@ -350,12 +350,14 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             if (Env.ElapsedTime > 10000)
                 return;
-            if (Env.Personaje.Position().Y <= -100)
+            if (Env.Personaje.Position().Y <= -50)
             {
                 Env.Personaje.vidas--;
+      
                 if (Env.Personaje.vidas <= 0)
                     Env.CambiarEscenario(1);
                 else
+                    
                     Reset();
             }
             ShowGrilla = Env.Input.keyDown(Key.F3);
@@ -387,7 +389,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             var sprite = new Sprite(d3dDevice);
             sprite.Begin(SpriteFlags.AlphaBlend);
             for (var i = 0; i < Env.Personaje.vidas; i++)
-                sprite.Draw2D(texturaVida, Rectangle.Empty, new SizeF(32, 32), new PointF(10+32*i, 10), Color.Red);
+                sprite.Draw2D(texturaVida, Rectangle.Empty, new SizeF(32, 32), new PointF(0+32*i, 700), Color.Red);
             sprite.End();
         }
     }

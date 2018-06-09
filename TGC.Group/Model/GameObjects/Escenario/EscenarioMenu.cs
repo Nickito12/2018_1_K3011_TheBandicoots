@@ -33,8 +33,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         int x, y;
         ClickDelegate onClick;
         public System.Drawing.Font font = new System.Drawing.Font("Arial", 24, FontStyle.Bold);
-
-        public QuadButton(TGCVector3 pos, float X, float Y, string text, ClickDelegate onClick, Color color, float sizeX = 15, float sizeY = 8)
+        
+        public QuadButton(TGCVector3 pos, float X, float Y, string text, ClickDelegate onClick, Color color, float sizeX = 50, float sizeY = 4)
         {
 
             quad = new TGC.Core.Geometry.TGCQuad();
@@ -45,7 +45,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             quad.updateValues();
             var s = quad.Size * 0.5f;
             aabb = new TgcBoundingAxisAlignBox(quad.Center - new TGCVector3(s.X, 0, s.Y), quad.Center + new TGCVector3(s.X, 0, s.Y), quad.Center, new TGCVector3(1, 1, 1));
-            x = (int)(X * 650 / 20 + 650);
+            x = (int)(X * 650 / 50 + 525);
             y= (int)(Y * 350 / 20 + 350);
             this.onClick = onClick;
             this.text = text;
@@ -74,7 +74,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         TGCVector3 Center;
         TGCVector2 Size;
 
-        public SpriteButton(TGCVector3 pos, float X, float Y, string filePath, ClickDelegate onClick, float sizeX = 15, float sizeY = 8)
+        public SpriteButton(TGCVector3 pos, float X, float Y, string filePath, ClickDelegate onClick, float sizeX = 50, float sizeY = 4)
         {
             var d3dDevice = D3DDevice.Instance.Device;
             //TgcTexture textura;
@@ -117,16 +117,41 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public TGCVector3 pos;
         public List<Button> buttons = new List<Button>();
         private TgcPickingRay pickingRay;
-
+        
         public override void Init(GameModel _env)
         {
+           
             base.Init(_env);
             Reset();
-            buttons.Add(new SpriteButton(pos, 0, -15, Env.MediaDir + "\\Menu\\BotonIniciarPartida.jpg", () => {
+            buttons.Add(new QuadButton(pos, 0, -5, "Nueva Partida",() => {
                 Env.Personaje.Reset();
                 Env.CambiarEscenario(0);
-            }));
-            buttons.Add(new QuadButton(pos, 0, 15, "Exit", () => { Environment.Exit(0); }, Color.Red));
+                }, Color.DarkCyan));
+            /*buttons.Add(new SpriteButton(pos, 0, -15, Env.MediaDir + "\\Menu\\BotonIniciarPartida.jpg", () => {
+                Env.Personaje.Reset();
+                Env.CambiarEscenario(0);
+            })); */
+            buttons.Add(new QuadButton(pos, 0, 0, "Continuar", () => {
+                Env.Personaje.yaJugo = true;
+                Env.CambiarEscenario(0);
+            }, Color.DarkCyan));
+            /*buttons.Add(new SpriteButton(pos, 0, -15, Env.MediaDir + "\\Menu\\Continuar.jpg", () => {              
+                Env.CambiarEscenario(0);
+            }));*/
+            buttons.Add(new QuadButton(pos, 0, 5, "Cargar Partida", () => {
+                Env.LoadPartida();
+                Env.CambiarEscenario(0);
+            }, Color.DarkCyan));
+
+            buttons.Add(new QuadButton(pos, 0, 10, "Guardar Partida", () => {
+                Env.guardarPartida();
+               
+            }, Color.DarkCyan));
+
+            /* buttons.Add(new SpriteButton(pos, 0, 0, Env.MediaDir + "\\Menu\\GuardarPartida.jpg", () => {
+                //hacemos algo para guardar partida
+             })); */
+            buttons.Add(new QuadButton(pos, 0, 15, "Exit", () => { Environment.Exit(0); }, Color.DarkCyan));
             pickingRay = new TgcPickingRay(Env.Input);
         }
         public override void Render()

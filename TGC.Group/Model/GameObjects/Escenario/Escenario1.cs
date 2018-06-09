@@ -77,7 +77,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             // Cargar escena
             Loader = new TgcSceneLoader();
-            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\asd30-TgcScene.xml");
+            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\escenarioconcaida-TgcScene.xml");
 
             // Paredes
             ListaParedes = Scene.Meshes.FindAll(m => m.Name.Contains("ParedCastillo"));
@@ -205,6 +205,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
             // Reset pj (Moverlo a la posicion inicial del escenario
             if (checkpointReached)
                 Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
+            else if (Env.Personaje.yaJugo)
+            {
+                Env.NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0, 0, 0), 20, -75, Env.Input);
+                Env.Camara = Env.NuevaCamara;
+            }
             else
                 Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
             Env.NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0, 0, 0), 20, -75, Env.Input);

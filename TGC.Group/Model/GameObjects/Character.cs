@@ -38,6 +38,8 @@ namespace TGC.Group.Model.GameObjects
         public int vidas;
         private TGCVector3 PosBeforeMovingInXZ;  // global 
         bool modoGod = false;
+        public bool caida = false;
+        public bool yaJugo;
 
 
         public override void Init(GameModel _env)
@@ -59,6 +61,7 @@ namespace TGC.Group.Model.GameObjects
                         Env.MediaDir + "Piloto\\Animations\\CrouchWalk-TgcSkeletalAnim.xml",
                         Env.MediaDir + "Piloto\\Animations\\LowKick-TgcSkeletalAnim.xml",
                         Env.MediaDir + "Piloto\\Animations\\Jump-TgcSkeletalAnim.xml"
+                       
                     });
 
             Mesh.playAnimation("StandBy", true);
@@ -93,6 +96,10 @@ namespace TGC.Group.Model.GameObjects
                 VelocidadMovimiento += 10 * ElapsedTime;
             if (Input.keyDown(Key.F9))
                 VelocidadMovimiento -= 10 * ElapsedTime;
+            if (Input.keyDown(Key.M))
+            {               
+                Env.CambiarEscenario(1);
+            }
             if (Input.keyPressed(Key.G))
             {
                 if (!modoGod)
@@ -145,10 +152,13 @@ namespace TGC.Group.Model.GameObjects
             ultimoDesplazamientoAdelante += VelocidadAdelante * ElapsedTime;
 
             updateAnimation = true;
-            if (Mesh.Position.Y != LastPos.Y)
+            
+           if (Mesh.Position.Y != LastPos.Y)
             {
                 SetAnimation("Jump", false);
             }
+
+            
             else if (Input.keyDown(Key.LeftShift) || Input.keyDown(Key.RightShift)) {
                 SetAnimation("CrouchWalk");
                 updateAnimation = VelocidadAdelante != 0;
@@ -199,11 +209,14 @@ namespace TGC.Group.Model.GameObjects
                 Env.DrawText.drawText("F5: Activar/Desactivar colisiones de camara", 0, textY, c); textY += 20;
                 Env.DrawText.drawText("G: Modo god", 0, textY, c); textY += 20;
                 Env.DrawText.drawText("F6: Desactivar sharpen", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("M: Menu Principal", 0, textY, c); textY += 20;
             }
             if (modoGod)
             {
-                Env.DrawText.drawText("God activado", 200, 20, Color.Chocolate); 
+               
+               Env.DrawText.drawText("God activado", D3DDevice.Instance.Width/2, 20, Color.Chocolate); 
             }
+           
             Mesh.Transform = TGCMatrix.Scaling(Mesh.Scale)
                             * TGCMatrix.RotationYawPitchRoll(Mesh.Rotation.Y, Mesh.Rotation.X, Mesh.Rotation.Z)
                             * TGCMatrix.Translation(Mesh.Position);
@@ -329,9 +342,11 @@ namespace TGC.Group.Model.GameObjects
         }
         public TGCVector3 Position() { return Mesh.Position; }
         public void Position(TGCVector3 pos) { Mesh.Position = pos; }
+        public void Vidas(int cantVidas) { vidas = cantVidas; }
         public void Pozo()
         {
-            CanJump = false;
+            CanJump = false;          
+            SetAnimation("Jump", false);
             woah.closeFile();
             woah.FileName = Env.MediaDir + "\\Sound\\woah.mp3";
             woah.play(false);
@@ -343,6 +358,7 @@ namespace TGC.Group.Model.GameObjects
         }
         public void Reset()
         {
+            yaJugo = false;
             vidas = 3;
         }
     }
