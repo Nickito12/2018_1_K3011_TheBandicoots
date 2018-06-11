@@ -145,7 +145,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             buttons.Add(new QuadButton(pos, 0, 10, "Guardar Partida", () => {
                 Env.guardarPartida();
-               
+
             }, Color.DarkCyan));
 
             /* buttons.Add(new SpriteButton(pos, 0, 0, Env.MediaDir + "\\Menu\\GuardarPartida.jpg", () => {

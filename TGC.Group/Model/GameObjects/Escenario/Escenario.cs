@@ -389,7 +389,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             var sprite = new Sprite(d3dDevice);
             sprite.Begin(SpriteFlags.AlphaBlend);
             for (var i = 0; i < Env.Personaje.vidas; i++)
-                sprite.Draw2D(texturaVida, Rectangle.Empty, new SizeF(32, 32), new PointF(0+32*i, 700), Color.Red);
+                sprite.Draw2D(texturaVida, Rectangle.Empty, new SizeF(32, 32), new PointF(20+32*i, 650), Color.Red);
             sprite.End();
         }
     }

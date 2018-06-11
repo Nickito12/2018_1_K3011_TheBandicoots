@@ -11,6 +11,7 @@ using TGC.Core.Collision;
 using TGC.Group.Model.GameObjects.Escenario;
 using System.IO;
 using System;
+using System.Windows.Forms;
 
 namespace TGC.Group.Model
 {
@@ -127,16 +128,16 @@ namespace TGC.Group.Model
             }
             catch (Exception e)
             {
-                
+
                 //DrawText.drawText("Error al guardar Partida", D3DDevice.Instance.Width / 2,0, Color.Red);
-                
+                System.Windows.Forms.MessageBox.Show("Error al guardar Partida.");
             }
             finally
             {
 
                 // DrawText.drawText("Partida Guardada Correctamente!", 50, 0, Color.Red); //habria que hacer una impresion en pantalla para que se notifique que se guardo la partida.
-               
-               
+                System.Windows.Forms.MessageBox.Show("Partida guardada correctamente.");
+
             }
     
         }
@@ -144,23 +145,44 @@ namespace TGC.Group.Model
         {
             String line;
             String PathDirectorio = MediaDir + "PartidasGuardadas\\";
-            StreamReader reader = new StreamReader(PathDirectorio + "Partida0" + ".txt");
-            line = reader.ReadLine();
-          
-                Personaje.yaJugo = true;
-                string[] posicionGuardada = line.Split('-');
-                float X = Convert.ToSingle(posicionGuardada[0]);
-                float Y = Convert.ToSingle(posicionGuardada[1]);
-                float Z = Convert.ToSingle(posicionGuardada[2]);
-                TGCVector3 posicion = new TGCVector3(X, Y, Z);
-                Personaje.Position(posicion);
-            line = reader.ReadLine();
 
-            Personaje.Vidas(Convert.ToInt32(line));
-                //setear al personaje la posicion y las vidas
+            Stream myStream = null;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
+            openFileDialog1.InitialDirectory = PathDirectorio;
+            openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
 
-            
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    if ((myStream = openFileDialog1.OpenFile()) != null)
+                    {
+                        using (myStream)
+                        {
+                            StreamReader reader = new StreamReader(myStream);
+                            line = reader.ReadLine();
+
+                            Personaje.yaJugo = true;
+                            string[] posicionGuardada = line.Split('-');
+                            float X = Convert.ToSingle(posicionGuardada[0]);
+                            float Y = Convert.ToSingle(posicionGuardada[1]);
+                            float Z = Convert.ToSingle(posicionGuardada[2]);
+                            TGCVector3 posicion = new TGCVector3(X, Y, Z);
+                            Personaje.Position(posicion);
+                            line = reader.ReadLine();
+
+                            Personaje.Vidas(Convert.ToInt32(line));
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                }
+            }
 
 
         }
