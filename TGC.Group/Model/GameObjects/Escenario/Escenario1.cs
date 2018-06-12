@@ -62,13 +62,13 @@ namespace TGC.Group.Model.GameObjects.Escenario
             var PisoCastilloEntradaWidth = 250f;
             var PisoCastilloEntradaLength = 550f;
             var PisoCastilloEntradaTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "rockfloor.jpg");
-            PisoCastilloEntrada = new TgcPlane(new TGCVector3(700f, 0f, -650f), new TGCVector3(PisoCastilloEntradaWidth, 5f, PisoCastilloEntradaLength), TgcPlane.Orientations.XZplane, PisoCastilloEntradaTexture, 15, 15);
+            PisoCastilloEntrada = new TgcPlane(new TGCVector3(700f, 21f, -650f), new TGCVector3(PisoCastilloEntradaWidth, 5f, PisoCastilloEntradaLength), TgcPlane.Orientations.XZplane, PisoCastilloEntradaTexture, 15, 15);
             ListaPlanos.Add(PisoCastilloEntrada);
 
             var PisoCastilloMainWidth = 800f;
             var PisoCastilloMainLength = 800f;
             var PisoCastilloMainTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "rockfloor.jpg");
-            PisoCastilloMain = new TgcPlane(new TGCVector3(950f, 0.1f, -650f), new TGCVector3(PisoCastilloMainWidth, 5f, PisoCastilloMainLength), TgcPlane.Orientations.XZplane, PisoCastilloMainTexture, 15, 15);
+            PisoCastilloMain = new TgcPlane(new TGCVector3(950f, 21f, -650f), new TGCVector3(PisoCastilloMainWidth, 5f, PisoCastilloMainLength), TgcPlane.Orientations.XZplane, PisoCastilloMainTexture, 15, 15);
             ListaPlanos.Add(PisoCastilloMain);
 
 
@@ -77,7 +77,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             // Cargar escena
             Loader = new TgcSceneLoader();
-            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\escenarioconcaida-TgcScene.xml");
+            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\escenarioEscalon-TgcScene.xml");
 
             // Paredes
             ListaParedes = Scene.Meshes.FindAll(m => m.Name.Contains("ParedCastillo"));
@@ -139,10 +139,12 @@ namespace TGC.Group.Model.GameObjects.Escenario
             List<TgcMesh> ListaPlataformaX = new List<TgcMesh>();
             List<TgcMesh> ListaPlataformaZ = new List<TgcMesh>();
             List<TgcMesh> ListaMovibles = new List<TgcMesh>();
+            List<TgcMesh> Escalones = new List<TgcMesh>();
             ListaPlataformaEstatica = Scene.Meshes.FindAll(m => m.Name.Contains("Box_0"));
             ListaPlataformaX = Scene.Meshes.FindAll(m => m.Name.Contains("Box_1"));
             ListaPlataformaZ = Scene.Meshes.FindAll(m => m.Name.Contains("Box_2"));
             ListaMovibles = Scene.Meshes.FindAll(m => m.Name.Contains("Box_M"));
+            Escalones = Scene.Meshes.FindAll(m => m.Name.Contains("Escalon"));
 
             //agrego plataforma que se mueven en X
             foreach (var p in ListaPlataformaX)
@@ -192,6 +194,14 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 ListaPlataformas.Add(plataforma.Mesh);
                 MeshConMovimiento.Add(plataforma.Mesh);
                 Scene.Meshes.Remove(plataforma.Mesh);
+            }
+            //agrego escalones
+           
+            
+            foreach(var escalon in Escalones)
+            {
+                ListaEscalones.Add(escalon);
+
             }
 
             Grilla = new GrillaRegular();

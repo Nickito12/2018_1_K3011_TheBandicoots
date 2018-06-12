@@ -270,8 +270,14 @@ namespace TGC.Group.Model.GameObjects
             else if (Collider == null && TipoColisionActual == TiposColision.Caja)
             {
                 Mesh.Move(posicionPlataforma);
-            }        
-            else if (Collider != null)
+            } 
+           /* else if(Collider == null && TipoColisionActual == TiposColision.Escalon)
+            {
+               // Mesh.Move(posicionPlataforma);
+                return;
+               
+            } */
+            else if(Collider != null)
             {
                 Collider = Collider.clone();
                 Collider.scaleTranslate(TGCVector3.Empty, new TGCVector3(1.05f, 1.05f, 1.05f));
@@ -334,11 +340,13 @@ namespace TGC.Group.Model.GameObjects
             {
                 Mesh.Move(posicionPlataforma);
             }
+            
             else if (TipoColisionActual == TiposColision.Techo)
             {
                 Mesh.Position = new TGCVector3(oldPos.X, posicionPlataforma.Y, oldPos.Z);
                 VelocidadY = 0;
             }
+            
         }
         public TGCVector3 Position() { return Mesh.Position; }
         public void Position(TGCVector3 pos) { Mesh.Position = pos; }

@@ -26,6 +26,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         protected List<TgcMesh> ListaPozos = new List<TgcMesh>();
         protected List<TgcMesh> ListaPlataformas = new List<TgcMesh>();
         protected List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
+        protected List<TgcMesh> ListaEscalones = new List<TgcMesh>();
         protected List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
         protected List<TgcMesh> MeshConMovimiento = new List<TgcMesh>();
         protected List<CajaEmpujable> ListaCajasEmpujables = new List<CajaEmpujable>();
@@ -114,6 +115,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 pozo.Render();
             }
+            /*foreach(var escalon in ListaEscalones)
+            {
+                escalon.Render();
+            } */
             foreach (var caja in ListaCajasEmpujables)
             {
                 caja.Mesh.Render();
@@ -173,6 +178,17 @@ namespace TGC.Group.Model.GameObjects.Escenario
                         Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
                         break;
                     }
+                  /*  else if (ListaEscalones.Contains(Mesh))
+                    {
+                        if (Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || Mesh.BoundingBox.PMin.Y <= Env.Personaje.Mesh.Position.Y)
+                        {
+                            
+                            Env.Personaje.setposition(Mesh.BoundingBox.PMax);
+                           
+                            break;
+                        }
+                        
+                    } */
                     else
                     {
                         Colisionador = Mesh.BoundingBox;
@@ -260,6 +276,19 @@ namespace TGC.Group.Model.GameObjects.Escenario
                     }
                 }
             }
+          /*  foreach(var escalon in ListaEscalones)
+            {
+                if (Escenario.testAABBAABB(escalon.BoundingBox, boundingBox))
+                {
+                    if (escalon.BoundingBox.PMin.Y <= Env.Personaje.Mesh.BoundingBox.PMin.Y)
+                    {
+                        Colisionador = escalon.BoundingBox;
+                    }
+                    
+                   
+                }
+                    
+            } */
             foreach (var caja in ListaCajasEmpujables)
             {
                 var colision = caja.ColisionY(Env.Personaje, Env.ElapsedTime);
