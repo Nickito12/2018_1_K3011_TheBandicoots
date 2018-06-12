@@ -119,12 +119,20 @@ namespace TGC.Group.Model
                 String PathDirectorio = MediaDir + "PartidasGuardadas\\";
                 string[] filePaths = Directory.GetFiles(@PathDirectorio);
                 int cantidadArchivos = filePaths.Length;
-                StreamWriter arch = new StreamWriter(PathDirectorio + "Partida" + cantidadArchivos.ToString() + ".txt");
-                arch.WriteLine(Personaje.Position().X + "-" + Personaje.Position().Y + "-" + Personaje.Position().Z);
-                arch.WriteLine(Personaje.vidas);
-                arch.Close();
 
-               
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.InitialDirectory = PathDirectorio;
+                saveFileDialog.Filter = "txt files (*.txt)|*.txt";
+                saveFileDialog.RestoreDirectory = true;
+
+                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    StreamWriter arch = new StreamWriter(saveFileDialog.FileName);
+                    arch.WriteLine(Personaje.Position().X + "-" + Personaje.Position().Y + "-" + Personaje.Position().Z);
+                    arch.WriteLine(Personaje.vidas);
+                    arch.Close();
+                }
+
             }
             catch (Exception e)
             {
