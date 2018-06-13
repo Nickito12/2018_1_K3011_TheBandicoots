@@ -31,7 +31,7 @@ namespace TGC.Group.Model
         public TgcThirdPersonCamera NuevaCamara;
         public float CameraOffsetHeight = 20;
         public float CameraOffsetForward = -75;
-        bool guardadoPartida;
+      
 
         /// <summary>
         ///     Constructor del juego.
@@ -137,13 +137,13 @@ namespace TGC.Group.Model
             catch (Exception e)
             {
 
-                //DrawText.drawText("Error al guardar Partida", D3DDevice.Instance.Width / 2,0, Color.Red);
+               
                 System.Windows.Forms.MessageBox.Show("Error al guardar Partida.");
             }
             finally
             {
 
-                // DrawText.drawText("Partida Guardada Correctamente!", 50, 0, Color.Red); //habria que hacer una impresion en pantalla para que se notifique que se guardo la partida.
+               
                 System.Windows.Forms.MessageBox.Show("Partida guardada correctamente.");
 
             }
