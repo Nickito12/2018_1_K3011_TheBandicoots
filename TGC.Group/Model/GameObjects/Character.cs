@@ -40,7 +40,6 @@ namespace TGC.Group.Model.GameObjects
         bool modoGod = false;
         public bool caida = false;
         public bool yaJugo;
-        private string posEscalon = "";
 
         public override void Init(GameModel _env)
         {
@@ -194,8 +193,6 @@ namespace TGC.Group.Model.GameObjects
             int textY = 20;
             var c = Color.BlanchedAlmond;
             Env.DrawText.drawText("H: Mostrar Ayuda", 0, textY, c); textY += 20;
-            //////////////////////////////
-            Env.DrawText.drawText("Ultima posicion antes dsps de la deteccion del escalon: " + posEscalon, 0, textY, c); textY += 20;
             if (ShowHelp)
             {
                 Env.DrawText.drawText("[Pos pj]: " + TGCVector3.PrintVector3(Mesh.Position), 0, textY, c); textY += 20;
