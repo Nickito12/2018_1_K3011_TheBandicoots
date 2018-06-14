@@ -26,6 +26,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         protected List<TgcMesh> ListaPozos = new List<TgcMesh>();
         protected List<TgcMesh> ListaPlataformas = new List<TgcMesh>();
         protected List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
+        protected List<TgcMesh> ListaEscalones = new List<TgcMesh>();
         protected List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
         protected List<TgcMesh> MeshConMovimiento = new List<TgcMesh>();
         protected List<CajaEmpujable> ListaCajasEmpujables = new List<CajaEmpujable>();
@@ -112,7 +113,13 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }
             foreach (var pozo in ListaPozos)
             {
-                pozo.Render();
+                //pozo.BoundingBox.PMin
+                 //   pozo.BoundingBox.PMax
+                //pozo.Render();
+            }
+            foreach(var escalon in ListaEscalones)
+            {
+                escalon.Render();
             }
             foreach (var caja in ListaCajasEmpujables)
             {
@@ -171,6 +178,14 @@ namespace TGC.Group.Model.GameObjects.Escenario
                     else if (ListaPisosResbalosos.Contains(Mesh))
                     {
                         Env.Personaje.SetTipoColisionActual(TiposColision.PisoResbaloso);
+                        break;
+                    }
+                    else if (ListaEscalones.Contains(Mesh))
+                    {
+                        var c = Mesh.BoundingBox;
+                        var aabb = Env.Personaje.Mesh.BoundingBox;
+                        Env.Personaje.setposition(new TGCVector3(0, c.PMax.Y- Env.Personaje.Position().Y, 0));
+                        Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                         break;
                     }
                     else
@@ -259,6 +274,15 @@ namespace TGC.Group.Model.GameObjects.Escenario
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                     }
                 }
+            }
+            foreach(var escalon in ListaEscalones)
+            {
+                if (Escenario.testAABBAABB(escalon.BoundingBox, boundingBox))
+                {
+                    //Env.Personaje.SetTipoColisionActual(TiposColision.Escalon);
+                    Colisionador = escalon.BoundingBox;
+                }
+                    
             }
             foreach (var caja in ListaCajasEmpujables)
             {

@@ -62,7 +62,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             var PisoCastilloEntradaWidth = 250f;
             var PisoCastilloEntradaLength = 550f;
             var PisoCastilloEntradaTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "rockfloor.jpg");
-            PisoCastilloEntrada = new TgcPlane(new TGCVector3(700f, 0f, -650f), new TGCVector3(PisoCastilloEntradaWidth, 5f, PisoCastilloEntradaLength), TgcPlane.Orientations.XZplane, PisoCastilloEntradaTexture, 15, 15);
+            PisoCastilloEntrada = new TgcPlane(new TGCVector3(700f, 19f, -650f), new TGCVector3(PisoCastilloEntradaWidth, 5f, PisoCastilloEntradaLength), TgcPlane.Orientations.XZplane, PisoCastilloEntradaTexture, 15, 15);
             ListaPlanos.Add(PisoCastilloEntrada);
 
             var PisoCastilloMainWidth = 800f;
@@ -77,7 +77,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             // Cargar escena
             Loader = new TgcSceneLoader();
-            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\escenarioconcaida-TgcScene.xml");
+            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\escenarioEscalon-TgcScene.xml");
 
             // Paredes
             ListaParedes = Scene.Meshes.FindAll(m => m.Name.Contains("ParedCastillo"));
@@ -99,14 +99,12 @@ namespace TGC.Group.Model.GameObjects.Escenario
             foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto"))) {
                 mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
                 mesh.AutoTransform = false;
-                var ang = r.Next(0, 180);
+                var ang = r.Next(0, 360);
                 var p = (mesh.BoundingBox.PMax + mesh.BoundingBox.PMin)*0.5f;
                 var s = new TGCVector3(((float)r.Next(90, 110))/100f, 1, ((float)r.Next(90, 110))/100f);
-                mesh.Transform = TGCMatrix.Translation(-1 * p) * TGCMatrix.Scaling(s) * TGCMatrix.RotationY(ang)  * TGCMatrix.Translation(p);
-            }
-            foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto2")))
-            {
-                mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
+                var rango = 6;
+                var t = new TGCVector3(((float)r.Next(-rango*100, rango * 100)) / 100f, 0, ((float)r.Next(-rango * 100, rango * 100)) / 100f);
+                mesh.Transform = TGCMatrix.Translation(-1 * p) * TGCMatrix.Scaling(s) * TGCMatrix.RotationY(ang)  * TGCMatrix.Translation(t+p);
             }
             foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Flores")))
             {
@@ -139,10 +137,12 @@ namespace TGC.Group.Model.GameObjects.Escenario
             List<TgcMesh> ListaPlataformaX = new List<TgcMesh>();
             List<TgcMesh> ListaPlataformaZ = new List<TgcMesh>();
             List<TgcMesh> ListaMovibles = new List<TgcMesh>();
+            List<TgcMesh> Escalones = new List<TgcMesh>();
             ListaPlataformaEstatica = Scene.Meshes.FindAll(m => m.Name.Contains("Box_0"));
             ListaPlataformaX = Scene.Meshes.FindAll(m => m.Name.Contains("Box_1"));
             ListaPlataformaZ = Scene.Meshes.FindAll(m => m.Name.Contains("Box_2"));
             ListaMovibles = Scene.Meshes.FindAll(m => m.Name.Contains("Box_M"));
+            Escalones = Scene.Meshes.FindAll(m => m.Name.Contains("Escalon"));
 
             //agrego plataforma que se mueven en X
             foreach (var p in ListaPlataformaX)
@@ -192,6 +192,14 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 ListaPlataformas.Add(plataforma.Mesh);
                 MeshConMovimiento.Add(plataforma.Mesh);
                 Scene.Meshes.Remove(plataforma.Mesh);
+            }
+            //agrego escalones
+           
+            
+            foreach(var escalon in Escalones)
+            {
+                ListaEscalones.Add(escalon);
+
             }
 
             Grilla = new GrillaRegular();
@@ -251,7 +259,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         public override List<TgcMesh> listaColisionesConCamara()
         {
-            return Scene.Meshes.FindAll(m => !ListaMeshesSinColision.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m));
+            return Scene.Meshes.FindAll(m => !ListaMeshesSinColision.Contains(m) && !ListaEscalones.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m));
         }
     }
 }
