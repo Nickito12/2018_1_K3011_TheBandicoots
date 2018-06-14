@@ -121,6 +121,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 escalon.Render();
             }
+            /*foreach(var escalon in ListaEscalones)
+            {
+                escalon.Render();
+            } */
             foreach (var caja in ListaCajasEmpujables)
             {
                 caja.Mesh.Render();

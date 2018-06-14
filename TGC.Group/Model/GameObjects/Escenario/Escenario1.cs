@@ -17,7 +17,23 @@ namespace TGC.Group.Model.GameObjects.Escenario
     public class Escenario1 : Escenario
     {
         // El piso del mapa/escenario
-        private TgcPlane PisoSelva;
+        //private TgcPlane PisoSelva;
+        private TgcPlane PisoSelva1;
+        private TgcPlane PisoSelva2;
+        private TgcPlane PisoSelva3;
+        private TgcPlane PisoSelva4;
+        private TgcPlane PisoSelva5;
+        private TgcPlane PisoSelva6;
+        private TgcPlane PisoSelva7;
+        private TgcPlane PisoSelva8;
+        private TgcPlane PisoSelva9;
+        private TgcPlane PisoSelva10;
+        private TgcPlane PisoSelva11;
+        private TgcPlane PisoSelva12;
+        private TgcPlane PisoSelva13;
+        private TgcPlane PisoSelva14;
+        private TgcPlane PisoSelva15;
+        private TgcPlane PisoSelva16;
         private TgcPlane PisoCastilloEntrada;
         private TgcPlane PisoCastilloMain;
         private TgcBoundingAxisAlignBox checkpoint = new TgcBoundingAxisAlignBox(
@@ -53,22 +69,59 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }
             Reset();
             //Crear pisos
-            var PisoSelvaWidth = 1200f;
+            /*var PisoSelvaWidth = 1200f;
             var PisoSelvaLength = PisoSelvaWidth;
             var PisoSelvaTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "pasto.jpg");
             PisoSelva = new TgcPlane(new TGCVector3(-200f, 0f, -100f), new TGCVector3(PisoSelvaWidth, 5f, PisoSelvaWidth), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
-            ListaPlanos.Add(PisoSelva);
+            ListaPlanos.Add(PisoSelva);*/
+            var PisoSelvaTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "pasto.jpg");
+            PisoSelva1 = new TgcPlane(new TGCVector3(-81f, 0f, -74f), new TGCVector3(168f, 5f, 161f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva1);
+            PisoSelva2 = new TgcPlane(new TGCVector3(-81f, 0f, 150f), new TGCVector3(168f, 5f, 110f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva2);
+            PisoSelva3 = new TgcPlane(new TGCVector3(-81f, 0f, 278f), new TGCVector3(302f, 5f, 247f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva3);
+            PisoSelva4 = new TgcPlane(new TGCVector3(309f, 0f, 278f), new TGCVector3(111f, 5f, 247f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva4);
+            PisoSelva5 = new TgcPlane(new TGCVector3(595f, 0f, 236f), new TGCVector3(387f, 5f, 350f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva5);
+            PisoSelva6 = new TgcPlane(new TGCVector3(707f, 0f, -50f), new TGCVector3(259f, 5f, 77f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva6);
+            PisoSelva7 = new TgcPlane(new TGCVector3(834f, 0f, 49f), new TGCVector3(132f, 5f, 48f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva7);
+            PisoSelva8 = new TgcPlane(new TGCVector3(707f, 0f, 147.5f), new TGCVector3(130f, 5f, 38f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva8);
+            PisoSelva9 = new TgcPlane(new TGCVector3(707f, -0.1f, 0f), new TGCVector3(81f, 5f, 148f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva9);
+            PisoSelva10 = new TgcPlane(new TGCVector3(881f, -0.1f, -0.2f), new TGCVector3(79.5f, 5f, 50f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva10);
+            PisoSelva11 = new TgcPlane(new TGCVector3(883f, -0.1f, 96f), new TGCVector3(83f, 5f, 145f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva11);
+            PisoSelva12 = new TgcPlane(new TGCVector3(43.7f, -0.1f, 219f), new TGCVector3(552f, 5f, 133.5f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva12);
+            PisoSelva13 = new TgcPlane(new TGCVector3(218f, -0.1f, 432f), new TGCVector3(379f, 5f, 148.5f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva13);
+            PisoSelva14 = new TgcPlane(new TGCVector3(-81f, -0.1f, 86f), new TGCVector3(40f, 5f, 193f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva14);
+            PisoSelva15 = new TgcPlane(new TGCVector3(41f, -0.1f, 82f), new TGCVector3(46f, 5f, 70f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva15);
+            PisoSelva16 = new TgcPlane(new TGCVector3(705f, -0.1f, 185f), new TGCVector3(84f, 5f, 58f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            ListaPlanos.Add(PisoSelva16);
+
+
 
             var PisoCastilloEntradaWidth = 250f;
             var PisoCastilloEntradaLength = 550f;
             var PisoCastilloEntradaTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "rockfloor.jpg");
+
             PisoCastilloEntrada = new TgcPlane(new TGCVector3(700f, 19f, -650f), new TGCVector3(PisoCastilloEntradaWidth, 5f, PisoCastilloEntradaLength), TgcPlane.Orientations.XZplane, PisoCastilloEntradaTexture, 15, 15);
+
             ListaPlanos.Add(PisoCastilloEntrada);
 
             var PisoCastilloMainWidth = 800f;
             var PisoCastilloMainLength = 800f;
             var PisoCastilloMainTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "rockfloor.jpg");
-            PisoCastilloMain = new TgcPlane(new TGCVector3(950f, 0.1f, -650f), new TGCVector3(PisoCastilloMainWidth, 5f, PisoCastilloMainLength), TgcPlane.Orientations.XZplane, PisoCastilloMainTexture, 15, 15);
+            PisoCastilloMain = new TgcPlane(new TGCVector3(950f, 21f, -650f), new TGCVector3(PisoCastilloMainWidth, 5f, PisoCastilloMainLength), TgcPlane.Orientations.XZplane, PisoCastilloMainTexture, 15, 15);
             ListaPlanos.Add(PisoCastilloMain);
 
 

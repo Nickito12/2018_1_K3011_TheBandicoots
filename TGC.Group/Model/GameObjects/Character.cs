@@ -273,13 +273,6 @@ namespace TGC.Group.Model.GameObjects
             {
                 Mesh.Move(posicionPlataforma);
             } 
-            else if(Collider != null && TipoColisionActual == TiposColision.Escalon)
-            {
-                //Mesh.Move(Collider.PMax);
-                Mesh.Move( Mesh.Position.X, (Mesh.Position.Y+50), Mesh.Position.Z );
-                posEscalon = Mesh.Position.ToString();
-
-            }
             else if (Collider != null)
             {
                 Collider = Collider.clone();
@@ -343,6 +336,7 @@ namespace TGC.Group.Model.GameObjects
             {
                 Mesh.Move(posicionPlataforma);
             }
+            
             else if (TipoColisionActual == TiposColision.Techo)
             {
                 Mesh.Position = new TGCVector3(oldPos.X, posicionPlataforma.Y, oldPos.Z);
