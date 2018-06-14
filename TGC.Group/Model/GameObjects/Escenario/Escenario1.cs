@@ -85,7 +85,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             ListaPlanos.Add(PisoSelva4);
             PisoSelva5 = new TgcPlane(new TGCVector3(595f, 0f, 236f), new TGCVector3(387f, 5f, 350f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
             ListaPlanos.Add(PisoSelva5);
-            PisoSelva6 = new TgcPlane(new TGCVector3(707f, 0f, -50f), new TGCVector3(259f, 5f, 50f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            PisoSelva6 = new TgcPlane(new TGCVector3(707f, 0f, -50f), new TGCVector3(259f, 5f, 77f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
             ListaPlanos.Add(PisoSelva6);
             PisoSelva7 = new TgcPlane(new TGCVector3(834f, 0f, 49f), new TGCVector3(132f, 5f, 48f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
             ListaPlanos.Add(PisoSelva7);
@@ -93,15 +93,15 @@ namespace TGC.Group.Model.GameObjects.Escenario
             ListaPlanos.Add(PisoSelva8);
             PisoSelva9 = new TgcPlane(new TGCVector3(707f, -0.1f, 0f), new TGCVector3(81f, 5f, 148f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
             ListaPlanos.Add(PisoSelva9);
-            PisoSelva10 = new TgcPlane(new TGCVector3(886.5f, -0.1f, -0.2f), new TGCVector3(79.5f, 5f, 50f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            PisoSelva10 = new TgcPlane(new TGCVector3(881f, -0.1f, -0.2f), new TGCVector3(79.5f, 5f, 50f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
             ListaPlanos.Add(PisoSelva10);
             PisoSelva11 = new TgcPlane(new TGCVector3(883f, -0.1f, 96f), new TGCVector3(83f, 5f, 145f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
             ListaPlanos.Add(PisoSelva11);
-            PisoSelva12 = new TgcPlane(new TGCVector3(45f, -0.1f, 221f), new TGCVector3(552f, 5f, 133.5f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            PisoSelva12 = new TgcPlane(new TGCVector3(43.7f, -0.1f, 219f), new TGCVector3(552f, 5f, 133.5f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
             ListaPlanos.Add(PisoSelva12);
-            PisoSelva13 = new TgcPlane(new TGCVector3(218f, -0.1f, 425.5f), new TGCVector3(379f, 5f, 148.5f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            PisoSelva13 = new TgcPlane(new TGCVector3(218f, -0.1f, 432f), new TGCVector3(379f, 5f, 148.5f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
             ListaPlanos.Add(PisoSelva13);
-            PisoSelva14 = new TgcPlane(new TGCVector3(-81f, -0.1f, 86f), new TGCVector3(50f, 5f, 193f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
+            PisoSelva14 = new TgcPlane(new TGCVector3(-81f, -0.1f, 86f), new TGCVector3(40f, 5f, 193f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
             ListaPlanos.Add(PisoSelva14);
             PisoSelva15 = new TgcPlane(new TGCVector3(41f, -0.1f, 82f), new TGCVector3(46f, 5f, 70f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
             ListaPlanos.Add(PisoSelva15);
