@@ -177,6 +177,13 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 m.BoundingBox = new TgcBoundingAxisAlignBox(m.BoundingBox.PMin - new TGCVector3(5, 0, 5), m.BoundingBox.PMax + new TGCVector3(5, 0, 5));
             }
 
+            // Paredes de caida
+            ListaParedesCaida = Scene.Meshes.FindAll(m => m.Name.Contains("Plane"));
+            foreach(var m in ListaParedesCaida)
+            {
+                m.BoundingBox.scaleTranslate(new TGCVector3(0, -3f ,0), new TGCVector3(1, 0.9f, 1));
+            }
+
             // Pozos
             ListaPozos = Scene.Meshes.FindAll(m => m.Name.Contains("Pozo"));
             foreach (var mesh in ListaPozos)
