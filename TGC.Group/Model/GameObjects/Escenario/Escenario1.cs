@@ -201,9 +201,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             // Paredes de caida
             ListaParedesCaida = Scene.Meshes.FindAll(m => m.Name.Contains("Plane"));
-            foreach(var m in ListaParedesCaida)
+            foreach (var m in ListaParedesCaida)
             {
-                m.BoundingBox.scaleTranslate(new TGCVector3(0, -3f ,0), new TGCVector3(1, 0.9f, 1));
+                var agregado = new TGCVector3(3, -0.8f, 3);
+                m.BoundingBox = new TgcBoundingAxisAlignBox(m.BoundingBox.PMin - agregado, m.BoundingBox.PMax + agregado);
             }
 
             // Pozos
@@ -383,6 +384,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }
             return min;
         }
+        float rotacionLogos = 0f;
         public override void RenderScene()
         {
             var l = ClosestLight();
@@ -394,17 +396,16 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 RenderObject(plano);
             }
-            /* ACA VA LA ROTACION DE LOS LOGOS
+            rotacionLogos += 1f * Env.ElapsedTime;
+            rotacionLogos = rotacionLogos > 360f ? 0 : rotacionLogos;
             foreach (var logo in ListaLogos)
             {
-                //TGCVector3 posicionVieja = logo.Position;
-                //logo.Position = new TGCVector3(0, 0, 0);
-
-                //logo.RotateY(-Env.ElapsedTime / 2);
-
-                //logo.Position = posicionVieja;
+                var p = (logo.BoundingBox.PMax + logo.BoundingBox.PMin) * 0.5f;
+                logo.AutoTransform = false;
+                logo.Transform = TGCMatrix.Translation(-p)
+                                * TGCMatrix.RotationYawPitchRoll(rotacionLogos, 0, 0)
+                                * TGCMatrix.Translation(p);
             }
-            */
             TextoLogo.Text = CantLogos.ToString();
             TextoLogo.render();
             Env.Personaje.Render(this);
