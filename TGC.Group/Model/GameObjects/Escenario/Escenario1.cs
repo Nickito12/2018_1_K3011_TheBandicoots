@@ -65,7 +65,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
             Lights.Add(new Tuple<float, TGCVector3, TGCVector3>(0.05f, new TGCVector3(0, 80, 100), dir));
             dir = new TGCVector3(1, -2, 0);
             dir.Normalize();
-            Lights.Add(new Tuple<float, TGCVector3, TGCVector3>(0.05f, new TGCVector3(220, 40, 390), dir));
+            Lights.Add(new Tuple<float, TGCVector3, TGCVector3>(0.05f, new TGCVector3(220, 80, 390), dir));
+            Lights.Add(new Tuple<float, TGCVector3, TGCVector3>(0.05f, new TGCVector3(1370, 80, 57), new TGCVector3(0, -1, 0)));
+            Lights.Add(new Tuple<float, TGCVector3, TGCVector3>(0.05f, new TGCVector3(842, 80, -327), new TGCVector3(0, -1, 0)));
+            Lights.Add(new Tuple<float, TGCVector3, TGCVector3>(0.05f, new TGCVector3(1050, 80, -110), new TGCVector3(0, -1, 0)));
             g_LightPos = new TGCVector3(140, 40, 390);
             EfectoRender2D = Effect.FromFile(d3dDevice, Env.ShadersDir + "render2D.fx",
                 null, null, ShaderFlags.PreferFlowControl, null, out compilationErrors);
