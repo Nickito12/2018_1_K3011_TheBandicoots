@@ -35,6 +35,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         protected const float ROTATION_SPEED = 1f;
         protected List<Plataforma> Plataformas;
         protected List<TgcPlane> ListaPlanos = new List<TgcPlane>();
+        public int CantLogos;
+        public List<TgcMesh> ListaLogos = new List<TgcMesh>();
 
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
         {
@@ -130,6 +132,13 @@ namespace TGC.Group.Model.GameObjects.Escenario
                         var aabb = Env.Personaje.Mesh.BoundingBox;
                         Env.Personaje.setposition(new TGCVector3(0, c.PMax.Y - Env.Personaje.Position().Y, 0));
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
+                        break;
+                    }
+                    else if (ListaLogos.Contains(Mesh))
+                    {
+                        Mesh.Enabled = false; //Deberia dejar de mostrarse
+                        ListaLogos.Remove(Mesh); //lo quito de la lista asi no se contabiliza
+                        CantLogos = ListaLogos.Count;
                         break;
                     }
                     else

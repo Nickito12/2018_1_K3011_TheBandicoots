@@ -12,6 +12,8 @@ using TGC.Group.Model.Estructuras;
 using Microsoft.DirectX.Direct3D;
 using System;
 using TGC.Core.Shaders;
+using TGC.Core.Text;
+using System.Drawing;
 
 namespace TGC.Group.Model.GameObjects.Escenario
 {
@@ -45,6 +47,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         private TgcPlane PisoCastillo8;
         private TgcPlane PisoCastillo9;
         private TgcPlane PisoCastillo10;
+        public Texture texturaLogo;
+        public TgcText2D TextoLogo = new TgcText2D();
 
         // Epsilon, pos, dir
         private List<Tuple<float, TGCVector3, TGCVector3>> Lights = new List<Tuple<float, TGCVector3, TGCVector3>>(); // Usamos solo la mas cercana
@@ -81,12 +85,18 @@ namespace TGC.Group.Model.GameObjects.Escenario
             try
             {
                 texturaVida = TextureLoader.FromFile(d3dDevice, Env.MediaDir + "\\Menu\\heart.png");
+                texturaLogo = TextureLoader.FromFile(d3dDevice, Env.MediaDir + "\\Menu\\LogoTGC.png");
             }
             catch
             {
                 throw new Exception(string.Format("Error at loading texture: {0}", Env.MediaDir + "\\Menu\\heart.png"));
             }
-            Reset();
+
+            TextoLogo.Align = TgcText2D.TextAlign.LEFT;
+            TextoLogo.changeFont(new System.Drawing.Font("Comic Sans MS", 24, FontStyle.Bold));
+            TextoLogo.Position = new Point(D3DDevice.Instance.Width - 70, D3DDevice.Instance.Height - 65);
+            TextoLogo.Color = Color.White;
+
             //Crear pisos
             /*var PisoSelvaWidth = 1200f;
             var PisoSelvaLength = PisoSelvaWidth;
@@ -169,7 +179,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             // Cargar escena
             Loader = new TgcSceneLoader();
-            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\escenarioEscalon-TgcScene.xml");
+            Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\escenarioConLogos-TgcScene.xml");
+
+            Reset();
 
             // Paredes
             ListaParedes = Scene.Meshes.FindAll(m => m.Name.Contains("ParedCastillo"));
@@ -200,6 +212,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 Scene.Meshes.Remove(mesh);
             }
+
+            // Logos
+            ListaLogos = Scene.Meshes.FindAll(m => m.Name.Contains("LogoTGC"));
+            CantLogos = ListaLogos.Count;
 
             // Alargar algunas AABB
             var r = new Random();
@@ -326,6 +342,16 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }
             else
                 Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
+            if (Env.Personaje.vidas == 3)
+            {
+                ListaLogos.Clear();
+                ListaLogos = Scene.Meshes.FindAll(m => m.Name.Contains("LogoTGC"));
+                foreach (var logo in ListaLogos)
+                {
+                    logo.Enabled = true; //esto es para que se renderice
+                }
+                CantLogos = ListaLogos.Count;
+            }
             Env.NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0, 0, 0), 20, -75, Env.Input);
             Env.Camara = Env.NuevaCamara;
         }
@@ -335,6 +361,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             if (!checkpointReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint))
                 checkpointReached = true;
             RenderHUD();
+            RenderHUDLogos();
             Env.Personaje.RenderHUD();
             realBaseRender();
             RenderScene();
@@ -367,6 +394,19 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 RenderObject(plano);
             }
+            /* ACA VA LA ROTACION DE LOS LOGOS
+            foreach (var logo in ListaLogos)
+            {
+                //TGCVector3 posicionVieja = logo.Position;
+                //logo.Position = new TGCVector3(0, 0, 0);
+
+                //logo.RotateY(-Env.ElapsedTime / 2);
+
+                //logo.Position = posicionVieja;
+            }
+            */
+            TextoLogo.Text = CantLogos.ToString();
+            TextoLogo.render();
             Env.Personaje.Render(this);
         }
 
@@ -376,6 +416,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 plano.Dispose();
             }
+            TextoLogo.Dispose();
             base.Dispose();
         }
 
@@ -389,8 +430,18 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         public override List<TgcBoundingAxisAlignBox> listaColisionesConCamara()
         { 
-            return Scene.Meshes.FindAll(m => !ListaMeshesSinColision.Contains(m) && !ListaEscalones.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m)).
+            return Scene.Meshes.FindAll(m => !ListaMeshesSinColision.Contains(m) && !ListaEscalones.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m) && !ListaLogos.Contains(m)).
                 ConvertAll((TgcMesh x) => x.BoundingBox);
+        }
+
+        public void RenderHUDLogos()
+        {
+            var d3dDevice = D3DDevice.Instance.Device;
+            //TgcTexture textura;
+            var sprite = new Sprite(d3dDevice);
+            sprite.Begin(SpriteFlags.AlphaBlend);
+            sprite.Draw2D(texturaLogo, Rectangle.Empty, new SizeF(80, 80), new PointF(D3DDevice.Instance.Width - 155, D3DDevice.Instance.Height - 90), Color.Blue);
+            sprite.End();
         }
     }
 }
