@@ -14,7 +14,7 @@ using System;
 
 namespace TGC.Group.Model.GameObjects.Escenario
 {
-    public class Escenario1 : Escenario
+    public class Escenario1 : EscenarioManual
     {
         // El piso del mapa/escenario
         //private TgcPlane PisoSelva;
@@ -54,12 +54,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
             Env = _env;
             string compilationErrors;
             var d3dDevice = D3DDevice.Instance.Device;
-            EfectoRender3D = Effect.FromFile(d3dDevice, Env.ShadersDir + "render3D.fx",
-                null, null, ShaderFlags.PreferFlowControl, null, out compilationErrors);
-            if (EfectoRender3D == null)
-            {
-                throw new Exception("Error al cargar shader. Errores: " + compilationErrors);
-            }
             EfectoRender2D = Effect.FromFile(d3dDevice, Env.ShadersDir + "render2D.fx",
                 null, null, ShaderFlags.PreferFlowControl, null, out compilationErrors);
             if (EfectoRender2D == null)
@@ -299,7 +293,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             }
 
-            Grilla = new GrillaRegular();
             Grilla.create(Scene.Meshes.FindAll(m => !m.Name.Contains("Box")), Scene.BoundingBox);
             Grilla.createDebugMeshes();
         }
@@ -349,14 +342,15 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public override TgcBoundingAxisAlignBox ColisionConPiso(TgcBoundingAxisAlignBox boundingBox)
         {
             foreach (var p in ListaPlanos)
-                if (Escenario.testAABBAABB(p.BoundingBox, boundingBox))
+                if (EscenarioManual.testAABBAABB(p.BoundingBox, boundingBox))
                     return p.BoundingBox;
             return null;
         }
 
-        public override List<TgcMesh> listaColisionesConCamara()
-        {
-            return Scene.Meshes.FindAll(m => !ListaMeshesSinColision.Contains(m) && !ListaEscalones.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m));
+        public override List<TgcBoundingAxisAlignBox> listaColisionesConCamara()
+        { 
+            return Scene.Meshes.FindAll(m => !ListaMeshesSinColision.Contains(m) && !ListaEscalones.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m)).
+                ConvertAll((TgcMesh x) => x.BoundingBox);
         }
     }
 }

@@ -31,11 +31,5 @@ namespace TGC.Group.Model.GameObjects
             Delta = Mesh.Position - old;
         }
 
-
-        public override String nombreClase()
-        {
-            return null;
-        }
-
     }
 }

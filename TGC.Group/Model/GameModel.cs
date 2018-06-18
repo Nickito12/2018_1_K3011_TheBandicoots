@@ -27,7 +27,7 @@ namespace TGC.Group.Model
         public Character Personaje = new Character();
         public Escenario Escenario;
         // Para precargar todos los escenarios
-        public List<Escenario> Escenarios = new List<Escenario>();
+        public Dictionary<string, Escenario> Escenarios = new Dictionary<string, Escenario>();
         public TgcThirdPersonCamera NuevaCamara;
         public float CameraOffsetHeight = 20;
         public float CameraOffsetForward = -75;
@@ -57,9 +57,13 @@ namespace TGC.Group.Model
             Personaje.Init(this);
             Escenario = new Escenario1();
             Escenario.Init(this);
-            Escenarios.Add(Escenario);
+            Escenarios["Escenario1"] = Escenario;
             Escenario = new EscenarioMenu();
-            Escenarios.Add(Escenario);
+            Escenarios["Menu"] = Escenario;
+            Escenario = new EscenarioBullet1();
+            Escenario.Init(this);
+            Escenarios["Bullet1"] = Escenario;
+            Escenario = Escenarios["Menu"];
             Personaje.Init(this);
             Escenario.Init(this);
         }
@@ -100,15 +104,15 @@ namespace TGC.Group.Model
         public override void Dispose()
         {
             Personaje.Dispose();
-            foreach(GameObject Esc in Escenarios)
-                Esc.Dispose();
+            foreach(var par in Escenarios)
+                par.Value.Dispose();
         }
         public void limpiarTexturas() { ClearTextures(); }
         public void RenderizaAxis() { RenderAxis(); }
         public void RenderizaFPS() { RenderFPS(); }
-        public void CambiarEscenario(int num)
+        public void CambiarEscenario(string name)
         {
-            Escenario = Escenarios[num];
+            Escenario = Escenarios[name];
             Escenario.Reset();
         }
 

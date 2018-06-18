@@ -35,9 +35,9 @@ namespace TGC.Group.Model.GameObjects
             {
                 if (Mesh.Position.Y > PosInicial.Y - LongitudCaida)
                     Mesh.Move(new TGCVector3(0f, -ElapsedTime * VelocidadCaida, 0f));
-                return Escenario.Escenario.testAABBAABB(pj.Mesh.BoundingBox, aabb) ? aabb : null;
+                return Escenario.EscenarioManual.testAABBAABB(pj.Mesh.BoundingBox, aabb) ? aabb : null;
             }
-            if (Escenario.Escenario.testAABBAABB(pj.Mesh.BoundingBox, aabb))
+            if (Escenario.EscenarioManual.testAABBAABB(pj.Mesh.BoundingBox, aabb))
                 if (pj.Mesh.BoundingBox.PMin.Y > aabb.PMax.Y - MargenError)
                 {
                     pj.SetTipoColisionActual(TiposColision.SinColision);

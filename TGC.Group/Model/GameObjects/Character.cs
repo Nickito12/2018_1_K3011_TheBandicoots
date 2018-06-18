@@ -10,6 +10,7 @@ using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
 using TGC.Core.SceneLoader;
 using TGC.Core.Sound;
+using BulletSharp;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -97,7 +98,7 @@ namespace TGC.Group.Model.GameObjects
                 VelocidadMovimiento -= 10 * ElapsedTime;
             if (Input.keyDown(Key.M))
             {               
-                Env.CambiarEscenario(1);
+                Env.CambiarEscenario("Menu");
             }
             if (Input.keyPressed(Key.G))
             {
@@ -361,6 +362,45 @@ namespace TGC.Group.Model.GameObjects
         {
             yaJugo = false;
             vidas = 3;
+        }
+        TGCVector3 prevPos;
+        public void UpdateBullet(EscenarioBullet ph)
+        {
+            var Input = Env.Input;
+            Env.NuevaCamara.keyboardMovement = 0;
+            if (Input.keyDown(Key.D) || Input.keyDown(Key.RightArrow))
+                Env.NuevaCamara.keyboardMovement += 1;
+            if (Input.keyDown(Key.A) || Input.keyDown(Key.LeftArrow))
+                Env.NuevaCamara.keyboardMovement -= 1;
+
+            var Forward = Env.NuevaCamara.LookAt - Env.NuevaCamara.Position;
+            Forward.Y = 0;
+            Forward.Normalize();
+            float strength = 125f;
+            if (Input.keyDown(Key.W) || Input.keyDown(Key.UpArrow))
+            {
+                var cuerpo = ph.cuerpoPJ();
+                cuerpo.ActivationState = ActivationState.ActiveTag;
+                cuerpo.AngularVelocity = TGCVector3.Empty.ToBsVector;
+                cuerpo.ApplyImpulse(strength * Forward.ToBsVector*Env.ElapsedTime, cuerpo.CenterOfMassPosition);
+            }
+            if (Input.keyDown(Key.S) || Input.keyDown(Key.DownArrow))
+            {
+                var cuerpo = ph.cuerpoPJ();
+                cuerpo.ActivationState = ActivationState.ActiveTag;
+                cuerpo.AngularVelocity = TGCVector3.Empty.ToBsVector;
+                cuerpo.ApplyImpulse(-strength * Forward.ToBsVector * Env.ElapsedTime, cuerpo.CenterOfMassPosition);
+            }
+            var delta = prevPos.Y - Mesh.Position.Y;
+            prevPos = Mesh.Position;
+            if (Input.keyPressed(Key.Space) && delta == 0f)
+            {
+                var cuerpo = ph.cuerpoPJ();
+                cuerpo.ActivationState = ActivationState.ActiveTag;
+                cuerpo.AngularVelocity = TGCVector3.Empty.ToBsVector;
+                cuerpo.ApplyCentralForce(30*strength * TGCVector3.Up.ToBsVector);
+            }
+            Mesh.Rotation = new TGCVector3(0, Env.NuevaCamara.rotY + FastMath.PI, 0);
         }
     }
 }
