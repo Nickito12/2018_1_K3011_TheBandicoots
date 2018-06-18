@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using TGC.Group.Model.Estructuras;
 using Microsoft.DirectX.Direct3D;
 using System;
+using TGC.Core.Shaders;
 
 namespace TGC.Group.Model.GameObjects.Escenario
 {
@@ -45,15 +46,27 @@ namespace TGC.Group.Model.GameObjects.Escenario
         private TgcPlane PisoCastillo9;
         private TgcPlane PisoCastillo10;
 
+        // Epsilon, pos, dir
+        private List<Tuple<float, TGCVector3, TGCVector3>> Lights = new List<Tuple<float, TGCVector3, TGCVector3>>(); // Usamos solo la mas cercana
+
         private TgcBoundingAxisAlignBox checkpoint = new TgcBoundingAxisAlignBox(
              new TGCVector3(799, 0, -97), new TGCVector3(870, 1000, -4));
         private bool checkpointReached = false;
 
         public override void Init(GameModel _env)
         {
+            //useShadows = false;
             Env = _env;
             string compilationErrors;
             var d3dDevice = D3DDevice.Instance.Device;
+            shadowEffect = TgcShaders.loadEffect(Env.ShadersDir + "ShadowMap.fx");
+            var dir = new TGCVector3(0, -1, 0);
+            dir.Normalize();
+            Lights.Add(new Tuple<float, TGCVector3, TGCVector3>(0.05f, new TGCVector3(0, 80, 100), dir));
+            dir = new TGCVector3(1, -2, 0);
+            dir.Normalize();
+            Lights.Add(new Tuple<float, TGCVector3, TGCVector3>(0.05f, new TGCVector3(220, 40, 390), dir));
+            g_LightPos = new TGCVector3(140, 40, 390);
             EfectoRender2D = Effect.FromFile(d3dDevice, Env.ShadersDir + "render2D.fx",
                 null, null, ShaderFlags.PreferFlowControl, null, out compilationErrors);
             if (EfectoRender2D == null)
@@ -269,13 +282,13 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             //se agregan plataformas giratorias
             var meshGiratorio = Plataformas[0].Mesh.clone("pGira");
-            Plataformas.Add(new PlataformaGiratoria(20, meshGiratorio, new TGCVector3(260f, 0f, 275f), 5f));
+            Plataformas.Add(new PlataformaGiratoria(15, meshGiratorio, new TGCVector3(260f, 0f, 275f), 5f));
             Scene.Meshes.Add(meshGiratorio);
             var meshGiratorio2 = ListaPlataformaZ[4].clone("pGira2");
-            Plataformas.Add(new PlataformaGiratoria(32, meshGiratorio2, new TGCVector3(75f, 0f, -20f), 5f));
+            Plataformas.Add(new PlataformaGiratoria(28, meshGiratorio2, new TGCVector3(75f, 0f, -20f), 5f));
             Scene.Meshes.Add(meshGiratorio2);
             var meshGiratorio3 = ListaPlataformaZ[4].clone("pGira3");
-            Plataformas.Add(new PlataformaGiratoria(31, meshGiratorio3, new TGCVector3(-135f, 0f, 575f), 5f));
+            Plataformas.Add(new PlataformaGiratoria(28, meshGiratorio3, new TGCVector3(-135f, 0f, 575f), 5f));
             Scene.Meshes.Add(meshGiratorio3);
 
             foreach (var plataforma in Plataformas)
@@ -314,20 +327,44 @@ namespace TGC.Group.Model.GameObjects.Escenario
             Env.Camara = Env.NuevaCamara;
         }
 
-        public override void Render()
+        public override void RenderRealScene()
         {
             if (!checkpointReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint))
                 checkpointReached = true;
-            preRender3D();
             RenderHUD();
-            base.Render();
+            Env.Personaje.RenderHUD();
+            realBaseRender();
+            RenderScene();
+        }
+        public Tuple<float, TGCVector3, TGCVector3> ClosestLight()
+        {
+            Tuple<float, TGCVector3, TGCVector3> min = Lights[0];
+            var pos = new TGCVector3(Env.Personaje.Mesh.Position.X, 0, Env.Personaje.Mesh.Position.Z);
+            float d = float.MaxValue;
+            foreach(var l in Lights)
+            {
+                var lPos = l.Item2;
+                lPos -= new TGCVector3(0, lPos.Y, 0);
+                var dist = TGCVector3.Length(pos - l.Item2);
+                if (dist < d) {
+                    d = dist;
+                    min = l;
+                }
+            }
+            return min;
+        }
+        public override void RenderScene()
+        {
+            var l = ClosestLight();
+            shadowEffect.SetValue("EPSILON", l.Item1);
+            g_LightPos = l.Item2;
+            g_LightDir = l.Item3;
+            baseRender();
             foreach (var plano in ListaPlanos)
             {
-                plano.Render();
+                RenderObject(plano);
             }
-            Env.Personaje.Render();
-            postRender3D();
-            render2D(); 
+            Env.Personaje.Render(this);
         }
 
         public override void Dispose()

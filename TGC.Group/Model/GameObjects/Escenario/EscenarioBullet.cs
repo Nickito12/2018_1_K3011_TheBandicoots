@@ -17,7 +17,6 @@ namespace TGC.Group.Model
     public abstract class EscenarioBullet : Escenario
     {
         public abstract override void Update();
-        public abstract override void Render();
         public abstract int getElements();
         public abstract RigidBody cuerpoPJ();
 

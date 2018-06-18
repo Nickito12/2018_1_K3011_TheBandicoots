@@ -13,6 +13,7 @@ using TGC.Core.Sound;
 using System.Drawing;
 using Microsoft.DirectX.DirectInput;
 using System;
+using static TGC.Group.Model.GameObjects.GameObject;
 
 namespace TGC.Group.Model.GameObjects.Escenario
 {
@@ -62,11 +63,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
             SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, TexturesPath + "Front.jpg");
             SkyBox.Init();
         }
-        public override void Render() { baseRender(); }
-        public void baseRender()
+        public void realBaseRender()
         {
-            SkyBox.Render();
-            //Dibujar bounding boxes de los mesh (Debugging)
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
             {
                 foreach (TgcMesh mesh in Scene.Meshes)
@@ -74,19 +72,24 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 foreach (TgcMesh mesh in ListaPozos)
                     mesh.BoundingBox.Render();
             }
+        }
+        public void baseRender()
+        {
+            SkyBox.Render();
+            //Dibujar bounding boxes de los mesh (Debugging)
             foreach (var plataforma in Plataformas)
             {
-                plataforma.Mesh.Render();
+                RenderObject(plataforma.Mesh);
             }
             foreach (var pozo in ListaPozos)
             {
-                pozo.Render();
+                RenderObject(pozo);
             }
             foreach (var caja in ListaCajasEmpujables)
             {
-                caja.Mesh.Render();
+                RenderObject(caja.Mesh);
             }
-            Grilla.render(Env.Frustum, ShowGrilla);
+            Grilla.render(Env.Frustum, ShowGrilla, this);
         }
         public override void Dispose()
         {

@@ -128,7 +128,7 @@ namespace TGC.Group.Model.Estructuras
         /// <summary>
         ///     Dibujar objetos de la isla en forma optimizada, utilizando la grilla para Frustm Culling
         /// </summary>
-        public void render(TgcFrustum frustum, bool debugEnabled)
+        public void render(TgcFrustum frustum, bool debugEnabled, Escenario esc)
         {
             var pMax = sceneBounds.PMax;
             var pMin = sceneBounds.PMin;
@@ -142,7 +142,7 @@ namespace TGC.Group.Model.Estructuras
             {
                 if (mesh.Enabled)
                 {
-                    mesh.Render();
+                    esc.RenderObject(mesh);
                     DrawCount++;
                 }
             }

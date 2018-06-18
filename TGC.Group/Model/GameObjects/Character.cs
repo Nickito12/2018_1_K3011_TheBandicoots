@@ -189,8 +189,9 @@ namespace TGC.Group.Model.GameObjects
             VelocidadTerminal = -50;
             modoGod = false;
         }
-        public override void Render()
+        public void RenderHUD()
         {
+
             int textY = 20;
             var c = Color.BlanchedAlmond;
             Env.DrawText.drawText("H: Mostrar Ayuda", 0, textY, c); textY += 20;
@@ -213,16 +214,18 @@ namespace TGC.Group.Model.GameObjects
             }
             if (modoGod)
             {
-               
-               Env.DrawText.drawText("God activado", D3DDevice.Instance.Width/2, 20, Color.Chocolate); 
+
+                Env.DrawText.drawText("God activado", D3DDevice.Instance.Width / 2, 20, Color.Chocolate);
             }
-           
+            if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
+                Mesh.BoundingBox.Render();
+        }
+        public override void Render(Escenario.Escenario esc)
+        {
             Mesh.Transform = TGCMatrix.Scaling(Mesh.Scale)
                             * TGCMatrix.RotationYawPitchRoll(Mesh.Rotation.Y, Mesh.Rotation.X, Mesh.Rotation.Z)
                             * TGCMatrix.Translation(Mesh.Position);
-            Mesh.Render();
-            if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
-                Mesh.BoundingBox.Render();
+            esc.RenderObject(Mesh);
         }
 
         public override void Dispose()
@@ -398,7 +401,7 @@ namespace TGC.Group.Model.GameObjects
                 var cuerpo = ph.cuerpoPJ();
                 cuerpo.ActivationState = ActivationState.ActiveTag;
                 cuerpo.AngularVelocity = TGCVector3.Empty.ToBsVector;
-                cuerpo.ApplyCentralForce(30*strength * TGCVector3.Up.ToBsVector);
+                cuerpo.ApplyCentralForce(60*strength * TGCVector3.Up.ToBsVector);
             }
             Mesh.Rotation = new TGCVector3(0, Env.NuevaCamara.rotY + FastMath.PI, 0);
         }

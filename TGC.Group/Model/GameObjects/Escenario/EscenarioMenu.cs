@@ -154,6 +154,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }, Color.DarkCyan));
             buttons.Add(new QuadButton(pos, 0, 15, "Exit", () => { Environment.Exit(0); }, Color.DarkCyan));
             pickingRay = new TgcPickingRay(Env.Input);
+            useShadows = false;
         }
         public override void Render()
         {

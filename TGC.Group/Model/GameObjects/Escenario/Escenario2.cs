@@ -14,6 +14,7 @@ using System;
 using BulletSharp;
 using Microsoft.DirectX.DirectInput;
 using BulletSharp.Math;
+using TGC.Core.Shaders;
 
 namespace TGC.Group.Model.GameObjects.Escenario
 {
@@ -32,6 +33,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
             var d3dDevice = D3DDevice.Instance.Device;
             EfectoRender2D = Microsoft.DirectX.Direct3D.Effect.FromFile(d3dDevice, Env.ShadersDir + "render2D.fx",
                 null, null, ShaderFlags.PreferFlowControl, null, out compilationErrors);
+            shadowEffect = TgcShaders.loadEffect(Env.ShadersDir + "ShadowMap.fx");
+            shadowEffect.SetValue("EPSILON", 0.005f);
+            g_LightPos = new TGCVector3(0, 1000, 0);
+            g_LightDir = new TGCVector3(0, -1, 0);
+            g_LightDir.Normalize();
             if (EfectoRender2D == null)
             {
                 throw new Exception("Error al cargar shader. Errores: " + compilationErrors);
@@ -212,27 +218,27 @@ namespace TGC.Group.Model.GameObjects.Escenario
             });
         }
 
-        public override void Render()
+        public override void RenderRealScene()
         {
-            preRender3D();
             RenderHUD();
-            foreach (var pair in boxes)
-            {
-                var box = pair.Item1;
-                box.Render();
-            }
-            if(Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.LeftControl))
+            RenderScene();
+            if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.LeftControl))
                 foreach (var x in dynamicsWorld.CollisionObjectArray)
                 {
                     Vector3 min, max;
                     x.CollisionShape.GetAabb(x.WorldTransform, out min, out max);
                     new TgcBoundingAxisAlignBox(new TGCVector3(min), new TGCVector3(max)).Render();
                 }
-            Env.Personaje.Mesh.Render();
-            postRender3D();
-            render2D(); 
         }
-
+        public override void RenderScene()
+        {
+            foreach (var pair in boxes)
+            {
+                var box = pair.Item1;
+                RenderObject(box);
+            }
+            RenderObject(Env.Personaje.Mesh);
+        }
         public override void Dispose()
         {
             foreach (var pair in boxes)

@@ -15,7 +15,7 @@ namespace TGC.Group.Model.GameObjects
 
         public abstract void Init(GameModel _env);
         public abstract void Update();
-        public abstract void Render();
+        public abstract void Render(Escenario.Escenario esc);
         public abstract void Dispose();
         virtual public TgcBoundingAxisAlignBox ColisionY(TgcBoundingAxisAlignBox box) { return null; }
         virtual public TgcBoundingAxisAlignBox ColisionXZ(TgcBoundingAxisAlignBox box) { return null; }
