@@ -18,28 +18,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
 {
     public abstract class Escenario : GameObject
     {
-//<<<<<<< HEAD
-        protected TgcSkyBox SkyBox;
-        protected TgcScene Scene;
-        protected TgcSceneLoader Loader;
-        public GrillaRegular Grilla = new GrillaRegular();
-        public bool ShowGrilla = false;
-        protected List<TgcMesh> ListaPozos = new List<TgcMesh>();
-        protected List<TgcMesh> ListaPlataformas = new List<TgcMesh>();
-        protected List<TgcMesh> ListaPisosResbalosos = new List<TgcMesh>();
-        protected List<TgcMesh> ListaEscalones = new List<TgcMesh>();
-        protected List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
-        protected List<TgcMesh> MeshConMovimiento = new List<TgcMesh>();
-        protected List<CajaEmpujable> ListaCajasEmpujables = new List<CajaEmpujable>();
-        protected List<TgcMesh> ListaParedes = new List<TgcMesh>();
-        protected List<TgcMesh> ListaParedesCaida = new List<TgcMesh>();
         protected TgcMp3Player cancionPcpal = new TgcMp3Player();
-        protected const float ROTATION_SPEED = 1f;
-        protected List<Plataforma> Plataformas;
-        protected List<TgcPlane> ListaPlanos = new List<TgcPlane>();
+        public GrillaRegular Grilla = new GrillaRegular();
         protected Microsoft.DirectX.Direct3D.Effect EfectoRender3D;
-//=======
-//>>>>>>> bullet
         protected Microsoft.DirectX.Direct3D.Effect EfectoRender2D;
         protected Texture Text;
         public Surface pOldRT;
@@ -48,8 +29,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public Surface g_pDepthStencil;
         public Surface pOldDS;
         public Texture texturaVida;
-        //protected TgcMp3Player cancionPcpal = new TgcMp3Player();
-        //public GrillaRegular Grilla = new GrillaRegular();
 
         public abstract override void Render();
         public abstract override void Dispose();
@@ -77,80 +56,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 d3dDevice.PresentationParameters.BackBufferHeight,
                 DepthFormat.D24S8, MultiSampleType.None, 0, true);
         }
-/*
-        protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
-        {
-            scale = scale ?? new TGCVector3(1, 1, 1);
-            var Mesh = Loader.loadSceneFromFile(Env.MediaDir + 
-                "Meshes\\" + carpeta + "\\" + nombre + "\\" + 
-                nombre + "-TgcScene.xml").Meshes[0];
-            Mesh.AutoTransform = true;
-            Mesh.Position = pos;
-            Mesh.Scale = scale.Value;
-            Mesh.RotateY(FastMath.ToRad(rotation));
-            Scene.Meshes.Add(Mesh);
-
-        }
-        protected void CreateSkyBox(TGCVector3 center, TGCVector3 size, string name)
-        {
-            SkyBox = new TgcSkyBox();
-            SkyBox.Center = center;
-            SkyBox.Size = size;
-            var TexturesPath = Env.MediaDir + name + "\\";
-            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, TexturesPath + "Up.jpg");
-            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, TexturesPath + "Down.jpg");
-            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, TexturesPath + "Left.jpg");
-            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, TexturesPath + "Right.jpg");
-            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, TexturesPath + "Back.jpg");
-            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, TexturesPath + "Front.jpg");
-            SkyBox.Init();
-        }
-        //public override void Render() { baseRender(); }
-        public void baseRender()
-        {
-            SkyBox.Render();
-            //Dibujar bounding boxes de los mesh (Debugging)
-            if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
-            {
-                foreach (TgcMesh mesh in Scene.Meshes)
-                    mesh.BoundingBox.Render();
-                foreach (TgcMesh mesh in ListaPozos)
-                    mesh.BoundingBox.Render();
-            }
-            foreach (var plataforma in Plataformas)
-            {
-                plataforma.Mesh.Render();
-            }
-            foreach (var pozo in ListaPozos)
-            {
-                //pozo.BoundingBox.PMin
-                 //   pozo.BoundingBox.PMax
-                pozo.Render();
-            }
-            foreach(var escalon in ListaEscalones)
-            {
-                escalon.Render();
-            }
-            /*foreach(var escalon in ListaEscalones)
-            {
-                escalon.Render();
-            } *//*
-            foreach (var caja in ListaCajasEmpujables)
-            {
-                caja.Mesh.Render();
-            }
-            Grilla.render(Env.Frustum, ShowGrilla);
-        }
-        public override void Dispose()
-        {
-            cancionPcpal.closeFile();
-            SkyBox.Dispose();
-            Scene.DisposeAll();
-        }
-
-//=======
-//>>>>>>> bullet
-*/
         public static bool testAABBAABB(TgcBoundingAxisAlignBox a, TgcBoundingAxisAlignBox b)
         {
             return (a.PMin.X <= b.PMax.X && a.PMax.X >= b.PMin.X) &&
