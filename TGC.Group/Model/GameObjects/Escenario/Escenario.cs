@@ -144,7 +144,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
             shadowEffect.SetValue("g_txShadow", g_pShadowMap);
             // RENDER
             doingShadowRender = true;
-            RenderScene();
+            RenderScene(); 
+
 
             // Termino
             D3DDevice.Instance.Device.EndScene();
@@ -185,8 +186,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 x.Effect = shadowEffect;
                 x.Technique = doingShadowRender ? "RenderShadow" : "RenderScene";
             }
-            x.Render();
-            x.Technique = t;
+           
+                x.Render();
+                x.Technique = t;
+            
         }
         public void RenderObject(TgcSkeletalMesh x)
         {
@@ -268,7 +271,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         }
         public void RenderHUD()
         {
-
+            
             var d3dDevice = D3DDevice.Instance.Device;
             //TgcTexture textura;
             var sprite = new Sprite(d3dDevice);

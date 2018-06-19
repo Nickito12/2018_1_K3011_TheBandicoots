@@ -132,7 +132,7 @@ namespace TGC.Group.Model
                 if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     StreamWriter arch = new StreamWriter(saveFileDialog.FileName);
-                    arch.WriteLine(Personaje.Position().X + "-" + Personaje.Position().Y + "-" + Personaje.Position().Z);
+                    arch.WriteLine(Personaje.Position().X + "|" + Personaje.Position().Y + "|" + Personaje.Position().Z);
                     arch.WriteLine(Personaje.vidas);
                     arch.Close();
                 }
@@ -178,7 +178,7 @@ namespace TGC.Group.Model
                             line = reader.ReadLine();
 
                             Personaje.yaJugo = true;
-                            string[] posicionGuardada = line.Split('-');
+                            string[] posicionGuardada = line.Split('|');
                             float X = Convert.ToSingle(posicionGuardada[0]);
                             float Y = Convert.ToSingle(posicionGuardada[1]);
                             float Z = Convert.ToSingle(posicionGuardada[2]);

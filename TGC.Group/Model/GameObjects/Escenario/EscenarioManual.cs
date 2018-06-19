@@ -35,8 +35,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
         protected const float ROTATION_SPEED = 1f;
         protected List<Plataforma> Plataformas;
         protected List<TgcPlane> ListaPlanos = new List<TgcPlane>();
+        protected List<TgcMesh> ListaPisosSubterraneos = new List<TgcMesh>();
         public int CantLogos;
         public List<TgcMesh> ListaLogos = new List<TgcMesh>();
+        public bool subterraneo = false;
 
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
         {
@@ -70,7 +72,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
             {
                 foreach (TgcMesh mesh in Scene.Meshes)
-                    mesh.BoundingBox.Render();
+                    
+                        mesh.BoundingBox.Render(); 
+                    
                 foreach (TgcMesh mesh in ListaPozos)
                     mesh.BoundingBox.Render();
             }
@@ -83,6 +87,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 RenderObject(plataforma.Mesh);
             }
+         
             foreach (var pozo in ListaPozos)
             {
                 RenderObject(pozo);
@@ -91,6 +96,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 RenderObject(caja.Mesh);
             }
+          
             Grilla.render(Env.Frustum, ShowGrilla, this);
         }
         public override void Dispose()
@@ -139,6 +145,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
                         Mesh.Enabled = false; //Deberia dejar de mostrarse
                         ListaLogos.Remove(Mesh); //lo quito de la lista asi no se contabiliza
                         CantLogos = ListaLogos.Count;
+                        break;
+                    }
+                    else if (Mesh.Name.Contains("EscaleraMetalMovil"))
+                    {
+                        subterraneo = true;
                         break;
                     }
                     else
@@ -266,7 +277,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             if (Env.ElapsedTime > 10000)
                 return;
-            if (Env.Personaje.Position().Y <= -50)
+            if (Env.Personaje.Position().Y <= -50 && !subterraneo)
             {
                 Env.Personaje.vidas--;
 
