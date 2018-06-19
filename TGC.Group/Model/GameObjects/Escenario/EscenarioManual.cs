@@ -271,7 +271,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 Env.Personaje.vidas--;
 
                 if (Env.Personaje.vidas <= 0)
-                    Env.CambiarEscenario("Menu");
+                    Env.CambiarEscenario("Muerte");
                 else
 
                     Reset();

@@ -44,7 +44,7 @@ namespace TGC.Group.Model
             dynamicsWorld.Dispose();
             dispatcher.Dispose();
             collisionConfiguration.Dispose();
-            constraintSolver.Dispose();
+            //constraintSolver.Dispose();
             overlappingPairCache.Dispose();
         }
 

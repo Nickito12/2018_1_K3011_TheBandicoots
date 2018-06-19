@@ -56,6 +56,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         private TgcBoundingAxisAlignBox checkpoint = new TgcBoundingAxisAlignBox(
              new TGCVector3(799, 0, -97), new TGCVector3(870, 1000, -4));
         private bool checkpointReached = false;
+        private TgcBoundingAxisAlignBox final = new TgcBoundingAxisAlignBox(new TGCVector3(1005, 0, -140), new TGCVector3(1089, 50, -122));
+        private bool finalReached = false;
 
         public override void Init(GameModel _env)
         {
@@ -332,7 +334,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         public override void Reset()
         {
-            checkpointReached = false;
+            //checkpointReached = false;
             // Reset pj (Moverlo a la posicion inicial del escenario
             if (checkpointReached)
                 Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
@@ -361,6 +363,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             if (!checkpointReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint))
                 checkpointReached = true;
+            if (!finalReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, final))
+                Env.CambiarEscenario("Victoria");
             RenderHUD();
             RenderHUDLogos();
             Env.Personaje.RenderHUD();

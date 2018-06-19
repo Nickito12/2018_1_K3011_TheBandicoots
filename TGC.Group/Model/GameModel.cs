@@ -60,6 +60,12 @@ namespace TGC.Group.Model
             Escenarios["Escenario1"] = Escenario;
             Escenario = new EscenarioMenu();
             Escenarios["Menu"] = Escenario;
+            Escenario = new EscenarioMuerte();
+            Escenario.Init(this);
+            Escenarios["Muerte"] = Escenario;
+            Escenario = new EscenarioVictoria();
+            Escenario.Init(this);
+            Escenarios["Victoria"] = Escenario;
             Escenario = new EscenarioBullet1();
             Escenario.Init(this);
             Escenarios["Bullet1"] = Escenario;
