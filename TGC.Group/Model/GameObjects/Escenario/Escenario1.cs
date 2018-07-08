@@ -59,10 +59,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
              new TGCVector3(799, 0, -97), new TGCVector3(870, 1000, -4));
         private bool checkpointReached = false;
         private TgcBoundingAxisAlignBox checkpoint2 = new TgcBoundingAxisAlignBox(
-             new TGCVector3(0, -200 , -300), new TGCVector3(1050, 1200, 0));
+             new TGCVector3(1000, -200 , -500), new TGCVector3(1200, 1200, -200));
         private bool checkpointReached2 = false;
         private TgcBoundingAxisAlignBox final = new TgcBoundingAxisAlignBox(new TGCVector3(1700, -180, -650), new TGCVector3(1800, -160, -640));
         private bool finalReached = false;
+       
 
         public override void Init(GameModel _env)
         {
@@ -104,26 +105,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
             TextoLogo.Position = new Point(D3DDevice.Instance.Width - 70, D3DDevice.Instance.Height - 65);
             TextoLogo.Color = Color.White;
 
-            //Crear pisos
-            /*var PisoSelvaWidth = 1200f;
-            var PisoSelvaLength = PisoSelvaWidth;
-            var PisoSelvaTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "pasto.jpg");
-            PisoSelva = new TgcPlane(new TGCVector3(-200f, 0f, -100f), new TGCVector3(PisoSelvaWidth, 5f, PisoSelvaWidth), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
-            ListaPlanos.Add(PisoSelva);
-
-            var PisoCastilloEntradaWidth = 250f;
-            var PisoCastilloEntradaLength = 550f;
-            var PisoCastilloEntradaTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "rockfloor.jpg");
-
-            PisoCastilloEntrada = new TgcPlane(new TGCVector3(700f, 19f, -650f), new TGCVector3(PisoCastilloEntradaWidth, 5f, PisoCastilloEntradaLength), TgcPlane.Orientations.XZplane, PisoCastilloEntradaTexture, 15, 15);
-
-            ListaPlanos.Add(PisoCastilloEntrada);
-
-            var PisoCastilloMainWidth = 800f;
-            var PisoCastilloMainLength = 800f;
-            var PisoCastilloMainTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "rockfloor.jpg");
-            PisoCastilloMain = new TgcPlane(new TGCVector3(950f, 21f, -650f), new TGCVector3(PisoCastilloMainWidth, 5f, PisoCastilloMainLength), TgcPlane.Orientations.XZplane, PisoCastilloMainTexture, 15, 15);
-            ListaPlanos.Add(PisoCastilloMain);*/
 
             var PisoSelvaTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "pasto.jpg");
             PisoSelva1 = new TgcPlane(new TGCVector3(-81f, 0f, -74f), new TGCVector3(168f, 5f, 161f), TgcPlane.Orientations.XZplane, PisoSelvaTexture, 15, 15);
@@ -204,7 +185,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 Scene.Meshes.Remove(piso);
             }
-           
+
+            
+
             // Paredes
             ListaParedes = Scene.Meshes.FindAll(m => m.Name.Contains("ParedCastillo"));
             TgcMesh paredSinBB = Scene.Meshes.Find(m => m.Name.Contains("ParedCastillo441"));
@@ -365,8 +348,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
             else if (checkpointReached2)
             {
-                // Env.Personaje.Mesh.Position = new TGCVector3((float)1102.938,21,(float) -170.5317);
-                Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
+               
+                Env.Personaje.Mesh.Position = new TGCVector3((float)1094.411,(float) -165.0148,(float) -210.6129);
             }
             else if (Env.Personaje.yaJugo)
             {
@@ -453,9 +436,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
                
 
             }
-
-            /*var sube = Scene.Meshes.Find(Mesh => Mesh.Name.Contains("SubeBaja"));
-            sube.Transform = TGCMatrix.Translation(0, -10, 0); */
 
             TextoLogo.Text = CantLogos.ToString();
             TextoLogo.render();

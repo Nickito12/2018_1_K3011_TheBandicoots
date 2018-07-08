@@ -72,12 +72,15 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
             {
+                
                 foreach (TgcMesh mesh in Scene.Meshes)
                     
                         mesh.BoundingBox.Render(); 
                     
                 foreach (TgcMesh mesh in ListaPozos)
                     mesh.BoundingBox.Render();
+
+
             }
         }
         public void baseRender()
