@@ -11,6 +11,7 @@ using TGC.Core.Direct3D;
 using TGC.Core.SceneLoader;
 using TGC.Core.Sound;
 using BulletSharp;
+using TGC.Core.Particle;
 
 namespace TGC.Group.Model.GameObjects
 {
@@ -41,6 +42,11 @@ namespace TGC.Group.Model.GameObjects
         bool modoGod = false;
         public bool caida = false;
         public bool yaJugo;
+        private string texturePath;
+        private string[] textureNames;
+        private ParticleEmitter emitter;
+        private int particleCount;
+        private string textureName;
 
         public override void Init(GameModel _env)
         {
@@ -60,14 +66,28 @@ namespace TGC.Group.Model.GameObjects
                         Env.MediaDir + "Piloto\\Animations\\StandBy-TgcSkeletalAnim.xml",
                         Env.MediaDir + "Piloto\\Animations\\CrouchWalk-TgcSkeletalAnim.xml",
                         Env.MediaDir + "Piloto\\Animations\\LowKick-TgcSkeletalAnim.xml",
-                        Env.MediaDir + "Piloto\\Animations\\Jump-TgcSkeletalAnim.xml"
-                       
+                        Env.MediaDir + "Piloto\\Animations\\Jump-TgcSkeletalAnim.xml",
+                        Env.MediaDir + "Piloto\\Animations\\Run-TgcSkeletalAnim.xml"
+
                     });
 
             Mesh.playAnimation("StandBy", true);
             // Eventualmente esto lo vamos a hacer manual
             Mesh.Scale = new TGCVector3(0.3f, 0.3f, 0.3f);
             Mesh.RotateY(FastMath.ToRad(180f));
+
+            //Particulas
+            texturePath = Env.MediaDir + "Particulas\\";
+            textureNames = new[]
+            {
+                "pisada.png"
+            };
+            textureName = textureNames[0];
+            particleCount = 40;
+            emitter = new ParticleEmitter(texturePath + textureName, particleCount);
+            emitter.MaxSizeParticle = 1;
+            emitter.Dispersion = 50;
+            emitter.CreationFrecuency = 0.1f;
             Reset();
         }
 
@@ -88,7 +108,9 @@ namespace TGC.Group.Model.GameObjects
             }
 
             D3DDevice.Instance.Device.RenderState.FillMode = Input.keyDown(Key.F4) ? FillMode.WireFrame : FillMode.Solid;
-            if (Input.keyDown(Key.W) || Input.keyDown(Key.UpArrow))
+            if ((Input.keyDown(Key.W) || Input.keyDown(Key.UpArrow)) && Input.keyDown(Key.LeftShift))
+                VelocidadAdelante += VelocidadMovimiento * 2;
+            else if(Input.keyDown(Key.W) || Input.keyDown(Key.UpArrow))
                 VelocidadAdelante += VelocidadMovimiento;
             if (Input.keyDown(Key.S) || Input.keyDown(Key.DownArrow))
                 VelocidadAdelante -= VelocidadMovimiento;
@@ -154,12 +176,15 @@ namespace TGC.Group.Model.GameObjects
             updateAnimation = true;
             
            if (Mesh.Position.Y != LastPos.Y)
-            {
+           {
                 SetAnimation("Jump", false);
+           }
+           else if (Input.keyDown(Key.LeftShift)|| Input.keyDown(Key.RightShift)){
+                SetAnimation("Run");
+                updateAnimation = VelocidadAdelante != 0;
+                emitter.Position = Mesh.Position;
             }
-
-            
-            else if (Input.keyDown(Key.LeftShift) || Input.keyDown(Key.RightShift)) {
+            else if (Input.keyDown(Key.C)) {
                 SetAnimation("CrouchWalk");
                 updateAnimation = VelocidadAdelante != 0;
             }
@@ -174,6 +199,8 @@ namespace TGC.Group.Model.GameObjects
             Mesh.Rotation = new TGCVector3(0, Env.NuevaCamara.rotY + FastMath.PI, 0);
             if (updateAnimation)
                 Mesh.updateAnimation(ElapsedTime);
+
+            emitter.Position = Mesh.Position;
         }
 
         //setPosicion con respecto a la plataforma
@@ -222,15 +249,25 @@ namespace TGC.Group.Model.GameObjects
         }
         public override void Render(Escenario.Escenario esc)
         {
+            var ElapsedTime = Env.ElapsedTime;
             Mesh.Transform = TGCMatrix.Scaling(Mesh.Scale)
                             * TGCMatrix.RotationYawPitchRoll(Mesh.Rotation.Y, Mesh.Rotation.X, Mesh.Rotation.Z)
                             * TGCMatrix.Translation(Mesh.Position);
             esc.RenderObject(Mesh);
+            //IMPORTANTE PARA PERMITIR ESTE EFECTO.
+            D3DDevice.Instance.ParticlesEnabled = true;
+            D3DDevice.Instance.EnableParticles();
+            if (Mesh.CurrentAnimation.Name == "Run")
+            {
+                emitter.render(ElapsedTime);
+            }
         }
 
         public override void Dispose()
         {
             Mesh.Dispose();
+            //Liberar recursos
+            emitter.dispose();
         }
 
         public bool CheckColision(out TgcBoundingAxisAlignBox Collider)
