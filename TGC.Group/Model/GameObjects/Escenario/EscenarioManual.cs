@@ -34,11 +34,12 @@ namespace TGC.Group.Model.GameObjects.Escenario
         protected List<TgcMesh> ListaParedesCaida = new List<TgcMesh>();
         protected const float ROTATION_SPEED = 1f;
         protected List<Plataforma> Plataformas;
+        protected TgcMesh PlataformaY;
         protected List<TgcPlane> ListaPlanos = new List<TgcPlane>();
         protected List<TgcMesh> ListaPisosSubterraneos = new List<TgcMesh>();
         public int CantLogos;
         public List<TgcMesh> ListaLogos = new List<TgcMesh>();
-        public bool subterraneo = false;
+        public int posMuerte = -50;
 
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
         {
@@ -123,8 +124,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
                         if (Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.Position.Y)
                         {
                             Colisionador = Mesh.BoundingBox;
+                           
                             break;
                         }
+                      
 
                     }
                     else if (ListaPisosResbalosos.Contains(Mesh))
@@ -147,11 +150,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
                         CantLogos = ListaLogos.Count;
                         break;
                     }
-                    else if (Mesh.Name.Contains("EscaleraMetalMovil"))
-                    {
-                        subterraneo = true;
-                        break;
-                    }
+                   
                     else
                     {
                         Colisionador = Mesh.BoundingBox;
@@ -200,6 +199,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
                     }
                     else if (ListaPlataformas.Contains(Mesh))
                     {
+                        if (PlataformaY.Equals(Mesh)) { posMuerte = -300; }
+                       
                         if (Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || (Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.BoundingBox.PMax.Y && Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.BoundingBox.PMax.Y))
                             Colisionador = Mesh.BoundingBox;
                     }
@@ -233,6 +234,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
                     {
                         if (plataforma.Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.Position.Y)
                             Colisionador = plataforma.Mesh.BoundingBox;
+                       
                         Env.Personaje.setposition(plataforma.deltaPosicion());
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                     }
@@ -277,12 +279,12 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             if (Env.ElapsedTime > 10000)
                 return;
-            if (Env.Personaje.Position().Y <= -50 && !subterraneo)
+            if (Env.Personaje.Position().Y <= posMuerte)
             {
                 Env.Personaje.vidas--;
 
                 if (Env.Personaje.vidas <= 0)
-                    Env.CambiarEscenario("Menu");
+                    Env.CambiarEscenario("Muerte");
                 else
 
                     Reset();

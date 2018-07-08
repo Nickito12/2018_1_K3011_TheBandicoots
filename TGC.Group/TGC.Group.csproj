@@ -97,6 +97,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Game.settings</DependentUpon>
     </Compile>
+    <Compile Include="Model\GameObjects\Escenario\EscenarioMuerte.cs" />
     <Compile Include="Model\GameObjects\Escenario\Escenario.cs" />
     <Compile Include="Model\GameObjects\Escenario\EscenarioBullet.cs" />
     <Compile Include="Model\Estructuras\KdTree.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Model\GameObjects\CajasEmpujables.cs" />
     <Compile Include="Model\GameObjects\Escenario\Escenario2.cs" />
     <Compile Include="Model\GameObjects\Escenario\EscenarioMenu.cs" />
+    <Compile Include="Model\GameObjects\Escenario\EscenarioVictoria.cs" />
     <Compile Include="Model\GameObjects\Plataforma\Plataforma.cs" />
     <Compile Include="Model\GameObjects\Plataforma\PlataformaGiratoriaBullet.cs" />
     <Compile Include="Model\GameObjects\Plataforma\PlataformaLineal.cs" />
