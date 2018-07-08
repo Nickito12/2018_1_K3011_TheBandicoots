@@ -48,6 +48,7 @@ namespace TGC.Group.Model.GameObjects
         private int particleCount;
         private string textureName;
         public bool checkpointReached;// = false;
+        public bool checkpointReached2;// = false;
 
         public override void Init(GameModel _env)
         {
@@ -406,6 +407,7 @@ namespace TGC.Group.Model.GameObjects
         {
             yaJugo = false;
             checkpointReached = false;
+            checkpointReached2 = false;
             vidas = 3;
         }
         TGCVector3 prevPos;
