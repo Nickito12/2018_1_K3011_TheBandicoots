@@ -57,7 +57,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         private TgcBoundingAxisAlignBox checkpoint = new TgcBoundingAxisAlignBox(
              new TGCVector3(799, 0, -97), new TGCVector3(870, 1000, -4));
-        private bool checkpointReached = false;
         private TgcBoundingAxisAlignBox checkpoint2 = new TgcBoundingAxisAlignBox(
              new TGCVector3(1000, -200 , -500), new TGCVector3(1200, 1200, -200));
         private bool checkpointReached2 = false;
@@ -344,7 +343,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             //checkpointReached = false;
             // Reset pj (Moverlo a la posicion inicial del escenario
-            if (checkpointReached)
+            if (Env.Personaje.checkpointReached)
                 Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
             else if (checkpointReached2)
             {
@@ -358,15 +357,20 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }
             else
                 Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
-            if (Env.Personaje.vidas == 3)
+            if (Env.Personaje.vidas == 3 && !Env.Personaje.yaJugo)
             {
                 ListaLogos.Clear();
+                Scene.Meshes.AddRange(ListaLogosQuitados);
+                ListaLogosQuitados.Clear();
                 ListaLogos = Scene.Meshes.FindAll(m => m.Name.Contains("LogoTGC"));
+                CantLogos = ListaLogos.Count;
+                //ListaLogos.AddRange(ListaLogosQuitados);
+                /*
                 foreach (var logo in ListaLogos)
                 {
                     logo.Enabled = true; //esto es para que se renderice
                 }
-                CantLogos = ListaLogos.Count;
+                */
             }
             Env.NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0, 0, 0), 20, -75, Env.Input);
             Env.Camara = Env.NuevaCamara;
@@ -374,9 +378,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         public override void RenderRealScene()
         {
-            if (!checkpointReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint))
+            if (!Env.Personaje.checkpointReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint))
             {
-                checkpointReached = true;
+                Env.Personaje.checkpointReached = true;
             }
             else if (!checkpointReached2 && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint2))
             {

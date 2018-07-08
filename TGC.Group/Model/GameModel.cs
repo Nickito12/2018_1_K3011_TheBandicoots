@@ -140,22 +140,18 @@ namespace TGC.Group.Model
                     StreamWriter arch = new StreamWriter(saveFileDialog.FileName);
                     arch.WriteLine(Personaje.Position().X + "|" + Personaje.Position().Y + "|" + Personaje.Position().Z);
                     arch.WriteLine(Personaje.vidas);
+                    arch.WriteLine(Personaje.checkpointReached);
                     arch.Close();
                 }
 
             }
             catch (Exception e)
             {
-
-               
                 System.Windows.Forms.MessageBox.Show("Error al guardar Partida.");
             }
             finally
             {
-
-               
                 System.Windows.Forms.MessageBox.Show("Partida guardada correctamente.");
-
             }
     
         }
@@ -193,6 +189,8 @@ namespace TGC.Group.Model
                             line = reader.ReadLine();
 
                             Personaje.Vidas(Convert.ToInt32(line));
+                            line = reader.ReadLine();
+                            Personaje.checkpointReached = Convert.ToBoolean(line);
                         }
                     }
                 }

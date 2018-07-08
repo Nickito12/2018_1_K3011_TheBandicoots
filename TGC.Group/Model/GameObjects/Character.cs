@@ -47,6 +47,7 @@ namespace TGC.Group.Model.GameObjects
         private ParticleEmitter emitter;
         private int particleCount;
         private string textureName;
+        public bool checkpointReached;// = false;
 
         public override void Init(GameModel _env)
         {
@@ -227,7 +228,7 @@ namespace TGC.Group.Model.GameObjects
                 Env.DrawText.drawText("[Pos pj]: " + TGCVector3.PrintVector3(Mesh.Position), 0, textY, c); textY += 20;
                 Env.DrawText.drawText("Velocidad Y: " + VelocidadY.ToString(), 0, textY, c); textY += 20;
                 Env.DrawText.drawText("Ctrl: Render BB", 0, textY, c); textY += 20;
-                Env.DrawText.drawText("Shift: Crouch", 0, textY, c); textY += 20;
+                Env.DrawText.drawText("Shift: Run", 0, textY, c); textY += 20;
                 Env.DrawText.drawText("R: Reiniciar Posición", 0, textY, c); textY += 20;
                 Env.DrawText.drawText("F8/F9: +/- velocidad (" + VelocidadMovimiento + ")", 0, textY, c); textY += 20;
                 Env.DrawText.drawText("F10/F11: +/- salto (" + VelocidadSalto + ")", 0, textY, c); textY += 20;
@@ -404,6 +405,7 @@ namespace TGC.Group.Model.GameObjects
         public void Reset()
         {
             yaJugo = false;
+            checkpointReached = false;
             vidas = 3;
         }
         TGCVector3 prevPos;
