@@ -37,6 +37,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         protected List<TgcPlane> ListaPlanos = new List<TgcPlane>();
         public int CantLogos;
         public List<TgcMesh> ListaLogos = new List<TgcMesh>();
+        public List<TgcMesh> ListaLogosQuitados = new List<TgcMesh>();
+
 
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
         {
@@ -136,7 +138,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
                     }
                     else if (ListaLogos.Contains(Mesh))
                     {
-                        Mesh.Enabled = false; //Deberia dejar de mostrarse
+                        ListaLogosQuitados.Add(Mesh);
+                        Scene.Meshes.Remove(Mesh);
+                        //Mesh.Enabled = false; //Deberia dejar de mostrarse
                         ListaLogos.Remove(Mesh); //lo quito de la lista asi no se contabiliza
                         CantLogos = ListaLogos.Count;
                         break;

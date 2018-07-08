@@ -22,9 +22,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
             base.Init(_env);
             Reset();
 
-            hasMuerto.Text = "Has muerto.";
+            hasMuerto.Text = "Has muerto, vuelve a intentarlo";
             hasMuerto.Align = TgcText2D.TextAlign.CENTER;
-            hasMuerto.changeFont(new System.Drawing.Font("Comic Sans MS", 42, FontStyle.Bold));
+            hasMuerto.changeFont(new System.Drawing.Font("Comic Sans MS", 50, FontStyle.Bold));
             hasMuerto.Position = new Point(D3DDevice.Instance.Width/2 -700, D3DDevice.Instance.Height/2-200);
             hasMuerto.Color = Color.DarkRed;
 

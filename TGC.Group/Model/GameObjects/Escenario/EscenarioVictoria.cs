@@ -22,11 +22,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
             base.Init(_env);
             Reset();
 
-            hasGanado.Text = "Has ganado!";
+            hasGanado.Text = "¡Felicitaciones, has ganado!";
             hasGanado.Align = TgcText2D.TextAlign.CENTER;
-            hasGanado.changeFont(new System.Drawing.Font("Comic Sans MS", 42, FontStyle.Bold));
+            hasGanado.changeFont(new System.Drawing.Font("Comic Sans MS", 50, FontStyle.Bold));
             hasGanado.Position = new Point(D3DDevice.Instance.Width / 2 - 700, D3DDevice.Instance.Height / 2 - 200);
-            hasGanado.Color = Color.LightGreen;
+            hasGanado.Color = Color.Green;
 
             buttons.Add(new QuadButton(pos, 0, 15, "Menú Principal", () =>
             {

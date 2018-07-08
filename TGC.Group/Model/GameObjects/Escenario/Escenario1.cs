@@ -55,7 +55,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         private TgcBoundingAxisAlignBox checkpoint = new TgcBoundingAxisAlignBox(
              new TGCVector3(799, 0, -97), new TGCVector3(870, 1000, -4));
-        private bool checkpointReached = false;
+        
         private TgcBoundingAxisAlignBox final = new TgcBoundingAxisAlignBox(new TGCVector3(1005, 0, -140), new TGCVector3(1089, 50, -122));
         private bool finalReached = false;
 
@@ -336,7 +336,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             //checkpointReached = false;
             // Reset pj (Moverlo a la posicion inicial del escenario
-            if (checkpointReached)
+            if (Env.Personaje.checkpointReached)
                 Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
             else if (Env.Personaje.yaJugo)
             {
@@ -345,15 +345,20 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }
             else
                 Env.Personaje.Move(new TGCVector3(0, 1, 0), new TGCVector3(0, 1, 0));
-            if (Env.Personaje.vidas == 3)
+            if (Env.Personaje.vidas == 3 && !Env.Personaje.yaJugo)
             {
                 ListaLogos.Clear();
+                Scene.Meshes.AddRange(ListaLogosQuitados);
+                ListaLogosQuitados.Clear();
                 ListaLogos = Scene.Meshes.FindAll(m => m.Name.Contains("LogoTGC"));
+                CantLogos = ListaLogos.Count;
+                //ListaLogos.AddRange(ListaLogosQuitados);
+                /*
                 foreach (var logo in ListaLogos)
                 {
                     logo.Enabled = true; //esto es para que se renderice
                 }
-                CantLogos = ListaLogos.Count;
+                */
             }
             Env.NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0, 0, 0), 20, -75, Env.Input);
             Env.Camara = Env.NuevaCamara;
@@ -361,8 +366,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         public override void RenderRealScene()
         {
-            if (!checkpointReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint))
-                checkpointReached = true;
+            if (!Env.Personaje.checkpointReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint))
+                Env.Personaje.checkpointReached = true;
             if (!finalReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, final))
                 Env.CambiarEscenario("Victoria");
             RenderHUD();

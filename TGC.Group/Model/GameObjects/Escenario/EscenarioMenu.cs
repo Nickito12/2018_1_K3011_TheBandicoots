@@ -46,7 +46,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             aabb = new TgcBoundingAxisAlignBox(quad.Center - new TGCVector3(s.X, 0, s.Y), quad.Center + new TGCVector3(s.X, 0, s.Y), quad.Center, new TGCVector3(1, 1, 1));
             x = (int)(X * 650 / 50 + 525);
             //x = (int)(X* 650 / 20 + 650 - font.Size/5*text.Length);
-            y= (int)(Y * 350 / 20 + 350);
+            y = (int)(Y * 350 / 20 + 350);
             this.onClick = onClick;
             this.text = text;
         }
