@@ -34,11 +34,13 @@ namespace TGC.Group.Model.GameObjects.Escenario
         protected List<TgcMesh> ListaParedesCaida = new List<TgcMesh>();
         protected const float ROTATION_SPEED = 1f;
         protected List<Plataforma> Plataformas;
+        protected TgcMesh PlataformaY;
         protected List<TgcPlane> ListaPlanos = new List<TgcPlane>();
+        protected List<TgcMesh> ListaPisosSubterraneos = new List<TgcMesh>();
         public int CantLogos;
         public List<TgcMesh> ListaLogos = new List<TgcMesh>();
         public List<TgcMesh> ListaLogosQuitados = new List<TgcMesh>();
-
+        public int posMuerte = -50;
 
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
         {
@@ -72,7 +74,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
             if (Env.Input.keyDown(Key.LeftControl) || Env.Input.keyDown(Key.RightControl))
             {
                 foreach (TgcMesh mesh in Scene.Meshes)
-                    mesh.BoundingBox.Render();
+                    
+                        mesh.BoundingBox.Render(); 
+                    
                 foreach (TgcMesh mesh in ListaPozos)
                     mesh.BoundingBox.Render();
             }
@@ -85,6 +89,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 RenderObject(plataforma.Mesh);
             }
+         
             foreach (var pozo in ListaPozos)
             {
                 RenderObject(pozo);
@@ -93,6 +98,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 RenderObject(caja.Mesh);
             }
+          
             Grilla.render(Env.Frustum, ShowGrilla, this);
         }
         public override void Dispose()
@@ -119,8 +125,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
                         if (Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.Position.Y)
                         {
                             Colisionador = Mesh.BoundingBox;
+                           
                             break;
                         }
+                      
 
                     }
                     else if (ListaPisosResbalosos.Contains(Mesh))
@@ -145,6 +153,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
                         CantLogos = ListaLogos.Count;
                         break;
                     }
+                   
                     else
                     {
                         Colisionador = Mesh.BoundingBox;
@@ -193,6 +202,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
                     }
                     else if (ListaPlataformas.Contains(Mesh))
                     {
+                        if (PlataformaY.Equals(Mesh)) { posMuerte = -300; }
+                       
                         if (Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || (Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.BoundingBox.PMax.Y && Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.BoundingBox.PMax.Y))
                             Colisionador = Mesh.BoundingBox;
                     }
@@ -226,6 +237,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
                     {
                         if (plataforma.Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.Position.Y)
                             Colisionador = plataforma.Mesh.BoundingBox;
+                       
                         Env.Personaje.setposition(plataforma.deltaPosicion());
                         Env.Personaje.SetTipoColisionActual(TiposColision.Caja);
                     }
@@ -270,7 +282,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             if (Env.ElapsedTime > 10000)
                 return;
-            if (Env.Personaje.Position().Y <= -50)
+            if (Env.Personaje.Position().Y <= posMuerte)
             {
                 Env.Personaje.vidas--;
 

@@ -47,6 +47,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         private TgcPlane PisoCastillo8;
         private TgcPlane PisoCastillo9;
         private TgcPlane PisoCastillo10;
+        private TgcPlane PisoCastillo11;
+        private TgcPlane PisoAcido;
         public Texture texturaLogo;
         public TgcText2D TextoLogo = new TgcText2D();
 
@@ -55,8 +57,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         private TgcBoundingAxisAlignBox checkpoint = new TgcBoundingAxisAlignBox(
              new TGCVector3(799, 0, -97), new TGCVector3(870, 1000, -4));
-        
-        private TgcBoundingAxisAlignBox final = new TgcBoundingAxisAlignBox(new TGCVector3(1005, 0, -140), new TGCVector3(1089, 50, -122));
+        private TgcBoundingAxisAlignBox checkpoint2 = new TgcBoundingAxisAlignBox(
+             new TGCVector3(0, -200 , -300), new TGCVector3(1050, 1200, 0));
+        private bool checkpointReached2 = false;
+        private TgcBoundingAxisAlignBox final = new TgcBoundingAxisAlignBox(new TGCVector3(1700, -180, -650), new TGCVector3(1800, -160, -640));
         private bool finalReached = false;
 
         public override void Init(GameModel _env)
@@ -173,8 +177,14 @@ namespace TGC.Group.Model.GameObjects.Escenario
             ListaPlanos.Add(PisoCastillo8);
             PisoCastillo9 = new TgcPlane(new TGCVector3(986f, 21f, -108.7603f), new TGCVector3(134.15f, 5f, 223.6003f), TgcPlane.Orientations.XZplane, PisoCastilloTexture, 15, 15);
             ListaPlanos.Add(PisoCastillo9);
-            PisoCastillo10 = new TgcPlane(new TGCVector3(951f, 21f, -225f), new TGCVector3(187f, 5f, 116.2397f), TgcPlane.Orientations.XZplane, PisoCastilloTexture, 15, 15);
+            PisoCastillo10 = new TgcPlane(new TGCVector3(951f, 21f, -225f), new TGCVector3(130f, 5f, 116.2397f), TgcPlane.Orientations.XZplane, PisoCastilloTexture, 15, 15);
             ListaPlanos.Add(PisoCastillo10);
+            PisoCastillo11 = new TgcPlane(new TGCVector3(1080f, 21f, -185f), new TGCVector3(50f, 5f, 80f), TgcPlane.Orientations.XZplane, PisoCastilloTexture, 15, 15);
+            ListaPlanos.Add(PisoCastillo11);
+            var Acido = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "slime7.jpg");
+            PisoAcido = new TgcPlane(new TGCVector3(1427f, -228.4502f, -1000f), new TGCVector3(400f, 5f, 450f), TgcPlane.Orientations.XZplane, Acido, 15, 15);
+            ListaPlanos.Add(PisoAcido);
+
 
             //Crear SkyBox
             CreateSkyBox(TGCVector3.Empty, new TGCVector3(10000, 10000, 10000), "SkyBox1");
@@ -184,7 +194,16 @@ namespace TGC.Group.Model.GameObjects.Escenario
             Scene = Loader.loadSceneFromFile(Env.MediaDir + "\\" + "Escenario1\\escenarioConLogos-TgcScene.xml");
 
             Reset();
+            ///////////agrego pisos subterraneos
 
+            ListaPisosSubterraneos = Scene.Meshes.FindAll(m => m.Name.Contains("Floor"));
+            
+
+            foreach (var piso in ListaPisosSubterraneos)
+            {
+                Scene.Meshes.Remove(piso);
+            }
+           
             // Paredes
             ListaParedes = Scene.Meshes.FindAll(m => m.Name.Contains("ParedCastillo"));
             TgcMesh paredSinBB = Scene.Meshes.Find(m => m.Name.Contains("ParedCastillo441"));
@@ -261,19 +280,22 @@ namespace TGC.Group.Model.GameObjects.Escenario
             Plataformas = new List<Plataforma>();
             List<TgcMesh> ListaPlataformaEstatica = new List<TgcMesh>();
             List<TgcMesh> ListaPlataformaX = new List<TgcMesh>();
+           // TgcMesh PlataformaY;
             List<TgcMesh> ListaPlataformaZ = new List<TgcMesh>();
             List<TgcMesh> ListaMovibles = new List<TgcMesh>();
             List<TgcMesh> Escalones = new List<TgcMesh>();
+
             ListaPlataformaEstatica = Scene.Meshes.FindAll(m => m.Name.Contains("Box_0"));
             ListaPlataformaX = Scene.Meshes.FindAll(m => m.Name.Contains("Box_1"));
             ListaPlataformaZ = Scene.Meshes.FindAll(m => m.Name.Contains("Box_2"));
+            PlataformaY = Scene.Meshes.Find(Mesh => Mesh.Name.Contains("SubeBaja"));
             ListaMovibles = Scene.Meshes.FindAll(m => m.Name.Contains("Box_M"));
             Escalones = Scene.Meshes.FindAll(m => m.Name.Contains("Escalon"));
 
             //agrego plataforma que se mueven en X
             foreach (var p in ListaPlataformaX)
             {
-                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 25f, true, 12f, false));
+                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 25f, true, false,12f, false));
             }
 
             //agrego plataforma que se mueven en Z
@@ -282,24 +304,26 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 //-20f es para que este centrado en el camino
                 if (p.Name == "Box_202" || p.Name == "Box_204")
                 {
-                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false, 12f, true));
+                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false,false, 12f, true));
                 }
                 else
                 {
-                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false, 12f, false));
+                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false,false, 12f, false));
                 }
             }
+
+            Plataformas.Add(new PlataformaLineal(PlataformaY, new TGCVector3(0f, -90f, 0f), 90f, false, true, 15f, true)); 
 
             //agrego objetos moviles
             foreach (var p in ListaMovibles)
             {
-                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false, 0f, false));
+                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false, false,0f, false));
             }
 
             //agrego objetos estaticos
             foreach (var p in ListaPlataformaEstatica)
             {
-                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false, 0f, false));
+                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false,false, 0f, false));
             }
 
             //se agregan plataformas giratorias
@@ -338,6 +362,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
             // Reset pj (Moverlo a la posicion inicial del escenario
             if (Env.Personaje.checkpointReached)
                 Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
+            else if (checkpointReached2)
+            {
+                // Env.Personaje.Mesh.Position = new TGCVector3((float)1102.938,21,(float) -170.5317);
+                Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
+            }
             else if (Env.Personaje.yaJugo)
             {
                 Env.NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0, 0, 0), 20, -75, Env.Input);
@@ -367,9 +396,15 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public override void RenderRealScene()
         {
             if (!Env.Personaje.checkpointReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint))
+            {
                 Env.Personaje.checkpointReached = true;
+            }
+            else if (!checkpointReached2 && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint2))
+            {
+                checkpointReached2 = true;
+            }
             if (!finalReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, final))
-                Env.CambiarEscenario("Victoria");
+                Env.CambiarEscenario("Victoria"); 
             RenderHUD();
             RenderHUDLogos();
             Env.Personaje.RenderHUD();
@@ -405,16 +440,27 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 RenderObject(plano);
             }
+            foreach(var piso in ListaPisosSubterraneos)
+            {             
+                RenderObject(piso);
+            }
             rotacionLogos += 1f * Env.ElapsedTime;
             rotacionLogos = rotacionLogos > 360f ? 0 : rotacionLogos;
             foreach (var logo in ListaLogos)
             {
-                var p = (logo.BoundingBox.PMax + logo.BoundingBox.PMin) * 0.5f;
-                logo.AutoTransform = false;
-                logo.Transform = TGCMatrix.Translation(-p)
-                                * TGCMatrix.RotationYawPitchRoll(rotacionLogos, 0, 0)
-                                * TGCMatrix.Translation(p);
+               
+                    var p = (logo.BoundingBox.PMax + logo.BoundingBox.PMin) * 0.5f;
+                    logo.AutoTransform = false;
+                    logo.Transform = TGCMatrix.Translation(-p)
+                                    * TGCMatrix.RotationYawPitchRoll(rotacionLogos, 0, 0)
+                                    * TGCMatrix.Translation(p);
+               
+
             }
+
+            /*var sube = Scene.Meshes.Find(Mesh => Mesh.Name.Contains("SubeBaja"));
+            sube.Transform = TGCMatrix.Translation(0, -10, 0); */
+
             TextoLogo.Text = CantLogos.ToString();
             TextoLogo.render();
             Env.Personaje.Render(this);
@@ -426,6 +472,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 plano.Dispose();
             }
+            foreach(var piso in ListaPisosSubterraneos)
+            {
+                piso.Dispose();
+            }
             TextoLogo.Dispose();
             base.Dispose();
         }
@@ -435,12 +485,20 @@ namespace TGC.Group.Model.GameObjects.Escenario
             foreach (var p in ListaPlanos)
                 if (EscenarioManual.testAABBAABB(p.BoundingBox, boundingBox))
                     return p.BoundingBox;
+            
+
+            foreach(var meshPiso in ListaPisosSubterraneos)
+            {
+                if (EscenarioManual.testAABBAABB(meshPiso.BoundingBox, boundingBox))
+                    return meshPiso.BoundingBox;
+            }
+            
             return null;
         }
 
         public override List<TgcBoundingAxisAlignBox> listaColisionesConCamara()
         { 
-            return Scene.Meshes.FindAll(m => !ListaMeshesSinColision.Contains(m) && !ListaEscalones.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m) && !ListaLogos.Contains(m)).
+            return Scene.Meshes.FindAll(m => !ListaPisosSubterraneos.Contains(m) && !ListaMeshesSinColision.Contains(m) && !ListaEscalones.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m) && !ListaLogos.Contains(m)).
                 ConvertAll((TgcMesh x) => x.BoundingBox);
         }
 
@@ -453,5 +511,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             sprite.Draw2D(texturaLogo, Rectangle.Empty, new SizeF(80, 80), new PointF(D3DDevice.Instance.Width - 155, D3DDevice.Instance.Height - 90), Color.Blue);
             sprite.End();
         }
+
+        
     }
 }

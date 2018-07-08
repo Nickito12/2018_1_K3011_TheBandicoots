@@ -310,6 +310,7 @@ namespace TGC.Group.Model.GameObjects
             //El personaje se movera con la plataforma
             else if (Collider == null && TipoColisionActual == TiposColision.Caja)
             {
+
                 Mesh.Move(posicionPlataforma);
             } 
             else if (Collider != null)
@@ -373,7 +374,9 @@ namespace TGC.Group.Model.GameObjects
             }
             else if (TipoColisionActual == TiposColision.Caja)
             {
+                
                 Mesh.Move(posicionPlataforma);
+
             }
             
             else if (TipoColisionActual == TiposColision.Techo)
