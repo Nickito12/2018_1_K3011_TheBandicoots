@@ -49,6 +49,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         private TgcPlane PisoCastillo10;
         private TgcPlane PisoCastillo11;
         private TgcPlane PisoAcido;
+        private TgcMesh PisoAcidoMesh;
+
         public Texture texturaLogo;
         public TgcText2D TextoLogo = new TgcText2D();
 
@@ -62,7 +64,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         private bool checkpointReached2 = false;
         private TgcBoundingAxisAlignBox final = new TgcBoundingAxisAlignBox(new TGCVector3(1700, -180, -650), new TGCVector3(1800, -160, -640));
         private bool finalReached = false;
-       
+        private float time;
 
         public override void Init(GameModel _env)
         {
@@ -71,6 +73,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
             string compilationErrors;
             var d3dDevice = D3DDevice.Instance.Device;
             shadowEffect = TgcShaders.loadEffect(Env.ShadersDir + "ShadowMap.fx");
+            
+            shaderArbustos = TgcShaders.loadEffect(Env.ShadersDir + "movimientoArbustos.fx");
+
+            time = 0;
+
             var dir = new TGCVector3(0, -1, 0);
             dir.Normalize();
             Lights.Add(new Tuple<float, TGCVector3, TGCVector3>(0.05f, new TGCVector3(0, 80, 100), dir));
@@ -166,7 +173,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
             PisoAcido = new TgcPlane(new TGCVector3(1427f, -228.4502f, -1000f), new TGCVector3(400f, 5f, 450f), TgcPlane.Orientations.XZplane, Acido, 15, 15);
             ListaPlanos.Add(PisoAcido);
 
-
             //Crear SkyBox
             CreateSkyBox(TGCVector3.Empty, new TGCVector3(10000, 10000, 10000), "SkyBox1");
 
@@ -178,14 +184,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
             ///////////agrego pisos subterraneos
 
             ListaPisosSubterraneos = Scene.Meshes.FindAll(m => m.Name.Contains("Floor"));
-            
 
             foreach (var piso in ListaPisosSubterraneos)
             {
                 Scene.Meshes.Remove(piso);
             }
-
-            
 
             // Paredes
             ListaParedes = Scene.Meshes.FindAll(m => m.Name.Contains("ParedCastillo"));
@@ -240,7 +243,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }
             ListaPisosResbalosos = Scene.Meshes.FindAll(m => m.Name.Contains("PisoResbaloso"));
             ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001233")));
-            ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));
+            ListaMeshesSinColision.Add(Scene.Meshes.Find(m => m.Name.Contains("ParedEnvolvente001248")));            
 
             // Cajas Empujables
             /*TgcMesh MeshEmpujable = Scene.Meshes.Find(m => m.Name.Contains("Caja3"));
@@ -364,13 +367,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 ListaLogosQuitados.Clear();
                 ListaLogos = Scene.Meshes.FindAll(m => m.Name.Contains("LogoTGC"));
                 CantLogos = ListaLogos.Count;
-                //ListaLogos.AddRange(ListaLogosQuitados);
-                /*
-                foreach (var logo in ListaLogos)
-                {
-                    logo.Enabled = true; //esto es para que se renderice
-                }
-                */
             }
             Env.NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0, 0, 0), 20, -75, Env.Input);
             Env.Camara = Env.NuevaCamara;
@@ -418,6 +414,17 @@ namespace TGC.Group.Model.GameObjects.Escenario
             shadowEffect.SetValue("EPSILON", l.Item1);
             g_LightPos = l.Item2;
             g_LightDir = l.Item3;
+            // Cargar variables de shader, por ejemplo el tiempo transcurrido.
+            time += Env.ElapsedTime;
+            shaderArbustos.SetValue("time", time);
+
+            foreach (TgcMesh arbusto in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto") || m.Name.Contains("Flores") || m.Name.Contains("Arbol")))
+            {
+                arbusto.Effect = shaderArbustos;
+                arbusto.Technique = "RenderScene";
+                arbusto.Render();
+            }
+
             baseRender();
             foreach (var plano in ListaPlanos)
             {
@@ -437,8 +444,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
                     logo.Transform = TGCMatrix.Translation(-p)
                                     * TGCMatrix.RotationYawPitchRoll(rotacionLogos, 0, 0)
                                     * TGCMatrix.Translation(p);
-               
-
             }
 
             TextoLogo.Text = CantLogos.ToString();
@@ -492,6 +497,5 @@ namespace TGC.Group.Model.GameObjects.Escenario
             sprite.End();
         }
 
-        
     }
 }
