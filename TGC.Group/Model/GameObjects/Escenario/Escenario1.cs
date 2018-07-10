@@ -194,9 +194,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
             }
 
             // Paredes
-            ListaParedes = Scene.Meshes.FindAll(m => m.Name.Contains("ParedCastillo"));
+            ListaParedesCastillo = Scene.Meshes.FindAll(m => m.Name.Contains("ParedCastillo"));
             TgcMesh paredSinBB = Scene.Meshes.Find(m => m.Name.Contains("ParedCastillo441"));
-            foreach (var m in ListaParedes)
+            foreach (var m in ListaParedesCastillo)
             {
                 m.AutoTransform = false;
                 var p = (m.BoundingBox.PMax + m.BoundingBox.PMin) * 0.5f;
@@ -204,12 +204,17 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 m.Transform = TGCMatrix.Translation(-1 * p) * TGCMatrix.Translation(t + p);
                 m.BoundingBox.scaleTranslate(new TGCVector3(0, 21, 0), new TGCVector3(1, 1, 1));
             }
-            ListaParedes.Remove(paredSinBB); //elimino la pared que no necesita agrandar su BB
-            foreach (var m in ListaParedes)
+            ListaParedesCastillo.Remove(paredSinBB); //elimino la pared que no necesita agrandar su BB
+            foreach (var m in ListaParedesCastillo)
             {
                 m.BoundingBox = new TgcBoundingAxisAlignBox(m.BoundingBox.PMin - new TGCVector3(5, 0, 5), m.BoundingBox.PMax + new TGCVector3(5, 0, 5));
             }
-
+            // Paredes envolventes
+            ListaParedesEnvolventes = Scene.Meshes.FindAll(m => m.Name.Contains("ParedEnvolvente") || m.Name.Contains("Room"));
+            foreach (var m in ListaParedesEnvolventes)
+            {
+                m.BoundingBox = new TgcBoundingAxisAlignBox(m.BoundingBox.PMin - new TGCVector3(5, 0, 5), m.BoundingBox.PMax + new TGCVector3(5, 0, 5));
+            }
             // Paredes de caida
             ListaParedesCaida = Scene.Meshes.FindAll(m => m.Name.Contains("Plane"));
             foreach (var m in ListaParedesCaida)

@@ -30,7 +30,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         protected List<TgcMesh> ListaMeshesSinColision = new List<TgcMesh>();
         protected List<TgcMesh> MeshConMovimiento = new List<TgcMesh>();
         protected List<CajaEmpujable> ListaCajasEmpujables = new List<CajaEmpujable>();
-        protected List<TgcMesh> ListaParedes = new List<TgcMesh>();
+        protected List<TgcMesh> ListaParedesCastillo = new List<TgcMesh>();
+        protected List<TgcMesh> ListaParedesEnvolventes = new List<TgcMesh>();
         protected List<TgcMesh> ListaParedesCaida = new List<TgcMesh>();
         protected const float ROTATION_SPEED = 1f;
         protected List<Plataforma> Plataformas;
