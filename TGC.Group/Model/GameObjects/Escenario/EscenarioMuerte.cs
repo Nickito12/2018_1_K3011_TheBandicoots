@@ -68,6 +68,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 button.Render(Env);
             }
+            foreach (var plano in ListaPlanoAcido)
+            {
+                plano.Render();
+            }
             postRender3D();
             render2D();
         }

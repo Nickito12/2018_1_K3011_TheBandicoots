@@ -36,11 +36,12 @@ namespace TGC.Group.Model.GameObjects.Escenario
         protected List<Plataforma> Plataformas;
         protected TgcMesh PlataformaY;
         protected List<TgcPlane> ListaPlanos = new List<TgcPlane>();
+        protected List<TgcPlane> ListaPlanoAcido = new List<TgcPlane>();
         protected List<TgcMesh> ListaPisosSubterraneos = new List<TgcMesh>();
         public int CantLogos;
         public List<TgcMesh> ListaLogos = new List<TgcMesh>();
         public List<TgcMesh> ListaLogosQuitados = new List<TgcMesh>();
-        public int posMuerte = -50;
+        public int posMuerte = -45;
 
         protected void AddMesh(string carpeta, string nombre, TGCVector3 pos, int rotation = 0, TGCVector3? scale = null)
         {
@@ -205,7 +206,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
                     }
                     else if (ListaPlataformas.Contains(Mesh))
                     {
-                        if (PlataformaY.Equals(Mesh)) { posMuerte = -300; }
+                        if (PlataformaY.Equals(Mesh)) { posMuerte = -255; }
                        
                         if (Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.Position.Y || (Mesh.BoundingBox.PMin.Y < Env.Personaje.Mesh.BoundingBox.PMax.Y && Mesh.BoundingBox.PMax.Y > Env.Personaje.Mesh.BoundingBox.PMax.Y))
                             Colisionador = Mesh.BoundingBox;

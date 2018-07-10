@@ -181,7 +181,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 plano.Render();
             }
-            
+            foreach (var plano in ListaPlanoAcido)
+            {
+                plano.Render();
+            }
             foreach (var button in buttons)
             {
                 button.Render(Env);

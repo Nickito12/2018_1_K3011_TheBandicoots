@@ -174,7 +174,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             ListaPlanos.Add(PisoCastillo11);
             var Acido = TgcTexture.createTexture(D3DDevice.Instance.Device, Env.MediaDir + "slime7.jpg");
             PisoAcido = new TgcPlane(new TGCVector3(1427f, -228.4502f, -1000f), new TGCVector3(400f, 5f, 450f), TgcPlane.Orientations.XZplane, Acido, 15, 15);
-            ListaPlanos.Add(PisoAcido);
+            ListaPlanoAcido.Add(PisoAcido);
 
             //Crear SkyBox
             CreateSkyBox(TGCVector3.Empty, new TGCVector3(10000, 10000, 10000), "SkyBox1");
@@ -449,6 +449,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             baseRender();
             foreach (var plano in ListaPlanos)
+            {
+                RenderObject(plano);
+            }
+            foreach (var plano in ListaPlanoAcido)
             {
                 RenderObject(plano);
             }
