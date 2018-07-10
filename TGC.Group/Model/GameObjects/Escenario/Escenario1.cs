@@ -72,6 +72,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             string compilationErrors;
             var d3dDevice = D3DDevice.Instance.Device;
             shadowEffect = TgcShaders.loadEffect(Env.ShadersDir + "ShadowMap.fx");
+            skeletalShadowEffect = TgcShaders.loadEffect(Env.ShadersDir + "TgcSkeletalShadowMapMeshShader.fx");
 
             shaderArbustos = TgcShaders.loadEffect(Env.ShadersDir + "movimientoArbustos.fx");
 
@@ -423,6 +424,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             var l = ClosestLight();
             shadowEffect.SetValue("EPSILON", l.Item1);
+            skeletalShadowEffect.SetValue("EPSILON", l.Item1);
             g_LightPos = l.Item2;
             g_LightDir = l.Item3;
             // Cargar variables de shader, por ejemplo el tiempo transcurrido.

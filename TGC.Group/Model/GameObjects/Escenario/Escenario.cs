@@ -34,6 +34,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public Surface sharpenDepthStencil;
         public Texture texturaVida;
         protected Microsoft.DirectX.Direct3D.Effect shadowEffect;
+        protected Microsoft.DirectX.Direct3D.Effect skeletalShadowEffect;
         protected Microsoft.DirectX.Direct3D.Effect shaderArbustos;
         protected Microsoft.DirectX.Direct3D.Effect shaderLiquidos;
         protected Microsoft.DirectX.Direct3D.Effect shaderAceites;
@@ -127,11 +128,16 @@ namespace TGC.Group.Model.GameObjects.Escenario
             // Calculo la matriz de view de la luz
             shadowEffect.SetValue("g_vLightPos", new Vector4(g_LightPos.X, g_LightPos.Y, g_LightPos.Z, 1));
             shadowEffect.SetValue("g_vLightDir", new Vector4(g_LightDir.X, g_LightDir.Y, g_LightDir.Z, 1));
+            skeletalShadowEffect.SetValue("g_vLightPos", new Vector4(g_LightPos.X, g_LightPos.Y, g_LightPos.Z, 1));
+            skeletalShadowEffect.SetValue("g_vLightDir", new Vector4(g_LightDir.X, g_LightDir.Y, g_LightDir.Z, 1));
             g_LightView = TGCMatrix.LookAtLH(g_LightPos, g_LightPos + g_LightDir, new TGCVector3(0, 0, 1));
 
             // inicializacion standard:
             shadowEffect.SetValue("g_mProjLight", g_mShadowProj.ToMatrix());
             shadowEffect.SetValue("g_mViewLightProj", (g_LightView * g_mShadowProj).ToMatrix());
+            skeletalShadowEffect.SetValue("g_mProjLight", g_mShadowProj.ToMatrix());
+            skeletalShadowEffect.SetValue("g_mViewLightProj", (g_LightView * g_mShadowProj).ToMatrix());
+
 
             // Primero genero el shadow map, para ello dibujo desde el pto de vista de luz
             // a una textura, con el VS y PS que generan un mapa de profundidades.
@@ -145,6 +151,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             // Hago el render de la escena pp dicha
             shadowEffect.SetValue("g_txShadow", g_pShadowMap);
+            skeletalShadowEffect.SetValue("g_txShadow", g_pShadowMap);
             // RENDER
             doingShadowRender = true;
             RenderScene(); 
@@ -196,16 +203,17 @@ namespace TGC.Group.Model.GameObjects.Escenario
         }
         public void RenderObject(TgcSkeletalMesh x)
         {
-            /*
+            var e = x.Effect;
             var t = x.Technique;
             if (useShadows)
             {
                 x.Effect = shadowEffect;
+                x.Effect = skeletalShadowEffect;
                 x.Technique = doingShadowRender ? "RenderShadow" : "RenderScene";
             }
             x.Render();
             x.Technique = t;
-            */
+            x.Effect = e;
             x.Render();
         }
         public void RenderObject(TGCBox x)
