@@ -49,8 +49,6 @@ VS_OUTPUT vs_main(VS_INPUT Input)
 	float3 vectorModificador = (4,2,3);
 	float factorIntensidadMovimiento = 5;
 	float factorDivisorio = 0.001;
-	//Input.Position.x += sin(time) * factorIntensidadMovimiento * vectorModificador * (Input.Position.y % 10) / 100;
-	//Input.Position.z += cos(time) * factorIntensidadMovimiento * vectorModificador * (Input.Position.z % 10) / 100;
 	Input.Position.x += sin(time) * factorIntensidadMovimiento * vectorModificador * Input.Position.y * factorDivisorio;
 	Input.Position.z += cos(time) * factorIntensidadMovimiento * vectorModificador * Input.Position.y * factorDivisorio;
 	Output.Position = mul(Input.Position, matWorldViewProj);
