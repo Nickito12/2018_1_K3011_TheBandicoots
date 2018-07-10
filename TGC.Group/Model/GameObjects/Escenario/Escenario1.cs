@@ -73,8 +73,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
             string compilationErrors;
             var d3dDevice = D3DDevice.Instance.Device;
             shadowEffect = TgcShaders.loadEffect(Env.ShadersDir + "ShadowMap.fx");
-            
-            shaderArbustos = TgcShaders.loadEffect(Env.ShadersDir + "movimientoArbustos.fx");
+
+            shaderLiquidos = TgcShaders.loadEffect(Env.ShadersDir + "movimientoLiquidos.fx");
+
+            shaderAceites = TgcShaders.loadEffect(Env.ShadersDir + "movimientoAceites.fx");
 
             time = 0;
 
@@ -416,13 +418,20 @@ namespace TGC.Group.Model.GameObjects.Escenario
             g_LightDir = l.Item3;
             // Cargar variables de shader, por ejemplo el tiempo transcurrido.
             time += Env.ElapsedTime;
-            shaderArbustos.SetValue("time", time);
+            shaderLiquidos.SetValue("time", time);
 
-            foreach (TgcMesh arbusto in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto") || m.Name.Contains("Flores") || m.Name.Contains("Arbol")))
+            shaderAceites.SetValue("time", time);
+
+            PisoAcidoMesh = PisoAcido.toMesh("acido");
+            PisoAcidoMesh.Effect = shaderLiquidos;
+            PisoAcidoMesh.Technique = "RenderScene";
+            PisoAcidoMesh.Render();
+
+            foreach (TgcMesh aceite in ListaPisosResbalosos)
             {
-                arbusto.Effect = shaderArbustos;
-                arbusto.Technique = "RenderScene";
-                arbusto.Render();
+                aceite.Effect = shaderAceites;
+                aceite.Technique = "RenderScene";
+                aceite.Render();
             }
 
             baseRender();

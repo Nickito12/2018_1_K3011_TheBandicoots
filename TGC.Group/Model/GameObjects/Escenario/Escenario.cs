@@ -34,7 +34,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public Surface sharpenDepthStencil;
         public Texture texturaVida;
         protected Microsoft.DirectX.Direct3D.Effect shadowEffect;
-        protected Microsoft.DirectX.Direct3D.Effect shaderArbustos;
+        protected Microsoft.DirectX.Direct3D.Effect shaderLiquidos;
+        protected Microsoft.DirectX.Direct3D.Effect shaderAceites;
         private readonly int SHADOWMAP_SIZE = 1024;
         protected TGCVector3 g_LightDir; // direccion de la luz
         protected TGCVector3 g_LightPos; // posicion de la luz

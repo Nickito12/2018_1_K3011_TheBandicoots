@@ -46,13 +46,7 @@ struct VS_OUTPUT
 VS_OUTPUT vs_main(VS_INPUT Input)
 {
 	VS_OUTPUT Output;
-	float3 vectorModificador = (4,2,3);
-	float factorIntensidadMovimiento = 5;
-	float factorDivisorio = 0.001;
-	//Input.Position.x += sin(time) * factorIntensidadMovimiento * vectorModificador * (Input.Position.y % 10) / 100;
-	//Input.Position.z += cos(time) * factorIntensidadMovimiento * vectorModificador * (Input.Position.z % 10) / 100;
-	Input.Position.x += sin(time) * factorIntensidadMovimiento * vectorModificador * Input.Position.y * factorDivisorio;
-	Input.Position.z += cos(time) * factorIntensidadMovimiento * vectorModificador * Input.Position.y * factorDivisorio;
+	Input.Position.y += 0.1;
 	Output.Position = mul(Input.Position, matWorldViewProj);
 
 	Output.Texcoord = Input.Texcoord;
@@ -64,7 +58,10 @@ VS_OUTPUT vs_main(VS_INPUT Input)
 //Pixel Shader
 float4 ps_main(float2 Texcoord: TEXCOORD0, float4 Color : COLOR0) : COLOR0
 {
+	Texcoord.y = Texcoord.y + (sin(Texcoord.x * time)*0.01); 
 	float4 fvBaseColor = tex2D(diffuseMap, Texcoord);
+
+	
 	return fvBaseColor;
 }
 
