@@ -49,6 +49,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         private TgcPlane PisoCastillo10;
         private TgcPlane PisoCastillo11;
         private TgcPlane PisoAcido;
+        private TgcMesh PisoAcidoMesh;
+
         public Texture texturaLogo;
         public TgcText2D TextoLogo = new TgcText2D();
 
@@ -58,11 +60,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
         private TgcBoundingAxisAlignBox checkpoint = new TgcBoundingAxisAlignBox(
              new TGCVector3(799, 0, -97), new TGCVector3(870, 1000, -4));
         private TgcBoundingAxisAlignBox checkpoint2 = new TgcBoundingAxisAlignBox(
-             new TGCVector3(1000, -200 , -500), new TGCVector3(1200, 1200, -200));
+             new TGCVector3(1000, -200, -500), new TGCVector3(1200, 1200, -200));
         private bool checkpointReached2 = false;
         private TgcBoundingAxisAlignBox final = new TgcBoundingAxisAlignBox(new TGCVector3(1700, -180, -650), new TGCVector3(1800, -160, -640));
         private bool finalReached = false;
-       
+        private float time;
 
         public override void Init(GameModel _env)
         {
@@ -71,6 +73,15 @@ namespace TGC.Group.Model.GameObjects.Escenario
             string compilationErrors;
             var d3dDevice = D3DDevice.Instance.Device;
             shadowEffect = TgcShaders.loadEffect(Env.ShadersDir + "ShadowMap.fx");
+
+            shaderArbustos = TgcShaders.loadEffect(Env.ShadersDir + "movimientoArbustos.fx");
+
+            shaderLiquidos = TgcShaders.loadEffect(Env.ShadersDir + "movimientoLiquidos.fx");
+
+            shaderAceites = TgcShaders.loadEffect(Env.ShadersDir + "movimientoLiquidos.fx");
+
+            time = 0;
+
             var dir = new TGCVector3(0, -1, 0);
             dir.Normalize();
             Lights.Add(new Tuple<float, TGCVector3, TGCVector3>(0.05f, new TGCVector3(0, 80, 100), dir));
@@ -166,7 +177,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
             PisoAcido = new TgcPlane(new TGCVector3(1427f, -228.4502f, -1000f), new TGCVector3(400f, 5f, 450f), TgcPlane.Orientations.XZplane, Acido, 15, 15);
             ListaPlanos.Add(PisoAcido);
 
-
             //Crear SkyBox
             CreateSkyBox(TGCVector3.Empty, new TGCVector3(10000, 10000, 10000), "SkyBox1");
 
@@ -178,19 +188,17 @@ namespace TGC.Group.Model.GameObjects.Escenario
             ///////////agrego pisos subterraneos
 
             ListaPisosSubterraneos = Scene.Meshes.FindAll(m => m.Name.Contains("Floor"));
-            
 
             foreach (var piso in ListaPisosSubterraneos)
             {
                 Scene.Meshes.Remove(piso);
             }
 
-            
-
             // Paredes
             ListaParedes = Scene.Meshes.FindAll(m => m.Name.Contains("ParedCastillo"));
             TgcMesh paredSinBB = Scene.Meshes.Find(m => m.Name.Contains("ParedCastillo441"));
-            foreach (var m in ListaParedes) {
+            foreach (var m in ListaParedes)
+            {
                 m.AutoTransform = false;
                 var p = (m.BoundingBox.PMax + m.BoundingBox.PMin) * 0.5f;
                 var t = new TGCVector3(0, 20.8f, 0);
@@ -198,7 +206,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 m.BoundingBox.scaleTranslate(new TGCVector3(0, 21, 0), new TGCVector3(1, 1, 1));
             }
             ListaParedes.Remove(paredSinBB); //elimino la pared que no necesita agrandar su BB
-            foreach(var m in ListaParedes)
+            foreach (var m in ListaParedes)
             {
                 m.BoundingBox = new TgcBoundingAxisAlignBox(m.BoundingBox.PMin - new TGCVector3(5, 0, 5), m.BoundingBox.PMax + new TGCVector3(5, 0, 5));
             }
@@ -224,15 +232,16 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             // Alargar algunas AABB
             var r = new Random();
-            foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto"))) {
+            foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto")))
+            {
                 mesh.BoundingBox.scaleTranslate(new TGCVector3(0, 0, 0), new TGCVector3(1, 10, 1));
                 mesh.AutoTransform = false;
                 var ang = r.Next(0, 360);
-                var p = (mesh.BoundingBox.PMax + mesh.BoundingBox.PMin)*0.5f;
-                var s = new TGCVector3(((float)r.Next(90, 110))/100f, 1, ((float)r.Next(90, 110))/100f);
+                var p = (mesh.BoundingBox.PMax + mesh.BoundingBox.PMin) * 0.5f;
+                var s = new TGCVector3(((float)r.Next(90, 110)) / 100f, 1, ((float)r.Next(90, 110)) / 100f);
                 var rango = 6;
-                var t = new TGCVector3(((float)r.Next(-rango*100, rango * 100)) / 100f, 0, ((float)r.Next(-rango * 100, rango * 100)) / 100f);
-                mesh.Transform = TGCMatrix.Translation(-1 * p) * TGCMatrix.Scaling(s) * TGCMatrix.RotationY(ang)  * TGCMatrix.Translation(t+p);
+                var t = new TGCVector3(((float)r.Next(-rango * 100, rango * 100)) / 100f, 0, ((float)r.Next(-rango * 100, rango * 100)) / 100f);
+                mesh.Transform = TGCMatrix.Translation(-1 * p) * TGCMatrix.Scaling(s) * TGCMatrix.RotationY(ang) * TGCMatrix.Translation(t + p);
             }
             foreach (var mesh in Scene.Meshes.FindAll(m => m.Name.Contains("Flores")))
             {
@@ -263,7 +272,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             Plataformas = new List<Plataforma>();
             List<TgcMesh> ListaPlataformaEstatica = new List<TgcMesh>();
             List<TgcMesh> ListaPlataformaX = new List<TgcMesh>();
-           // TgcMesh PlataformaY;
+            // TgcMesh PlataformaY;
             List<TgcMesh> ListaPlataformaZ = new List<TgcMesh>();
             List<TgcMesh> ListaMovibles = new List<TgcMesh>();
             List<TgcMesh> Escalones = new List<TgcMesh>();
@@ -278,7 +287,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             //agrego plataforma que se mueven en X
             foreach (var p in ListaPlataformaX)
             {
-                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 25f, true, false,12f, false));
+                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 25f, true, false, 12f, false));
             }
 
             //agrego plataforma que se mueven en Z
@@ -287,26 +296,26 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 //-20f es para que este centrado en el camino
                 if (p.Name == "Box_202" || p.Name == "Box_204")
                 {
-                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false,false, 12f, true));
+                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false, false, 12f, true));
                 }
                 else
                 {
-                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false,false, 12f, false));
+                    Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, -20f), 25f, false, false, 12f, false));
                 }
             }
 
-            Plataformas.Add(new PlataformaLineal(PlataformaY, new TGCVector3(0f, -90f, 0f), 90f, false, true, 15f, true)); 
+            Plataformas.Add(new PlataformaLineal(PlataformaY, new TGCVector3(0f, -90f, 0f), 90f, false, true, 15f, true));
 
             //agrego objetos moviles
             foreach (var p in ListaMovibles)
             {
-                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false, false,0f, false));
+                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false, false, 0f, false));
             }
 
             //agrego objetos estaticos
             foreach (var p in ListaPlataformaEstatica)
             {
-                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false,false, 0f, false));
+                Plataformas.Add(new PlataformaLineal(p, new TGCVector3(0f, 0f, 0f), 0f, false, false, 0f, false));
             }
 
             //se agregan plataformas giratorias
@@ -327,9 +336,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 Scene.Meshes.Remove(plataforma.Mesh);
             }
             //agrego escalones
-           
-            
-            foreach(var escalon in Escalones)
+
+
+            foreach (var escalon in Escalones)
             {
                 ListaEscalones.Add(escalon);
 
@@ -347,8 +356,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
             else if (checkpointReached2)
             {
-               
-                Env.Personaje.Mesh.Position = new TGCVector3((float)1094.411,(float) -165.0148,(float) -210.6129);
+
+                Env.Personaje.Mesh.Position = new TGCVector3((float)1094.411, (float)-165.0148, (float)-210.6129);
             }
             else if (Env.Personaje.yaJugo)
             {
@@ -364,13 +373,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 ListaLogosQuitados.Clear();
                 ListaLogos = Scene.Meshes.FindAll(m => m.Name.Contains("LogoTGC"));
                 CantLogos = ListaLogos.Count;
-                //ListaLogos.AddRange(ListaLogosQuitados);
-                /*
-                foreach (var logo in ListaLogos)
-                {
-                    logo.Enabled = true; //esto es para que se renderice
-                }
-                */
             }
             Env.NuevaCamara = new TgcThirdPersonCamera(new TGCVector3(0, 0, 0), 20, -75, Env.Input);
             Env.Camara = Env.NuevaCamara;
@@ -387,7 +389,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 checkpointReached2 = true;
             }
             if (!finalReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, final))
-                Env.CambiarEscenario("Victoria"); 
+                Env.CambiarEscenario("Victoria");
             RenderHUD();
             RenderHUDLogos();
             Env.Personaje.RenderHUD();
@@ -399,12 +401,13 @@ namespace TGC.Group.Model.GameObjects.Escenario
             Tuple<float, TGCVector3, TGCVector3> min = Lights[0];
             var pos = new TGCVector3(Env.Personaje.Mesh.Position.X, 0, Env.Personaje.Mesh.Position.Z);
             float d = float.MaxValue;
-            foreach(var l in Lights)
+            foreach (var l in Lights)
             {
                 var lPos = l.Item2;
                 lPos -= new TGCVector3(0, lPos.Y, 0);
                 var dist = TGCVector3.Length(pos - l.Item2);
-                if (dist < d) {
+                if (dist < d)
+                {
                     d = dist;
                     min = l;
                 }
@@ -418,27 +421,52 @@ namespace TGC.Group.Model.GameObjects.Escenario
             shadowEffect.SetValue("EPSILON", l.Item1);
             g_LightPos = l.Item2;
             g_LightDir = l.Item3;
+            // Cargar variables de shader, por ejemplo el tiempo transcurrido.
+            time += Env.ElapsedTime;
+            shaderArbustos.SetValue("time", time);
+
+            shaderLiquidos.SetValue("time", time);
+
+            shaderAceites.SetValue("time", time);
+
+            PisoAcidoMesh = PisoAcido.toMesh("acido");
+            PisoAcidoMesh.Effect = shaderLiquidos;
+            PisoAcidoMesh.Technique = "RenderScene";
+            PisoAcidoMesh.Render();
+
+            foreach (TgcMesh aceite in ListaPisosResbalosos)
+            {
+                aceite.Effect = shaderAceites;
+                aceite.Technique = "RenderScene";
+                aceite.Render();
+            }
+
+            foreach (TgcMesh arbusto in Scene.Meshes.FindAll(m => m.Name.Contains("Arbusto") || m.Name.Contains("Flores") || m.Name.Contains("Arbol")))
+            {
+                arbusto.Effect = shaderArbustos;
+                arbusto.Technique = "RenderScene";
+                arbusto.Render();
+            }
+
             baseRender();
             foreach (var plano in ListaPlanos)
             {
                 RenderObject(plano);
             }
-            foreach(var piso in ListaPisosSubterraneos)
-            {             
+            foreach (var piso in ListaPisosSubterraneos)
+            {
                 RenderObject(piso);
             }
             rotacionLogos += 1f * Env.ElapsedTime;
             rotacionLogos = rotacionLogos > 360f ? 0 : rotacionLogos;
             foreach (var logo in ListaLogos)
             {
-               
-                    var p = (logo.BoundingBox.PMax + logo.BoundingBox.PMin) * 0.5f;
-                    logo.AutoTransform = false;
-                    logo.Transform = TGCMatrix.Translation(-p)
-                                    * TGCMatrix.RotationYawPitchRoll(rotacionLogos, 0, 0)
-                                    * TGCMatrix.Translation(p);
-               
 
+                var p = (logo.BoundingBox.PMax + logo.BoundingBox.PMin) * 0.5f;
+                logo.AutoTransform = false;
+                logo.Transform = TGCMatrix.Translation(-p)
+                                * TGCMatrix.RotationYawPitchRoll(rotacionLogos, 0, 0)
+                                * TGCMatrix.Translation(p);
             }
 
             TextoLogo.Text = CantLogos.ToString();
@@ -448,11 +476,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
         public override void Dispose()
         {
-            foreach(var plano in ListaPlanos)
+            foreach (var plano in ListaPlanos)
             {
                 plano.Dispose();
             }
-            foreach(var piso in ListaPisosSubterraneos)
+            foreach (var piso in ListaPisosSubterraneos)
             {
                 piso.Dispose();
             }
@@ -465,19 +493,19 @@ namespace TGC.Group.Model.GameObjects.Escenario
             foreach (var p in ListaPlanos)
                 if (EscenarioManual.testAABBAABB(p.BoundingBox, boundingBox))
                     return p.BoundingBox;
-            
 
-            foreach(var meshPiso in ListaPisosSubterraneos)
+
+            foreach (var meshPiso in ListaPisosSubterraneos)
             {
                 if (EscenarioManual.testAABBAABB(meshPiso.BoundingBox, boundingBox))
                     return meshPiso.BoundingBox;
             }
-            
+
             return null;
         }
 
         public override List<TgcBoundingAxisAlignBox> listaColisionesConCamara()
-        { 
+        {
             return Scene.Meshes.FindAll(m => !ListaPisosSubterraneos.Contains(m) && !ListaMeshesSinColision.Contains(m) && !ListaEscalones.Contains(m) && !ListaPisosResbalosos.Contains(m) && !ListaPozos.Contains(m) && !ListaLogos.Contains(m)).
                 ConvertAll((TgcMesh x) => x.BoundingBox);
         }
@@ -492,6 +520,5 @@ namespace TGC.Group.Model.GameObjects.Escenario
             sprite.End();
         }
 
-        
     }
 }
