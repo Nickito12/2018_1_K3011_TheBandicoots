@@ -61,7 +61,6 @@ namespace TGC.Group.Model.GameObjects.Escenario
              new TGCVector3(799, 0, -97), new TGCVector3(870, 1000, -4));
         private TgcBoundingAxisAlignBox checkpoint2 = new TgcBoundingAxisAlignBox(
              new TGCVector3(1000, -200, -500), new TGCVector3(1200, 1200, -200));
-        private bool checkpointReached2 = false;
         private TgcBoundingAxisAlignBox final = new TgcBoundingAxisAlignBox(new TGCVector3(1700, -180, -650), new TGCVector3(1800, -160, -640));
         private bool finalReached = false;
         private float time;
@@ -354,7 +353,7 @@ namespace TGC.Group.Model.GameObjects.Escenario
             // Reset pj (Moverlo a la posicion inicial del escenario
             if (Env.Personaje.checkpointReached)
                 Env.Personaje.Mesh.Position = new TGCVector3(836, 0, -41);
-            else if (checkpointReached2)
+            else if (Env.Personaje.checkpointReached2)
             {
 
                 Env.Personaje.Mesh.Position = new TGCVector3((float)1094.411, (float)-165.0148, (float)-210.6129);
@@ -384,9 +383,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
             {
                 Env.Personaje.checkpointReached = true;
             }
-            else if (!checkpointReached2 && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint2))
+            else if (!Env.Personaje.checkpointReached2 && testAABBAABB(Env.Personaje.Mesh.BoundingBox, checkpoint2))
             {
-                checkpointReached2 = true;
+                Env.Personaje.checkpointReached2 = true;
             }
             if (!finalReached && testAABBAABB(Env.Personaje.Mesh.BoundingBox, final))
                 Env.CambiarEscenario("Victoria");

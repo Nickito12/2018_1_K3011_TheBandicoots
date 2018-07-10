@@ -141,6 +141,7 @@ namespace TGC.Group.Model
                     arch.WriteLine(Personaje.Position().X + "|" + Personaje.Position().Y + "|" + Personaje.Position().Z);
                     arch.WriteLine(Personaje.vidas);
                     arch.WriteLine(Personaje.checkpointReached);
+                    arch.WriteLine(Personaje.checkpointReached2);
                     arch.Close();
                 }
 
@@ -191,6 +192,8 @@ namespace TGC.Group.Model
                             Personaje.Vidas(Convert.ToInt32(line));
                             line = reader.ReadLine();
                             Personaje.checkpointReached = Convert.ToBoolean(line);
+                            line = reader.ReadLine();
+                            Personaje.checkpointReached2 = Convert.ToBoolean(line);
                         }
                     }
                 }
