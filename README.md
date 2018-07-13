@@ -15,7 +15,11 @@ Proyecto plantilla para los trabajos prácticos de la asignatura electiva [Técn
 
 ## Integrantes ##
 TGC, Tgcito  |  Apellido, Nombre
------------- | -------------
+149.176-3 | Ventura, Leandro Emanuel
+148.735-8 | Lopez, María De los Angeles
+159.106-0 | Abram Lujan, Nicolas
+149.176-3 | , Mauro
+
 <img src="https://github.com/tgc-utn/tgc-utn.github.io/blob/master/images/robotgc.png" height="500"> | <img src="https://github.com/tgc-utn/tgc-utn.github.io/blob/master/images/trofeotp.png" height="500">
 
 ## ScreenShot ##
