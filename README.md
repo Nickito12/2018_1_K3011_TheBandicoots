@@ -18,9 +18,9 @@ TGC, Tgcito  |  Apellido, Nombre
 149.176-3 | Ventura, Leandro Emanuel
 148.735-8 | Lopez, María De los Angeles
 159.106-0 | Abram Lujan, Nicolas
-149.176-3 | , Mauro
+0 | , Mauro
 
-<img src="https://github.com/tgc-utn/tgc-utn.github.io/blob/master/images/robotgc.png" height="500"> | <img src="https://github.com/tgc-utn/tgc-utn.github.io/blob/master/images/trofeotp.png" height="500">
+<img src="https://github.com/tgc-utn/tgc-utn.github.io/blob/master/images/robotgc.png" height="500"> | <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/LeandroEmanuelVentura.jpeg" height="500"> | <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/MariaDeLosAngelesLopez.jpeg" height="500"> | <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/NicolasAbramLujan.jpeg" height="500">
 
 ## ScreenShot ##
 ![screenshot1](https://github.com/tgc-utn/tgc-group/blob/master/TGC.Group/Media/cajaMadera4.jpg)
