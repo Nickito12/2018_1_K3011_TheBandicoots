@@ -31,9 +31,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
         public Surface pOldDS;
         public Surface sharpenSurf;
         public VertexBuffer sharpenVBV3D;
+        public VertexBuffer outrunVBV3D;
         public Surface sharpenDepthStencil;
         public Texture texturaVida;
         protected Microsoft.DirectX.Direct3D.Effect shadowEffect;
+        protected Microsoft.DirectX.Direct3D.Effect outrunEffect;
         protected Microsoft.DirectX.Direct3D.Effect skeletalShadowEffect;
         protected Microsoft.DirectX.Direct3D.Effect shaderArbustos;
         protected Microsoft.DirectX.Direct3D.Effect shaderLiquidos;
@@ -44,9 +46,11 @@ namespace TGC.Group.Model.GameObjects.Escenario
         protected TGCMatrix g_LightView; // matriz de view del light
         protected TGCMatrix g_mShadowProj; // Projection matrix for shadow map
         private Surface shadowDepthStencil; // Depth-stencil buffer for rendering to shadow map
+        private Surface g_pOutrunDepthStencil; // Depth-stencil buffer for rendering the Outrun
         protected bool useShadows = true;
         private bool doingShadowRender = false;
         private Texture g_pShadowMap; // Texture to which the shadow map is rendered
+        private Texture g_pOutrunRenderTarget, g_pOutrunRenderTarget2, g_pOutrunRenderTarget3, g_pOutrunRenderTarget4, g_pOutrunRenderTarget5;
 
         public abstract void Dispose();
         public abstract void Init(GameModel _env);
@@ -58,14 +62,26 @@ namespace TGC.Group.Model.GameObjects.Escenario
                 4, d3dDevice, Usage.Dynamic | Usage.WriteOnly,
                 CustomVertex.PositionTextured.Format, Pool.Default);
             //FullScreen Quad
-            CustomVertex.PositionTextured[] vertices =
+            CustomVertex.PositionTextured[] verticesSharpen =
             {
                 new CustomVertex.PositionTextured(-1, 1, 1, 0, 0),
                 new CustomVertex.PositionTextured(1, 1, 1, 1, 0),
                 new CustomVertex.PositionTextured(-1, -1, 1, 0, 1),
                 new CustomVertex.PositionTextured(1, -1, 1, 1, 1)
             };
-            sharpenVBV3D.SetData(vertices, 0, LockFlags.None);
+            sharpenVBV3D.SetData(verticesSharpen, 0, LockFlags.None);
+            CustomVertex.PositionTextured[] verticesOutrun =
+            {
+                new CustomVertex.PositionTextured(-1, 1, 1, 0, 0),
+                new CustomVertex.PositionTextured(1, 1, 1, 1, 0),
+                new CustomVertex.PositionTextured(-1, -1, 1, 0, 1),
+                new CustomVertex.PositionTextured(1, -1, 1, 1, 1)
+            };
+            //vertex buffer de los triangulos
+            outrunVBV3D = new VertexBuffer(typeof(CustomVertex.PositionTextured),
+                4, d3dDevice, Usage.Dynamic | Usage.WriteOnly,
+                CustomVertex.PositionTextured.Format, Pool.Default);
+            outrunVBV3D.SetData(verticesOutrun, 0, LockFlags.None);
             // inicializo el render target
             Text = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
                 , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
@@ -73,6 +89,28 @@ namespace TGC.Group.Model.GameObjects.Escenario
             sharpenDepthStencil = d3dDevice.CreateDepthStencilSurface(d3dDevice.PresentationParameters.BackBufferWidth,
                 d3dDevice.PresentationParameters.BackBufferHeight,
                 DepthFormat.D24S8, MultiSampleType.None, 0, true);// Creo el shadowmap.
+
+
+            g_pOutrunDepthStencil = d3dDevice.CreateDepthStencilSurface(d3dDevice.PresentationParameters.BackBufferWidth,
+                d3dDevice.PresentationParameters.BackBufferHeight,
+                DepthFormat.D24S8, MultiSampleType.None, 0, true);
+            // inicializo el render target del outrun
+            g_pOutrunRenderTarget = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
+                , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                Format.X8R8G8B8, Pool.Default);
+            g_pOutrunRenderTarget2 = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
+                , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                Format.X8R8G8B8, Pool.Default);
+            g_pOutrunRenderTarget3 = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
+                , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                Format.X8R8G8B8, Pool.Default);
+            g_pOutrunRenderTarget4 = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
+                , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                Format.X8R8G8B8, Pool.Default);
+            g_pOutrunRenderTarget5 = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
+                , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                Format.X8R8G8B8, Pool.Default);
+
             // Format.R32F
             // Format.X8R8G8B8
             g_pShadowMap = new Texture(D3DDevice.Instance.Device, SHADOWMAP_SIZE, SHADOWMAP_SIZE, 1, Usage.RenderTarget, Format.R32F, Pool.Default);
@@ -116,6 +154,8 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             RenderScene();
         }
+
+        float ftime = 0;
         public virtual void Render()
         {
             preRender3D();
@@ -242,7 +282,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
         {
             var device = D3DDevice.Instance.Device;
             device.DepthStencilSurface = pOldDS;
-            device.SetRenderTarget(0, pOldRT);
+
+            var pSurf = g_pOutrunRenderTarget.GetSurfaceLevel(0);
+            device.SetRenderTarget(0, pSurf);
+            device.DepthStencilSurface = g_pOutrunDepthStencil;
 
             var oldFillMode = D3DDevice.Instance.Device.RenderState.FillMode;
             D3DDevice.Instance.Device.RenderState.FillMode = FillMode.Solid;
@@ -263,13 +306,45 @@ namespace TGC.Group.Model.GameObjects.Escenario
             EfectoRender2D.End();
             device.EndScene();
 
+
+            D3DDevice.Instance.Device.RenderState.FillMode = oldFillMode;
+
+            // Ultima pasada vertical va sobre la pantalla pp dicha
+            device.DepthStencilSurface = pOldDS;
+            device.SetRenderTarget(0, pOldRT);
             device.BeginScene();
+
+            outrunEffect.Technique = "FrameMotionBlur";
+            device.VertexFormat = CustomVertex.PositionTextured.Format;
+            device.SetStreamSource(0, outrunVBV3D, 0);
+            outrunEffect.SetValue("g_RenderTarget", g_pOutrunRenderTarget);
+            outrunEffect.SetValue("g_RenderTarget2", g_pOutrunRenderTarget2);
+            outrunEffect.SetValue("g_RenderTarget3", g_pOutrunRenderTarget3);
+            outrunEffect.SetValue("g_RenderTarget4", g_pOutrunRenderTarget4);
+            outrunEffect.SetValue("g_RenderTarget5", g_pOutrunRenderTarget5);
+            device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            outrunEffect.Begin(FX.None);
+            outrunEffect.BeginPass(0);
+            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            outrunEffect.EndPass();
+            outrunEffect.End();
+
             Env.RenderizaAxis();
             Env.RenderizaFPS();
             device.EndScene();
-
             device.Present();
-            D3DDevice.Instance.Device.RenderState.FillMode = oldFillMode;
+
+            ftime += Env.ElapsedTime;
+            if (ftime > 0.03f)
+            {
+                ftime = 0;
+                var aux = g_pOutrunRenderTarget5;
+                g_pOutrunRenderTarget5 = g_pOutrunRenderTarget4;
+                g_pOutrunRenderTarget4 = g_pOutrunRenderTarget3;
+                g_pOutrunRenderTarget3 = g_pOutrunRenderTarget2;
+                g_pOutrunRenderTarget2 = g_pOutrunRenderTarget;
+                g_pOutrunRenderTarget = aux;
+            }
         }
         public abstract void Update();
         public virtual List<TgcBoundingAxisAlignBox> listaColisionesConCamara()

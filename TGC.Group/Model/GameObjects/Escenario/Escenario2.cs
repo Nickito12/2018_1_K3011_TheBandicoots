@@ -34,6 +34,9 @@ namespace TGC.Group.Model.GameObjects.Escenario
             EfectoRender2D = Microsoft.DirectX.Direct3D.Effect.FromFile(d3dDevice, Env.ShadersDir + "render2D.fx",
                 null, null, ShaderFlags.PreferFlowControl, null, out compilationErrors);
             shadowEffect = TgcShaders.loadEffect(Env.ShadersDir + "ShadowMap.fx");
+            outrunEffect = TgcShaders.loadEffect(Env.ShadersDir + "OutRun.fx");
+            outrunEffect.SetValue("screen_dx", d3dDevice.PresentationParameters.BackBufferWidth);
+            outrunEffect.SetValue("screen_dy", d3dDevice.PresentationParameters.BackBufferHeight);
 
             skeletalShadowEffect = TgcShaders.loadEffect(Env.ShadersDir + "TgcSkeletalShadowMapMeshShader.fx");
             shadowEffect.SetValue("EPSILON", 0.005f);

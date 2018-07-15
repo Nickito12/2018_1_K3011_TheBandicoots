@@ -80,6 +80,10 @@ namespace TGC.Group.Model.GameObjects.Escenario
 
             shaderAceites = TgcShaders.loadEffect(Env.ShadersDir + "movimientoLiquidos.fx");
 
+            outrunEffect = TgcShaders.loadEffect(Env.ShadersDir + "OutRun.fx");
+            outrunEffect.SetValue("screen_dx", d3dDevice.PresentationParameters.BackBufferWidth);
+            outrunEffect.SetValue("screen_dy", d3dDevice.PresentationParameters.BackBufferHeight);
+
             time = 0;
 
             var dir = new TGCVector3(0, -1, 0);
