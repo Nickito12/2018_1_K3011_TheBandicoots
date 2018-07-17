@@ -14,13 +14,12 @@ Proyecto plantilla para los trabajos prácticos de la asignatura electiva [Técn
 * [TGC.Core](https://www.nuget.org/packages/TGC.Core/) (se baja automáticamente al hacer build por primera vez)
 
 ## Integrantes ##
-TGC, Tgcito  |  Apellido, Nombre
 149.176-3 | Ventura, Leandro Emanuel
 148.735-8 | Lopez, María De los Angeles
 159.106-0 | Abram Lujan, Nicolas
 149.748-0 | Caamaño, Mauro Gabriel
 
-<img src="https://github.com/tgc-utn/tgc-utn.github.io/blob/master/images/robotgc.png" height="400" width="400"> | <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/LeandroEmanuelVentura.jpeg" height="400" width="400"> | <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/MariaDeLosAngelesLopez.jpeg" height="400" width="400"> | <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/NicolasAbramLujan.jpeg" height="400" width="400">| <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/MauroGabrielCaamanio.jpeg" height="400" width="400">
+ <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/LeandroEmanuelVentura.jpeg" height="400" width="400"> | <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/MariaDeLosAngelesLopez.jpeg" height="400" width="400"> | <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/NicolasAbramLujan.jpeg" height="400" width="400">| <img src="https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/MauroGabrielCaamanio.jpeg" height="400" width="400">
 
 ## ScreenShot ##
 ![screenshot1](https://github.com/TheBandicoots/2018_1_K3011_TheBandicoots/blob/master/InformacionGrupo/Screenshot1.png)
